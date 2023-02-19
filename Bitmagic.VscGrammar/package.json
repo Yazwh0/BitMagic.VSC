@@ -1,7 +1,7 @@
 {
     "name": "bitmagic",
     "displayName": "BitMagic",
-    "description": "BitMagic 6502 Template Assembler",
+    "description": "BitMagic 65c02 Template Assembler",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.63.0"
@@ -11,43 +11,207 @@
         "url": "https://github.com/Yazwh0/BitMagic.git"
     },
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Debuggers"
     ],
+    "scripts": {
+        "watch": "tsc -watch -p ./src"
+    },
+    "main": "./out/extension.js",
     "contributes": {
         "languages": [
-        {
-            "id": "bmasm",
-            "aliases": ["BitMagic X16 Asm", "bmasm"],
-            "extensions": [".bmasm"],
-            "configuration": "./language-configuration.bmasm.json"
-        },
-        {
-            "id": "csasm",
-            "aliases": ["BitMagic X16 CS Asm", "csasm"],
-            "extensions": [".csasm"],
-            "configuration": "./language-configuration.csasm.json"
-        },
-        {
-            "id": "cstxt",
-            "aliases": ["BitMagic X16 CS Text", "cstxt"],
-            "extensions": [".cstxt"],
-            "configuration": "./language-configuration.cstxt.json"
-        }],
+            {
+                "id": "bmasm",
+                "aliases": [
+                    "BitMagic X16 Asm",
+                    "bmasm"
+                ],
+                "extensions": [
+                    ".bmasm"
+                ],
+                "configuration": "./language-configuration.bmasm.json"
+            },
+            {
+                "id": "csasm",
+                "aliases": [
+                    "BitMagic X16 CS Asm",
+                    "csasm"
+                ],
+                "extensions": [
+                    ".csasm"
+                ],
+                "configuration": "./language-configuration.csasm.json"
+            },
+            {
+                "id": "cstxt",
+                "aliases": [
+                    "BitMagic X16 CS Text",
+                    "cstxt"
+                ],
+                "extensions": [
+                    ".cstxt"
+                ],
+                "configuration": "./language-configuration.cstxt.json"
+            }
+        ],
         "grammars": [
-        {            
-            "language": "bmasm",
-            "scopeName": "source.bmasm",
-            "path": "./syntaxes/bmasm.tmLanguage.json"
+            {
+                "language": "bmasm",
+                "scopeName": "source.bmasm",
+                "path": "./syntaxes/bmasm.tmLanguage.json"
+            },
+            {
+                "language": "csasm",
+                "scopeName": "source.csasm",
+                "path": "./syntaxes/csasm.tmLanguage.json"
+            },
+            {
+                "language": "cstxt",
+                "scopeName": "source.cstxt",
+                "path": "./syntaxes/cstxt.tmLanguage.json"
+            }
+        ],
+        "breakpoints": [
+            {
+                "language": "bmasm"
+            }
+        ],
+        "menus": {
+            "editor/title/run": [
+                {
+                    "command": "extension.bmasm-debug.runEditorContents",
+                    "when": "resourceLangId == bmasm",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "extension.bmasm-debug.debugEditorContents",
+                    "when": "resourceLangId == bmasm",
+                    "group": "navigation@2"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "extension.bmasm-debug.debugEditorContents",
+                    "when": "resourceLangId == bmasm"
+                },
+                {
+                    "command": "extension.bmasm-debug.runEditorContents",
+                    "when": "resourceLangId == bmasm"
+                }
+            ]
         },
-        {
-            "language": "csasm",
-            "scopeName": "source.csasm",
-            "path": "./syntaxes/csasm.tmLanguage.json"
-        },
-        {
-            "language": "cstxt",
-            "scopeName": "source.cstxt",
-            "path": "./syntaxes/cstxt.tmLanguage.json"
-        }]
+        "commands": [
+            {
+                "command": "extension.bmasm-debug.debugEditorContents",
+                "title": "Debug File",
+                "category": "BMASM Debug",
+                "enablement": "!inDebugMode",
+                "icon": "$(debug-alt)"
+            },
+            {
+                "command": "extension.bmasm-debug.runEditorContents",
+                "title": "Run File",
+                "category": "BMASM Debug",
+                "enablement": "!inDebugMode",
+                "icon": "$(play)"
+            }
+        ],
+        "debuggers": [
+            {
+                "type": "bmasm",
+                "label": "BitMagic X16 ASM Debugger",
+                "program": "./bin/X16D.exe",
+                "args": [
+                    "${file}"
+                ],
+                "linux": {
+                    "runtime": "mono"
+                },
+                "configurationAttributes": {
+                    "launch": {
+                        "required": [
+                            "program"
+                        ],
+                        "properties": {
+                            "program": {
+                                "type": "string",
+                                "description": "Absolute path to a bmasm file.",
+                                "default": "${workspaceFolder}/${command:AskForProgramName}"
+                            },
+                            "stopOnEntry": {
+                                "type": "boolean",
+                                "description": "Automatically stop after launch.",
+                                "default": true
+                            },
+                            "debugArgs": {
+                                "type": "array",
+                                "description": "Extra X16D arguments",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "default": []
+                            },
+                            "cwd": {
+                                "type": "string",
+                                "description": "cwd",
+                                "default": "${workspaceRoot}"
+                            }
+                        }
+                    },
+                    "attach": {
+                        "required": [
+                            "debugPort"
+                        ],
+                        "properties": {
+                            "program": {
+                                "type": "string",
+                                "description": "Absolute path to a bmasm file.",
+                                "default": "${workspaceFolder}/${command:AskForProgramName}"
+                            },
+                            "debugPort": {
+                                "type": "number",
+                                "description": "Default debug port number for X16D in server mode.",
+                                "default": 2563
+                            },
+                            "debugAddress": {
+                                "type": "string",
+                                "description": "Address to connect to for X16D in server mode.",
+                                "default": "127.0.0.1"
+                            }
+                        }
+                    }
+                },
+                "initialConfigurations": [
+                    {
+                        "type": "bmasm",
+                        "request": "launch",
+                        "name": "Debug Application",
+                        "program": "${workspaceFolder}/${command:AskForProgramName}",
+                        "stopOnEntry": true,
+                        "debugArgs": [],
+                        "cwd": "${workspaceRoot}",
+                        "console": "internalConsole"
+                    },
+                    {
+                        "type": "bmasm",
+                        "request": "attach",
+                        "name": "Attach to debugger",
+                        "program": "${workspaceFolder}/${command:AskForProgramName}",
+                        "debugPort": 2563
+                    }
+                ],
+                "variables": {
+                    "AskForProgramName": "extension.bmasm-debug.getProgramName"
+                }
+            }
+        ]
+    },
+    "dependencies": {
+        "@types/vscode": "^1.75.1",
+        "@vscode/debugprotocol": "^1.59.0",
+        "vscode-nls": "^5.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^18.14.0"
     }
 }

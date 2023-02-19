@@ -10,7 +10,8 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "C:\\Documents\\Source\\BitMagic\\BitMagic.X16Debugger\\TestProject"
             ]
         }
     ]

@@ -1,0 +1,1 @@
+{"version":3,"file":"activateDebug.js","sourceRoot":"","sources":["../src/activateDebug.ts"],"names":[],"mappings":"AAAA,YAAY,CAAC;;;AACb,iCAAiC;AAEjC,SAAgB,aAAa,CAAC,OAAgC,EAAE,OAA8C;IAE1G,IAAI,CAAC,OAAO,EAAE;QAChB,OAAO;KACP;IAEE,OAAO,CAAC,aAAa,CAAC,IAAI,CAAC,MAAM,CAAC,KAAK,CAAC,qCAAqC,CAAC,OAAO,EAAE,OAAO,CAAC,CAAC,CAAC;AACrG,CAAC;AAPD,sCAOC"}
