@@ -35,6 +35,21 @@
 			"patterns": [{
 				"name": "comment.line.bmasm",
 				"match": ";.*$"
+			},
+			{
+				"name": "comment.block.bmasm",
+				"begin": "/\\*",
+				"beginCaptures": {
+					"0": {
+						"name": "punctuation.definition.comment.bmasm"
+					}
+				},
+				"end": "\\*/",
+				"endCaptures": {
+					"0": {
+						"name": "punctuation.definition.comment.bmasm"
+					}
+				}
 			}]
 		},
 		"literals": {
