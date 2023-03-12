@@ -18,6 +18,11 @@
         "watch": "tsc -watch -p ./src"
     },
     "main": "./out/extension.js",
+    "activationEvents": [
+        "onLanguage:bmasm",
+        "onLanguage:csasm",
+        "*"
+    ],
     "contributes": {
         "languages": [
             {
