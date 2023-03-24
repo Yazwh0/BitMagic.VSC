@@ -162,28 +162,6 @@
                                 "default": "${workspaceRoot}"
                             }
                         }
-                    },
-                    "attach": {
-                        "required": [
-                            "debugPort"
-                        ],
-                        "properties": {
-                            "program": {
-                                "type": "string",
-                                "description": "Absolute path to a bmasm file.",
-                                "default": "${workspaceFolder}/${command:AskForProgramName}"
-                            },
-                            "debugPort": {
-                                "type": "number",
-                                "description": "Default debug port number for X16D in server mode.",
-                                "default": 2563
-                            },
-                            "debugAddress": {
-                                "type": "string",
-                                "description": "Address to connect to for X16D in server mode.",
-                                "default": "127.0.0.1"
-                            }
-                        }
                     }
                 },
                 "initialConfigurations": [
@@ -196,13 +174,6 @@
                         "debugArgs": [],
                         "cwd": "${workspaceRoot}",
                         "console": "internalConsole"
-                    },
-                    {
-                        "type": "bmasm",
-                        "request": "attach",
-                        "name": "Attach to debugger",
-                        "program": "${workspaceFolder}/${command:AskForProgramName}",
-                        "debugPort": 2563
                     }
                 ],
                 "variables": {
