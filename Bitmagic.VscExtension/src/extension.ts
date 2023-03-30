@@ -14,7 +14,7 @@ import AutoUpdater from './autoUpdater';
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
 export function activate(context: vscode.ExtensionContext) {
-	bmOutput.appendLine("Activated!");
+	bmOutput.appendLine("BitMagic Activated!");
 
 	//context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new DebugAdapterExecutableFactory()));
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new MockDebugAdapterServerDescriptorFactory()));
