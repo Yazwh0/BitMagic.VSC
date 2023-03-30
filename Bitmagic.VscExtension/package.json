@@ -19,11 +19,43 @@
     },
     "main": "./out/extension.js",
     "activationEvents": [
-        "onLanguage:bmasm",
-        "onLanguage:csasm",
-        "*"
+        "onLanguage"
     ],
     "contributes": {
+        "configuration": {
+            "title": "BitMagic",
+            "properties": {
+                "bitMagic.debugger.autoUpdateDebugger": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically update the local copy of the debugger."
+                },
+                "bitMagic.debugger.path": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Path to the debugger that is automatically downloaded."
+                },
+                "bitMagic.debugger.alternativePath": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Path to an alternative copy of the debugger."
+                },
+                "bitMagic.debugger.port": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Port to use to communicate with the debugger. Will use std in\\out if not set. (Only really used for debugging the debugger.)"
+                }
+            }
+        },
         "languages": [
             {
                 "id": "bmasm",
@@ -183,9 +215,11 @@
         ]
     },
     "dependencies": {
+        "@microsoft/vscode-file-downloader-api": "^1.0.1",
         "@types/vscode": "^1.75.1",
         "@vscode/debugprotocol": "^1.59.0",
-        "vscode-nls": "^5.2.0"
+        "vscode-nls": "^5.2.0",
+        "wretch": "^2.5.1"
     },
     "devDependencies": {
         "@types/node": "^18.14.0"
