@@ -41,11 +41,14 @@ jobs:
             
             - name: clean install dependencies
               run: npm ci
+              working-directory: ./BitMagic.VscExtension
 
-            - name: Compile and Create VSIC
+            - name: Compile and Create VSIX
               run: npm run package
+              working-directory: ./BitMagic.VscExtension
 
             - name: Echo location
+              working-directory: ./BitMagic.VscExtension
               run: |
                 echo "VSIX Path: ${{ env.vsix_path }}"
 
