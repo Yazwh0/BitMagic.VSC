@@ -18,13 +18,13 @@ jobs:
                 submodules: recursive
 
             - name: install gitversion tool
-              uses: gittools/actions/gitversion/setup@v0.9
+              uses: gittools/actions/gitversion/setup@v0.10.2
               with:
                     versionSpec: '5.1.x'
             
             - name: execute gitversion
               id: gitversion # step id used as reference for output values
-              uses: gittools/actions/gitversion/execute@v0.9
+              uses: gittools/actions/gitversion/execute@v0.10.2
             
             - name: print gitversion
               run: |
@@ -41,4 +41,3 @@ jobs:
             
             - name: clean install dependencies
               run: npm ci
-              
