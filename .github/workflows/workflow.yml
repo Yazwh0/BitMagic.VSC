@@ -49,7 +49,7 @@ jobs:
             
             - name: Compile and Create VSIX
               working-directory: ./Bitmagic.VscExtension
-              run: vcse package
+              run: vsce package
 
             - name: Echo location
               working-directory: ./BitMagic.VscExtension
