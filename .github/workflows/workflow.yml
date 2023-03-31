@@ -44,8 +44,9 @@ jobs:
               run: npm ci
 
             - name: Build Extension
-              working-directory: ./BitMagic.VscExtension
-              run: tsc -p ./src
+              uses: iCrawl/action-tsc@v1
+              with:
+                project: ./BitMagic.VscExtension
 
             - name: Install VSCE
               working-directory: ./BitMagic.VscExtension
