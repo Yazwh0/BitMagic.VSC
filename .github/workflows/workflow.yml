@@ -40,12 +40,12 @@ jobs:
                 node-version: '12.x'
             
             - name: clean install dependencies
-              run: npm ci
               working-directory: ./BitMagic.VscExtension
+              run: npm ci
 
             - name: Compile and Create VSIX
+              working-directory: ./Bitmagic.VscExtension
               run: npm run package
-              working-directory: ./BitMagic.VscExtension
 
             - name: Echo location
               working-directory: ./BitMagic.VscExtension
