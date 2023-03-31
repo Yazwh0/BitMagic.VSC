@@ -9,6 +9,7 @@ import * as Net from 'net';
 import * as nls from 'vscode-nls';
 import { DebugProtocol } from '@vscode/debugprotocol';
 import AutoUpdater from './autoUpdater';
+import { platform } from 'os';
 
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
@@ -17,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
 
 	//context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new DebugAdapterExecutableFactory()));
-	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new MockDebugAdapterServerDescriptorFactory()));
+	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new NetworkDebugAdapterServerDescriptorFactory()));
 
 	context.subscriptions.push(vscode.commands.registerCommand('extension.bmasm-debug.getProgramName', config => {
 		return vscode.window.showInputBox({
@@ -85,20 +86,58 @@ class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescriptorFact
 		}
 
 		bmOutput.appendLine(`Creating Debug Adaptor Descriptor: ${executable.command} ${executable.args.join(' ')}`);
-		
+
 		// make VS Code launch the DA executable
 		return executable;
 	}
 }
 
-class MockDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
+class NetworkDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
 	private server?: Net.Server;
+	private readonly settingsPortNumber = 'bitMagic.debugger.port';
+	private readonly settingsDisablePlatformCheck = 'bitMagic.debugger.disablePlatformCheck';
+	private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
+	private readonly settingsDebugger = 'bitMagic.debugger.path';
 
 	createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+		var config = vscode.workspace.getConfiguration();
+		const disablePlatformCheck = config.get(this.settingsDisablePlatformCheck, false);
 
-		// make VS Code connect to debug server
-		return new vscode.DebugAdapterServer(2563);
+		// We can only test windows platforms, so anything else is a user issue.
+		if (!disablePlatformCheck) {
+			const os = platform();
+
+			if (os != 'win32') {
+				bmOutput.appendLine(`Unsupported Platform '${os}', only windows is currently supported.`);
+				bmOutput.show();
+				throw new Error(`Unsupported Platform '${os}', only windows is currently supported.`);
+			}
+		}
+
+		var portNumber = config.get(this.settingsPortNumber, undefined);
+
+		if (portNumber) {
+			// make VS Code connect to debug server
+			return new vscode.DebugAdapterServer(portNumber);
+		}
+
+		if (executable)  // overridden somewhere?
+			return executable;
+
+		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
+
+		if (debuggerTarget)
+			return new vscode.DebugAdapterExecutable(debuggerTarget + "/X16D.exe");
+
+		debuggerTarget = config.get(this.settingsDebugger, '');
+
+		if (debuggerTarget)
+			return new vscode.DebugAdapterExecutable(debuggerTarget + "/X16D.exe");
+
+		bmOutput.appendLine('Cannot find debugger. Please check settings.');
+		bmOutput.show();
+		return undefined;
 	}
 
 	dispose() {

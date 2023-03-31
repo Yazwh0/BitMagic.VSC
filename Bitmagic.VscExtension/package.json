@@ -47,6 +47,11 @@
                     ],
                     "default": null,
                     "description": "Port to use to communicate with the debugger. Will use std in\\out if not set. (Only really used for debugging the debugger.)"
+                },
+                "bitMagic.debugger.disablePlatformCheck" :{
+                    "type":"boolean",
+                    "default" : false,
+                    "description": "Disable the platform check."
                 }
             }
         },
@@ -151,7 +156,7 @@
             {
                 "type": "bmasm",
                 "label": "BitMagic X16 ASM Debugger",
-                "program": "./bin/X16D.exe",
+                "program": "",
                 "args": [
                     "${file}"
                 ],
