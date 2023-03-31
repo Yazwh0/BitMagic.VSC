@@ -43,11 +43,6 @@ jobs:
               working-directory: ./BitMagic.VscExtension
               run: npm install
 
-            - name: Build Extension
-              uses: iCrawl/action-tsc@v1
-              with:
-                project: ./BitMagic.VscExtension
-
             - name: Compile and Create VSIX
               working-directory: ./Bitmagic.VscExtension
               run: vsce package
