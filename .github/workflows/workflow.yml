@@ -43,10 +43,18 @@ jobs:
               working-directory: ./BitMagic.VscExtension
               run: npm install
 
+            - name: Install TypeScript
+              working-directory: ./BitMagic.VscExtension
+              run: npm install -g typescript
+
             - name: Install VSCE
               working-directory: ./BitMagic.VscExtension
               run: npm install -g vsce
 
+            - name: Compile Extension
+              working-directory: ./BitMagic.VscExtension
+              run: tsc -p ./src
+              
             - name: Compile and Create VSIX
               working-directory: ./Bitmagic.VscExtension
               run: vsce package
