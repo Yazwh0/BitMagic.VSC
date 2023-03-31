@@ -34,14 +34,14 @@ jobs:
             #     echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
             #     echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
     
-            - name: setup node
+            - name: Install Node
               uses: actions/setup-node@v3
               with:
                 node-version: '18'
             
-            - name: clean install dependencies
+            - name: Install Packages
               working-directory: ./BitMagic.VscExtension
-              run: npm ci
+              run: npm install
 
             - name: Build Extension
               uses: iCrawl/action-tsc@v1
