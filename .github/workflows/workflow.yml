@@ -43,6 +43,10 @@ jobs:
               working-directory: ./BitMagic.VscExtension
               run: npm install
 
+            - name: Install VSCE
+              working-directory: ./BitMagic.VscExtension
+              run: npm install -g vsce
+
             - name: Compile and Create VSIX
               working-directory: ./Bitmagic.VscExtension
               run: vsce package
