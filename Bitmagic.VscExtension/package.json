@@ -48,9 +48,9 @@
                     "default": null,
                     "description": "Port to use to communicate with the debugger. Will use std in\\out if not set. (Only really used for debugging the debugger.)"
                 },
-                "bitMagic.debugger.disablePlatformCheck" :{
-                    "type":"boolean",
-                    "default" : false,
+                "bitMagic.debugger.disablePlatformCheck": {
+                    "type": "boolean",
+                    "default": false,
                     "description": "Disable the platform check."
                 }
             }
@@ -217,8 +217,7 @@
         "@microsoft/vscode-file-downloader-api": "^1.0.1",
         "@types/vscode": "^1.75.1",
         "@vscode/debugprotocol": "^1.59.0",
-        "vscode-nls": "^5.2.0",
-        "wretch": "^2.5.1"
+        "vscode-nls": "^5.2.0"
     },
     "devDependencies": {
         "@types/node": "^18.14.0"
