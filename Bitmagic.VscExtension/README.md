@@ -1,7 +1,7 @@
 # BitMagic the Visual Studio Code Extension
 
-VSC Syntax highlights for CSASM and BMASM files.
+For debugging X16 applications or ROM.
 
-Use create_extension.bat to build and install the extension locally.
+Please see [the GitHub repository](https://github.com/Yazwh0/BitMagic) for more information!
 
-You will need vsce installed. Instructions here: <https://www.npmjs.com/package/vsce>
+Please note this is currently a work in progress.

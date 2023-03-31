@@ -59,9 +59,7 @@ jobs:
               working-directory: ./Bitmagic.VscExtension
               run: vsce package
 
-            - name: Echo location
-              working-directory: ./BitMagic.VscExtension
-              run: |
-                echo "VSIX Path: ${{ env.vsix_path }}"
-
+            - name: Publish
+              working-directory: ./Bitmagic.VscExtension
+              run: vsce publish -p ${{ secrets.VSCODEDEPLOY }}
                  
