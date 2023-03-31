@@ -17,22 +17,22 @@ jobs:
               with:
                 submodules: recursive
 
-            - name: install gitversion tool
-              uses: gittools/actions/gitversion/setup@v0.10.2
-              with:
-                    versionSpec: '5.x'
+            # - name: install gitversion tool
+            #   uses: gittools/actions/gitversion/setup@v0.10.2
+            #   with:
+            #         versionSpec: '5.x'
             
-            - name: execute gitversion
-              id: gitversion # step id used as reference for output values
-              uses: gittools/actions/gitversion/execute@v0.10.2
+            # - name: execute gitversion
+            #   id: gitversion # step id used as reference for output values
+            #   uses: gittools/actions/gitversion/execute@v0.10.2
             
-            - name: print gitversion
-              run: |
-                echo "Major: ${{ steps.gitversion.outputs.major }}"
-                echo "Minor: ${{ steps.gitversion.outputs.minor }}"
-                echo "Patch: ${{ steps.gitversion.outputs.patch }}"
-                echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-                echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+            # - name: print gitversion
+            #   run: |
+            #     echo "Major: ${{ steps.gitversion.outputs.major }}"
+            #     echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+            #     echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+            #     echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+            #     echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
     
             - name: setup node
               uses: actions/setup-node@v1
@@ -41,3 +41,12 @@ jobs:
             
             - name: clean install dependencies
               run: npm ci
+
+            - name: Compile and Create VSIC
+              run: npm run package
+
+            - name: Echo location
+              run: |
+                echo "VSIX Path: ${{ env.vsix_path }}"
+
+                 
