@@ -220,6 +220,7 @@
         "vscode-nls": "^5.2.0"
     },
     "devDependencies": {
-        "@types/node": "^18.14.0"
+        "@types/node": "^18.14.0",
+        "typescript": "^5.0.3"
     }
 }
