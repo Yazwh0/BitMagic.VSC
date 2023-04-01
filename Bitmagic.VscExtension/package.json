@@ -2,14 +2,20 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.0.2",
+    "version": "0.0.3",
+    "preview": true,
     "publisher" : "yazwh0",
+    "icon": "package/butterfly.png",
+    "homepage": "https://github.com/Yazwh0/BitMagic",
     "engines": {
         "vscode": "^1.63.0"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/Yazwh0/BitMagic.git"
+    },
+    "bugs": {
+        "url" : "https://github.com/Yazwh0/BitMagic/issues"
     },
     "categories": [
         "Programming Languages",
@@ -20,7 +26,9 @@
     },
     "main": "./out/extension.js",
     "activationEvents": [
-        "onLanguage"
+        "onLanguage",
+        "onDebugInitialConfigurations",
+        "workspaceContains:project.json"
     ],
     "contributes": {
         "configuration": {
@@ -52,7 +60,7 @@
                 "bitMagic.debugger.disablePlatformCheck": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Disable the platform check."
+                    "description": "Disable the platform check, to let you experiment on non-supported platforms."
                 }
             }
         },
@@ -172,7 +180,7 @@
                         "properties": {
                             "program": {
                                 "type": "string",
-                                "description": "Absolute path to a bmasm file.",
+                                "description": "Absolute path to a bmasm file, or project.json.",
                                 "default": "${workspaceFolder}/${command:AskForProgramName}"
                             },
                             "stopOnEntry": {
@@ -204,8 +212,7 @@
                         "program": "${workspaceFolder}/${command:AskForProgramName}",
                         "stopOnEntry": true,
                         "debugArgs": [],
-                        "cwd": "${workspaceRoot}",
-                        "console": "internalConsole"
+                        "cwd": "${workspaceRoot}"
                     }
                 ],
                 "variables": {
