@@ -2,6 +2,8 @@
 
 BitMagic is a project with the aim to create a single Commander X16 Development Suite using VSCode.
 
+Please note only Windows is officially supported.
+
 It is comprised of four parts:
 
 - [Template Engine](https://github.com/Yazwh0/BitMagic.Documentation/blob/main/TemplateEngine.md)
