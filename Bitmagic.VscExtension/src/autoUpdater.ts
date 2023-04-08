@@ -45,8 +45,12 @@ export default class AutoUpdater {
                 }
 
                 const downloadedVersionFile = file.fsPath;
+
                 const liveVersion = fs.readFileSync(downloadedVersionFile, { encoding: 'utf8' });
-                const localVersion = fs.readFileSync(path.join(localCopy, 'version.txt'), { encoding: 'utf8' });
+                
+                let localVersion = '';
+                if (fs.existsSync(path.join(localCopy, 'version.txt')))
+                    localVersion = fs.readFileSync(path.join(localCopy, 'version.txt'), { encoding: 'utf8' });
 
                 await fileDownloader.deleteItem(downloadedVersionFile, context)
                 output.appendLine('Done.');
