@@ -88,12 +88,11 @@ export default class AutoUpdater {
 
         output.append('Downloading new version... ');
 
-        var os = platform();
+        const os = platform();
 
-        os = 'linux';
         var fsPath = '';
 
-        if (false && os == 'win32') {
+        if (os == 'win32') {
             var url = this.debuggerUrl + '.Windows.zip'
             const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'X16D', context, undefined, undefined, { shouldUnzip: true });
 
@@ -103,7 +102,6 @@ export default class AutoUpdater {
                 return;
             }    
             output.appendLine('Done.');
-
 
             fsPath = file.fsPath;
         }
