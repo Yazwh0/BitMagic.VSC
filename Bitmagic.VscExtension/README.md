@@ -2,7 +2,7 @@
 
 BitMagic is a project with the aim to create a single Commander X16 Development Suite using VSCode.
 
-Please note only Windows is officially supported.
+Please note only Windows and Linux are supported.
 
 It is comprised of four parts:
 

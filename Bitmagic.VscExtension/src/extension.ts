@@ -108,10 +108,10 @@ class NetworkDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterD
 		if (!disablePlatformCheck) {
 			const os = platform();
 
-			if (os != 'win32') {
-				bmOutput.appendLine(`Unsupported Platform '${os}', only windows is currently supported.`);
+			if (os != 'win32' && os != 'linux') {
+				bmOutput.appendLine(`Unsupported Platform '${os}', only windows and linux are currently supported.`);
 				bmOutput.show();
-				throw new Error(`Unsupported Platform '${os}', only windows is currently supported.`);
+				throw new Error(`Unsupported Platform '${os}', only windows and linux art currently supported.`);
 			}
 		}
 

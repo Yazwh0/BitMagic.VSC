@@ -3,10 +3,11 @@ import * as vscode from 'vscode';
 import { Uri } from "vscode";
 import { getApi, FileDownloader } from "@microsoft/vscode-file-downloader-api";
 import path = require('path');
+import { platform } from 'os';
 
 export default class AutoUpdater {
     private readonly versionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/version.txt';
-    private readonly debuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/BitMagic-TheDebugger.zip';
+    private readonly debuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/BitMagic-TheDebugger';
     private readonly settingsDebuggerPath = 'bitMagic.debugger.path';
     private readonly settingsAutoUpdate = 'bitMagic.debugger.autoUpdateDebugger';
 	private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
@@ -85,7 +86,17 @@ export default class AutoUpdater {
         const fileDownloader: FileDownloader = await getApi();
 
         output.append('Downloading new version... ');
-        const file: Uri = await fileDownloader.downloadFile(Uri.parse(this.debuggerUrl), 'X16D', context, undefined, undefined, { shouldUnzip: true });
+
+        const os = platform();
+
+        if (os == 'win32')
+            var url = this.debuggerUrl + '.Windows.zip'
+        else if (os == 'linux')
+            var url = this.debuggerUrl + '.Linux.tar.gz'
+        else
+            throw new Error(`Unsupported Platform '${os}', only windows and linux art currently supported.`);
+
+        const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'X16D', context, undefined, undefined, { shouldUnzip: true });
 
         if (file === undefined) {
             output.appendLine("Error.");
