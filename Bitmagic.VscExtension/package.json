@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "preview": true,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -172,9 +172,6 @@
                 "args": [
                     "${file}"
                 ],
-                "linux": {
-                    "runtime": "mono"
-                },
                 "configurationAttributes": {
                     "launch": {
                         "required": [

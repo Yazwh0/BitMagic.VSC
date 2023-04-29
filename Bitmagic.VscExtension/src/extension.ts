@@ -103,11 +103,10 @@ class NetworkDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterD
 	createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
 		var config = vscode.workspace.getConfiguration();
 		const disablePlatformCheck = config.get(this.settingsDisablePlatformCheck, false);
+		const os = platform();
 
 		// We can only test windows platforms, so anything else is a user issue.
 		if (!disablePlatformCheck) {
-			const os = platform();
-
 			if (os != 'win32' && os != 'linux') {
 				bmOutput.appendLine(`Unsupported Platform '${os}', only windows and linux are currently supported.`);
 				bmOutput.show();
@@ -125,15 +124,16 @@ class NetworkDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterD
 		if (executable)  // overridden somewhere?
 			return executable;
 
-		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
+		const exeExtension = os == 'win32' ? '/X16D.exe' : '/X16D';
+		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');		
 
 		if (debuggerTarget)
-			return new vscode.DebugAdapterExecutable(debuggerTarget + "/X16D.exe");
+			return new vscode.DebugAdapterExecutable(debuggerTarget + exeExtension);
 
 		debuggerTarget = config.get(this.settingsDebugger, '');
 
 		if (debuggerTarget)
-			return new vscode.DebugAdapterExecutable(debuggerTarget + "/X16D.exe");
+			return new vscode.DebugAdapterExecutable(debuggerTarget + exeExtension);
 
 		bmOutput.appendLine('Cannot find debugger. Please check settings.');
 		bmOutput.show();
