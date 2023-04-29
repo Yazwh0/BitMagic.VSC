@@ -4,13 +4,15 @@ import { Uri } from "vscode";
 import { getApi, FileDownloader } from "@microsoft/vscode-file-downloader-api";
 import path = require('path');
 import { platform } from 'os';
+const decompress = require('decompress');
+const decompressTargz = require('decompress-targz');
 
 export default class AutoUpdater {
     private readonly versionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/version.txt';
     private readonly debuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/BitMagic-TheDebugger';
     private readonly settingsDebuggerPath = 'bitMagic.debugger.path';
     private readonly settingsAutoUpdate = 'bitMagic.debugger.autoUpdateDebugger';
-	private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
+    private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
 
     public async CheckForUpdate(context: vscode.ExtensionContext, output: vscode.OutputChannel) {
         try {
@@ -25,8 +27,7 @@ export default class AutoUpdater {
 
             var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
 
-            if (debuggerTarget)
-            {
+            if (debuggerTarget) {
                 output.append('Skipping update check as a custom location for the debugger is used.');
                 return;
             }
@@ -48,7 +49,7 @@ export default class AutoUpdater {
                 const downloadedVersionFile = file.fsPath;
 
                 const liveVersion = fs.readFileSync(downloadedVersionFile, { encoding: 'utf8' });
-                
+
                 let localVersion = '';
                 if (fs.existsSync(path.join(localCopy, 'version.txt')))
                     localVersion = fs.readFileSync(path.join(localCopy, 'version.txt'), { encoding: 'utf8' });
@@ -87,27 +88,48 @@ export default class AutoUpdater {
 
         output.append('Downloading new version... ');
 
-        const os = platform();
+        var os = platform();
 
-        if (os == 'win32')
+        os = 'linux';
+        var fsPath = '';
+
+        if (false && os == 'win32') {
             var url = this.debuggerUrl + '.Windows.zip'
-        else if (os == 'linux')
+            const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'X16D', context, undefined, undefined, { shouldUnzip: true });
+
+            if (file === undefined) {
+                output.appendLine("Error.");
+                output.show();
+                return;
+            }    
+            output.appendLine('Done.');
+
+
+            fsPath = file.fsPath;
+        }
+        else if (os == 'linux') {
             var url = this.debuggerUrl + '.Linux.tar.gz'
+            const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'BitMagic-TheDebugger.Linux.tar.gz', context, undefined, undefined, { shouldUnzip: false });
+
+            if (file === undefined) {
+                output.appendLine("Error.");
+                output.show();
+                return;
+            }    
+            output.appendLine('Done.');
+
+            fsPath = path.dirname(file.fsPath);
+            fsPath = fsPath + path.sep + 'X16D';
+
+            fs.mkdirSync(fsPath);
+
+            await decompress(file.fsPath, fsPath, { plugins : [ decompressTargz() ]});
+        }
         else
             throw new Error(`Unsupported Platform '${os}', only windows and linux art currently supported.`);
 
-        const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'X16D', context, undefined, undefined, { shouldUnzip: true });
-
-        if (file === undefined) {
-            output.appendLine("Error.");
-            output.show();
-            return;
-        }
-
-        output.appendLine('Done.');
-
         var config = vscode.workspace.getConfiguration();
 
-        config.update(this.settingsDebuggerPath, file.fsPath, true);
+        config.update(this.settingsDebuggerPath, fsPath, true);
     }
 }
