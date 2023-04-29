@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "preview": true,
     "publisher" : "yazwh0",
     "icon": "package/butterfly.png",
