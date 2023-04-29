@@ -124,7 +124,7 @@ class NetworkDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterD
 		if (executable)  // overridden somewhere?
 			return executable;
 
-		const exeExtension = os == 'win32' ? '/X16D.exe' : '/X16D';
+		const exeExtension = os == 'win32' ? '\\X16D.exe' : '/X16D';
 		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');		
 
 		if (debuggerTarget)
