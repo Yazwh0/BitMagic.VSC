@@ -48,7 +48,7 @@ export default class AutoUpdater {
 
                 const downloadedVersionFile = file.fsPath;
 
-                const liveVersion = fs.readFileSync(downloadedVersionFile, { encoding: 'utf8' });
+                let liveVersion = fs.readFileSync(downloadedVersionFile, { encoding: 'utf8' });
 
                 let localVersion = '';
                 if (fs.existsSync(path.join(localCopy, 'version.txt')))
@@ -56,6 +56,9 @@ export default class AutoUpdater {
 
                 await fileDownloader.deleteItem(downloadedVersionFile, context)
                 output.appendLine('Done.');
+
+                liveVersion = liveVersion.trim();
+                localVersion = localVersion.trim();
 
                 if (liveVersion === localVersion) {
                     output.appendLine("No update required.");
