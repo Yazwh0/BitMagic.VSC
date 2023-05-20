@@ -1,76 +1,64 @@
 {
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "BitMagic X16 Asm",
-	"patterns": [
-		{
-			"include": "#strings"
-		},
-		{
-			"include": "#literals"
-		},
-		{
-			"include": "#comments"
-		},
-		{
-			"include": "#operators"
-		},
-		{
-			"include": "#opcodes"
-		},
-		{
-			"include": "#labels"
-		},
-		{
-			"include": "#pseudofunctions"
-		},
-		{
-			"include": "#blockstarts"
-		},
-		{
-			"include": "#blockends"
-		}
+	"patterns": [			
+		{ "include": "#asm-strings" },
+		{ "include": "#asm-literals" },
+		{ "include": "#asm-comments" },
+		{ "include": "#asm-operators" },
+		{ "include": "#asm-opcodes" },
+		{ "include": "#asm-labels" },
+		{ "include": "#asm-pseudofunctions" },
+		{ "include": "#asm-variabledefinition" },
+		{ "include": "#asm-blockstarts" },
+		{ "include": "#asm-blockends" },
+		{ "include" : "source.csasm" }
 	],
 	"repository": {
-		"comments": {
-			"patterns": [{
-				"name": "comment.line.bmasm",
-				"match": ";.*$"
-			},
-			{
-				"name": "comment.block.bmasm",
-				"begin": "/\\*",
-				"beginCaptures": {
-					"0": {
-						"name": "punctuation.definition.comment.bmasm"
-					}
+		"asm-comments": {
+			"patterns": [
+				{
+					"name": "comment.line.bmasm",
+					"match": ";.*$"
 				},
-				"end": "\\*/",
-				"endCaptures": {
-					"0": {
-						"name": "punctuation.definition.comment.bmasm"
+				{
+					"name": "comment.block.bmasm",
+					"begin": "/\\*",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.comment.bmasm"
+						}
+					},
+					"end": "\\*/",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.comment.bmasm"
+						}
 					}
 				}
-			}]
+			]
 		},
-		"literals": {
-			"patterns": [{
-				"name": "constant.numeric.binary.bmasm",
-				"match": "(%[01]+\\b)|(0b[01]+\\b)"
-			}, 
-			{
-				"name": "constant.numeric.hex.bmasm",
-				"match": "(\\$[0-9A-Fa-f]+\\b)|(0x[0-9A-Fa-f]+\\b)"
-			}, 
-			{
-				"name": "constant.numeric.decimal.bmasm",
-				"match": "\\b[0-9]+\\b"
-			}, 
-			{
-				"name": "constant.language.unnamed-label.bmasm",
-				"match": ":-+|:\\++"
-			}]
+		"asm-literals": {
+			"patterns": [
+				{
+					"name": "constant.numeric.binary.bmasm",
+					"match": "(%[01]+\\b)|(0b[01]+\\b)"
+				},
+				{
+					"name": "constant.numeric.hex.bmasm",
+					"match": "(\\$[0-9A-Fa-f]+\\b)|(0x[0-9A-Fa-f]+\\b)"
+				},
+				{
+					"name": "constant.numeric.decimal.bmasm",
+					"match": "\\b[0-9]+\\b"
+				},
+				{
+					"name": "constant.language.unnamed-label.bmasm",
+					"match": ":-+|:\\++"
+				}
+			]
 		},
-		"strings": {
+		"asm-strings": {
 			"name": "string.quoted.double.bmasm",
 			"begin": "\"",
 			"end": "\"",
@@ -81,51 +69,79 @@
 				}
 			]
 		},
-		"operators": {
-			"patterns": [{
-				"name": "keyword.operators.immediate.bmasm",
-				"match": "[#|^|<|>]"
-			},
-			{
-				"name": "keyword.operators.misc.bmasm",
-				"match": "=|<>|:=|\\+|-|\\*|/|\\&|~|\\||<<|>>|\\&\\&|\\|\\||!|<|>|<=|>="	
-			}]
+		"asm-operators": {
+			"patterns": [
+				{
+					"name": "keyword.operators.immediate.bmasm",
+					"match": "[#|^|<|>]"
+				},
+				{
+					"name": "keyword.operators.misc.bmasm",
+					"match": "=|<>|:=|\\+|-|\\*|/|\\&|~|\\||<<|>>|\\&\\&|\\|\\||!|<|>|<=|>="
+				}
+			]
 		},
-		"opcodes": {
-			"patterns": [{
-				"comment": "6502 Opcodes",
-				"name": "entity.name.function.bmasm.6502",
-				"match": "\\b(?i:adc|and|asl|bcc|bcs|beq|bit|bmi|bne|bpl|brk|bvc|bvs|clc|cld|cli|clv|cmp|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|jmp|jsr|lda|ldx|ldy|lsr|nop|ora|pha|php|pla|plp|rol|ror|rti|rts|sbc|sec|sed|sei|sta|stx|sty|stp|tax|tay|tsx|txa|txs|tya)\\b"
-			}, {
-				"comment": "65C02 Opcodes",
-				"name": "entity.name.function.bmasm.65c02",
-				"match": "\\b(?i:bra|phx|phy|plx|ply|stz|trb|tsb|bbr0|bbr1|bbr2|bbr3|bbr4|bbr5|bbr6|bbr7|bbs0|bbs1|bbs2|bbs3|bbs4|bbs5|bbs6|bbs7|rmb0|rmb1|rmb2|rmb3|rmb4|rmb5|rmb6|rmb7|smb0|smb1|smb2|smb3|smb4|smb5|smb6|smb7|wai)\\b"
-			}]
+		"asm-opcodes": {
+			"patterns": [
+				{
+					"comment": "6502 Opcodes",
+					"name": "entity.name.function.bmasm.6502",
+					"match": "\\b(?i:adc|and|asl|bcc|bcs|beq|bit|bmi|bne|bpl|brk|bvc|bvs|clc|cld|cli|clv|cmp|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|jmp|jsr|lda|ldx|ldy|lsr|nop|ora|pha|php|pla|plp|rol|ror|rti|rts|sbc|sec|sed|sei|sta|stx|sty|stp|tax|tay|tsx|txa|txs|tya)\\b"
+				},
+				{
+					"comment": "65C02 Opcodes",
+					"name": "entity.name.function.bmasm.65c02",
+					"match": "\\b(?i:bra|phx|phy|plx|ply|stz|trb|tsb|bbr0|bbr1|bbr2|bbr3|bbr4|bbr5|bbr6|bbr7|bbs0|bbs1|bbs2|bbs3|bbs4|bbs5|bbs6|bbs7|rmb0|rmb1|rmb2|rmb3|rmb4|rmb5|rmb6|rmb7|smb0|smb1|smb2|smb3|smb4|smb5|smb6|smb7|wai)\\b"
+				}
+			]
 		},
-		"pseudofunctions": {
-			"patterns": [{
-				"name": "entity.name.function.pseudofunction.bmasm",
-				"match": "\\.(?i:byte|word|const|pad|align|importfile|org|cpu|machine)\\b"
-			}]
+		"asm-pseudofunctions": {
+			"patterns": [
+				{
+					"name": "entity.name.function.pseudofunction.bmasm",
+					"match": "\\.(?i:byte|word|const|pad|align|importfile|org|cpu|machine)\\b"
+				}
+			]
 		},
-		"blockstarts": {
-			"patterns": [{
-				"name": "keyword.control.block.bmasm",
-				"contentName": "entity.name.function.bmasm",
-				"match": "\\.(?i:proc|scope|segment|machine)\\b"
-			}]
-		},		
-		"blockends": {
-			"patterns": [{
-				"name": "keyword.control.block.bmasm",
-				"match": "\\.(?i:endproc|endscope|endsegment)\\b"
-			}]
+		"asm-variabledefinition": {
+			"patterns": [
+				{
+					"match": "(\\.var|\\.padvar|\\.constvar)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string))",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.pseudofunction.bmasm"
+						},
+						"2": {
+							"name": "keyword.type.bmasm"
+						}
+					}
+				}
+			]
 		},
-		"labels": {
-			"patterns": [{
-				"name": "entity.name.label.bmasm",
-				"match": "^.\\S*:"
-			}]
+		"asm-blockstarts": {
+			"patterns": [
+				{
+					"name": "keyword.control.block.bmasm",
+					"contentName": "entity.name.function.bmasm",
+					"match": "\\.(?i:proc|scope|segment|machine)\\b"
+				}
+			]
+		},
+		"asm-blockends": {
+			"patterns": [
+				{
+					"name": "keyword.control.block.bmasm",
+					"match": "\\.(?i:endproc|endscope|endsegment)\\b"
+				}
+			]
+		},
+		"asm-labels": {
+			"patterns": [
+				{
+					"name": "entity.name.label.bmasm",
+					"match": "^.\\S*:"
+				}
+			]
 		}
 	},
 	"scopeName": "source.bmasm"

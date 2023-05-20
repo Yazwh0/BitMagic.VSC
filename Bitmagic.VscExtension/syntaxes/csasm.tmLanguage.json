@@ -1,9 +1,9 @@
 {
 	"information_for_contributors": [
 		"Pulled from https://raw.githubusercontent.com/microsoft/vscode/main/extensions/csharp/syntaxes/csharp.tmLanguage.json",
-        "Then links to bmasm added."
+        "bm asm then references this."
 	],
-	"name": "BitMagic X16 CS Asm",
+	"name": "BitMagic X16 CS Parser",
 	"scopeName": "source.csasm",
 	"patterns": [		
 			{ "include" : "#csasm" },
@@ -16,7 +16,6 @@
 	"repository": {
 		"csasm":{
 			"patterns":[
-				{ "include" : "source.bmasm" },
 				{ "include" : "#assembly-references"},
 				{ "include" : "#machine"},
 				{ "include" : "#comment" },		
