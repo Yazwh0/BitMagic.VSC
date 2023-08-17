@@ -1,7 +1,3 @@
-/*---------------------------------------------------------
- * Copyright (C) Microsoft Corporation. All rights reserved.
- *--------------------------------------------------------*/
-
 'use strict';
 
 import * as vscode from 'vscode';
@@ -12,7 +8,7 @@ import AutoUpdater from './autoUpdater';
 import { platform } from 'os';
 import { VisualiserTree } from './visualiserTree';
 import { PaletteViewProvider } from './paletteViewProvider';
-
+import BitMagicDebugAdaptorTrackerFactory from './debugTracker';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -64,41 +60,31 @@ export function activate(context: vscode.ExtensionContext) {
 		})
 	);
 
-	vscode.window.registerTreeDataProvider('x16-visualiser', new VisualiserTree())
-	vscode.commands.registerCommand('x16-visualiser.view_bitmap', (i) => {
-		vscode.window.showInformationMessage("Bitmap!");
-	})
-	vscode.commands.registerCommand('x16-visualiser.view_tilemap', (i) => {
-		vscode.window.showInformationMessage("Tilemap!");
-	})
-	vscode.commands.registerCommand('x16-visualiser.view_tiles', (i) => {
-		vscode.window.showInformationMessage("Tiles!");
-	})
-	vscode.commands.registerCommand('x16-visualiser.view_sprites', (i) => {
-		vscode.window.showInformationMessage("Sprites!");
-	})
-	vscode.commands.registerCommand('x16-visualiser.view_palette', (i) => {
-		vscode.debug.activeDebugSession?.customRequest("bm_palette").then(i => {
+	// Debug tracker for compilation errors
+	vscode.debug.registerDebugAdapterTrackerFactory('bmasm', new BitMagicDebugAdaptorTrackerFactory(bmOutput));
 
-		});
-		vscode.window.showInformationMessage("Palette!");
-	})
+	// Visualiser
+	// vscode.window.registerTreeDataProvider('x16-visualiser', new VisualiserTree())
+	// vscode.commands.registerCommand('x16-visualiser.view_bitmap', (i) => {
+	// 	vscode.window.showInformationMessage("Bitmap!");
+	// })
+	// vscode.commands.registerCommand('x16-visualiser.view_tilemap', (i) => {
+	// 	vscode.window.showInformationMessage("Tilemap!");
+	// })
+	// vscode.commands.registerCommand('x16-visualiser.view_tiles', (i) => {
+	// 	vscode.window.showInformationMessage("Tiles!");
+	// })
+	// vscode.commands.registerCommand('x16-visualiser.view_sprites', (i) => {
+	// 	vscode.window.showInformationMessage("Sprites!");
+	// })
+	// vscode.commands.registerCommand('x16-visualiser.view_palette', (i) => {
+	// 	vscode.debug.activeDebugSession?.customRequest("bm_palette").then(i => {
 
-	PaletteViewProvider.activate(context);
+	// 	});
+	// 	vscode.window.showInformationMessage("Palette!");
+	// })
 
-	/// for debugging:
-	// vscode.debug.registerDebugAdapterTrackerFactory('*', {
-	// 	createDebugAdapterTracker(session: vscode.DebugSession) {
-	// 		return {
-	// 			onWillReceiveMessage: m => console.log(`> ${JSON.stringify(m, undefined, 2)}`),
-	// 			onDidSendMessage: m => console.log(`< ${JSON.stringify(m, undefined, 2)}`)
-	// 		};
-	// 	}
-	// });
-
-	//context.subscriptions.push(vscode.commands.registerCommand('extension.bmasm-debug.configureExceptions', () => configureExceptions()));
-	// context.subscriptions.push(vscode.commands.registerCommand('extension.bmasm-debug.startSession', config => startSession(config)));
-	// context.subscriptions.push(vscode.commands.registerCommand('extension.bmasm-debug.attachToDebugger', config => attachSession(config)));
+	// PaletteViewProvider.activate(context);
 
 	new AutoUpdater().CheckForUpdate(context, bmOutput);
 }
