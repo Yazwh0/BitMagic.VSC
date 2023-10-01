@@ -12,6 +12,8 @@
 		{ "include": "#asm-variabledefinition" },
 		{ "include": "#asm-blockstarts" },
 		{ "include": "#asm-blockends" },
+		{ "include" : "#magic-import" },
+		{ "include" : "#magic-library"},
 		{ "include" : "source.csasm" }
 	],
 	"repository": {
@@ -140,6 +142,39 @@
 				{
 					"name": "entity.name.label.bmasm",
 					"match": "^.\\S*:"
+				}
+			]
+		},
+		"magic-import" : {
+			"patterns" : [
+				{
+					"match" : "^\\s*(import)\\s+(\\w+)\\s*=\\s*(\"[\\w.\\\\:\\/-]+\");",
+					"captures" : {
+						"1": {
+							"name" : "keyword.other.import"
+						},
+						"2" : {
+							"name" : "entity.name.class"
+						},
+						"3" :{
+							"name" : "string.quote"
+						}
+					}
+				}
+			]
+		},
+		"magic-library" : {
+			"patterns" : [
+				{
+					"match" : "^\\s*(library)\\s+([\\w.-_]+);",
+					"captures" : {
+						"1" : {
+							"name" : "keyword.other.library"							
+						},
+						"2" : {
+							"name" : "entity.name.class"
+						}
+					}
 				}
 			]
 		}
