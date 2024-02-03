@@ -10,8 +10,8 @@ const decompressTargz = require('decompress-targz');
 export default class AutoUpdater {
     private readonly versionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/version.txt';
     private readonly debuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/BitMagic-TheDebugger';
-    private readonly developVersionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/develop/version.txt';
-    private readonly developDebuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/develop/BitMagic-TheDebugger';
+    private readonly developVersionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/prerelease/version.txt';
+    private readonly developDebuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/prerelease/BitMagic-TheDebugger';
     private readonly settingsDebuggerPath = 'bitMagic.debugger.path';
     private readonly settingsAutoUpdate = 'bitMagic.debugger.autoUpdateDebugger';
     private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
