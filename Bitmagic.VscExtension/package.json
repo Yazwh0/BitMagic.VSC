@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "preview": true,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -59,6 +59,11 @@
                     ],
                     "default": null,
                     "description": "Port to use to communicate with the debugger. Will use std in\\out if not set. (Only really used for debugging the debugger.)"
+                },
+                "bitMagic.debugger.developRelease": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use the develop release channel. This is for pre-release and experimental features. Use with caution!"
                 },
                 "bitMagic.debugger.disablePlatformCheck": {
                     "type": "boolean",

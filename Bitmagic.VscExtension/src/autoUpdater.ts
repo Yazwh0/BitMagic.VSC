@@ -10,13 +10,19 @@ const decompressTargz = require('decompress-targz');
 export default class AutoUpdater {
     private readonly versionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/version.txt';
     private readonly debuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/BitMagic-TheDebugger';
+    private readonly developVersionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/develop/version.txt';
+    private readonly developDebuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/develop/BitMagic-TheDebugger';
     private readonly settingsDebuggerPath = 'bitMagic.debugger.path';
     private readonly settingsAutoUpdate = 'bitMagic.debugger.autoUpdateDebugger';
     private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
+    private readonly settingsUseDevelop = "bitMagic.debugger.developRelease";
 
     public async CheckForUpdate(context: vscode.ExtensionContext, output: vscode.OutputChannel) {
         try {
             var config = vscode.workspace.getConfiguration();
+
+            var _versionUrl = config.get(this.settingsUseDevelop, false) ? this.developVersionUrl : this.versionUrl;
+            var _debuggerUrl = config.get(this.settingsUseDevelop, false) ? this.developDebuggerUrl : this.debuggerUrl;
 
             var autoUpdate = config.get(this.settingsAutoUpdate, true);
 
@@ -40,7 +46,7 @@ export default class AutoUpdater {
 
                 const fileDownloader: FileDownloader = await getApi();
 
-                const file: Uri = await fileDownloader.downloadFile(Uri.parse(this.versionUrl), versionFileName, context);
+                const file: Uri = await fileDownloader.downloadFile(Uri.parse(_versionUrl), versionFileName, context);
 
                 if (file === undefined) {
                     output.appendLine("Error.");
@@ -72,7 +78,7 @@ export default class AutoUpdater {
                 output.appendLine('Done.');
             }
 
-            await this.DownloadEmulator(context, output);
+            await this.DownloadEmulator(context, output, _debuggerUrl);
         }
         catch (e: unknown) {
             output.appendLine('');
@@ -86,7 +92,7 @@ export default class AutoUpdater {
         }
     }
 
-    private async DownloadEmulator(context: vscode.ExtensionContext, output: vscode.OutputChannel) {
+    private async DownloadEmulator(context: vscode.ExtensionContext, output: vscode.OutputChannel, _debuggerUrl: string) {
         const fileDownloader: FileDownloader = await getApi();
 
         output.append('Downloading new version... ');
@@ -96,7 +102,7 @@ export default class AutoUpdater {
         var fsPath = '';
 
         if (os == 'win32') {
-            var url = this.debuggerUrl + '.Windows.zip'
+            var url = _debuggerUrl + '.Windows.zip'
             const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'X16D', context, undefined, undefined, { shouldUnzip: true });
 
             if (file === undefined) {
@@ -109,7 +115,7 @@ export default class AutoUpdater {
             fsPath = file.fsPath;
         }
         else if (os == 'linux') {
-            var url = this.debuggerUrl + '.Linux.tar.gz'
+            var url = _debuggerUrl + '.Linux.tar.gz'
             const file: Uri = await fileDownloader.downloadFile(Uri.parse(url), 'BitMagic-TheDebugger.Linux.tar.gz', context, undefined, undefined, { shouldUnzip: false });
 
             if (file === undefined) {
