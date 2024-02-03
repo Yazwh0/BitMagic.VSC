@@ -66,12 +66,17 @@ export default class AutoUpdater {
                 liveVersion = liveVersion.trim();
                 localVersion = localVersion.trim();
 
+                if (localVersion !== "")
+                {
+                    output.appendLine(`Current version ${localVersion.substring(0, 8)}.`);
+                }
+
                 if (liveVersion === localVersion) {
                     output.appendLine("No update required.");
                     return;
                 }
 
-                output.appendLine('New version found!');
+                output.appendLine(`New version ${liveVersion.substring(0, 8)} found!`);
                 output.show();
                 output.append('Deleting old version... ');
                 fs.rmSync(localCopy, { recursive: true, force: true });
