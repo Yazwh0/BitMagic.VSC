@@ -21,7 +21,7 @@ export default class DotNetInstaller {
 
         output.append("Checking dotnet is installed... ");
 
-        const result = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireGlobal', { 
+        const result = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', { 
             version: "6.0", 
             requestingExtensionId: context.extension.id, 
             installType: 'global', 
