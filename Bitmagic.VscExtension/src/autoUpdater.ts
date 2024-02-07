@@ -4,6 +4,7 @@ import { Uri } from "vscode";
 import { getApi, FileDownloader } from "@microsoft/vscode-file-downloader-api";
 import path = require('path');
 import { platform } from 'os';
+import DotNetInstaller from './dotnetinstaller';
 const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
 
@@ -16,13 +17,21 @@ export default class AutoUpdater {
     private readonly settingsAutoUpdate = 'bitMagic.debugger.autoUpdateDebugger';
     private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
     private readonly settingsUseDevelop = "bitMagic.debugger.developRelease";
+    private readonly settingsUseOwnDotnet = "bitMagic.debugger.useOwnDotnet";
 
-    public async CheckForUpdate(context: vscode.ExtensionContext, output: vscode.OutputChannel) {
+    public async CheckForUpdate(context: vscode.ExtensionContext, output: vscode.OutputChannel, dni: DotNetInstaller) {
         try {
             var config = vscode.workspace.getConfiguration();
 
-            var _versionUrl = config.get(this.settingsUseDevelop, false) ? this.developVersionUrl : this.versionUrl;
-            var _debuggerUrl = config.get(this.settingsUseDevelop, false) ? this.developDebuggerUrl : this.debuggerUrl;
+            const _useOwnDotnet = config.get(this.settingsUseOwnDotnet, false);
+
+            if (_useOwnDotnet)
+            {
+                await dni.CheckDotnet(context, output);
+            }
+
+            const _versionUrl = config.get(this.settingsUseDevelop, false) ? this.developVersionUrl : this.versionUrl;
+            const _debuggerUrl = config.get(this.settingsUseDevelop, false) ? this.developDebuggerUrl : this.debuggerUrl;
 
             var autoUpdate = config.get(this.settingsAutoUpdate, true);
 
@@ -83,7 +92,7 @@ export default class AutoUpdater {
                 output.appendLine('Done.');
             }
 
-            await this.DownloadEmulator(context, output, _debuggerUrl);
+            await this.DownloadEmulator(context, output, _debuggerUrl, _useOwnDotnet, dni);
         }
         catch (e: unknown) {
             output.appendLine('');
@@ -97,7 +106,7 @@ export default class AutoUpdater {
         }
     }
 
-    private async DownloadEmulator(context: vscode.ExtensionContext, output: vscode.OutputChannel, _debuggerUrl: string) {
+    private async DownloadEmulator(context: vscode.ExtensionContext, output: vscode.OutputChannel, _debuggerUrl: string, useOwnDotnet: boolean, dni: DotNetInstaller) {
         const fileDownloader: FileDownloader = await getApi();
 
         output.append('Downloading new version... ');
@@ -133,9 +142,23 @@ export default class AutoUpdater {
             fsPath = path.dirname(file.fsPath);
             fsPath = fsPath + path.sep + 'X16D';
 
+            if (fs.existsSync(fsPath))
+            {
+                output.append('Cleaning up old version... ');
+                fs.rmSync(fsPath, { recursive: true, force: true });
+                output.appendLine('Done.');
+            }
+
             fs.mkdirSync(fsPath);
 
+            output.append('Decompressing... ');
             await decompress(file.fsPath, fsPath, { plugins : [ decompressTargz() ]});
+            output.appendLine('Done.');
+
+            if(useOwnDotnet)
+            {
+                await dni.CheckLinuxDependencies(context, output, fsPath + path.sep + 'X16D.dll', dni.Location);
+            }
         }
         else
             throw new Error(`Unsupported Platform '${os}', only windows and linux art currently supported.`);

@@ -9,8 +9,11 @@ import { platform } from 'os';
 import { VisualiserTree } from './visualiserTree';
 import { PaletteViewProvider } from './paletteViewProvider';
 import BitMagicDebugAdaptorTrackerFactory from './debugTracker';
+import DotNetInstaller from './dotnetinstaller';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
+
+var _dni: DotNetInstaller;
 
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
@@ -86,7 +89,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// PaletteViewProvider.activate(context);
 
-	new AutoUpdater().CheckForUpdate(context, bmOutput);
+	_dni = new DotNetInstaller();
+	// first check that we have the framework installed
+	new AutoUpdater().CheckForUpdate(context, bmOutput, _dni);
 }
 
 class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
@@ -96,9 +101,10 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 	private readonly settingsDisablePlatformCheck = 'bitMagic.debugger.disablePlatformCheck';
 	private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
 	private readonly settingsDebugger = 'bitMagic.debugger.path';
+	private readonly settingsUseOwnDotnet = "bitMagic.debugger.useOwnDotnet";
 
 	createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
-		var config = vscode.workspace.getConfiguration();
+		const config = vscode.workspace.getConfiguration();
 		const disablePlatformCheck = config.get(this.settingsDisablePlatformCheck, false);
 		const os = platform();
 
@@ -124,16 +130,26 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
 
 		if (debuggerTarget)
-			return new vscode.DebugAdapterExecutable(debuggerTarget + exeExtension);
+			return this.GetDebugAdaptor(debuggerTarget + exeExtension, config, _dni);
 
 		debuggerTarget = config.get(this.settingsDebugger, '');
 
 		if (debuggerTarget)
-			return new vscode.DebugAdapterExecutable(debuggerTarget + exeExtension);
+			return this.GetDebugAdaptor(debuggerTarget + exeExtension, config, _dni);
 
 		bmOutput.appendLine('Cannot find debugger. Please check settings.');
 		bmOutput.show();
 		return undefined;
+	}
+
+	private GetDebugAdaptor(debuggerLocation: string, config: vscode.WorkspaceConfiguration, dni: DotNetInstaller) : vscode.DebugAdapterExecutable
+	{
+		const _useOwnDotnet = config.get(this.settingsUseOwnDotnet, false);
+
+		if (_useOwnDotnet)
+			return new vscode.DebugAdapterExecutable(dni.Location, [debuggerLocation.replace('.exe', '') + '.dll']);
+
+		return new vscode.DebugAdapterExecutable(debuggerLocation);
 	}
 
 	dispose() {

@@ -2,8 +2,8 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.1.0",
-    "preview": false,
+    "version": "0.1.1",
+    "preview": true,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
     "homepage": "https://github.com/Yazwh0/BitMagic",
@@ -26,7 +26,8 @@
     },
     "main": "./out/extension.js",
     "extensionDependencies": [
-        "mindaro-dev.file-downloader"
+        "mindaro-dev.file-downloader",
+        "ms-dotnettools.vscode-dotnet-runtime"
     ],
     "activationEvents": [
         "onLanguage",
@@ -41,6 +42,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Automatically update the local copy of the debugger."
+                },
+                "bitMagic.debugger.useOwnDotnet": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically download a copy of the dotnet runtime for the extension."
                 },
                 "bitMagic.debugger.path": {
                     "type": "string",
