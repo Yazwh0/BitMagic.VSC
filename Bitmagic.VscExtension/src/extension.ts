@@ -136,6 +136,9 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		const exeExtension = os == 'win32' ? 'X16D.exe' : 'X16D';
 		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
 
+		if (!debuggerTarget)
+			debuggerTarget = config.get(this.settingsDebugger, '');
+
 		if (!debuggerTarget.endsWith(path.sep))
 			debuggerTarget += path.sep;
 
