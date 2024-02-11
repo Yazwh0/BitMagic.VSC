@@ -80,6 +80,10 @@
 				{
 					"name": "keyword.operators.misc.bmasm",
 					"match": "=|<>|:=|\\+|-|\\*|/|\\&|~|\\||<<|>>|\\&\\&|\\|\\||!|<|>|<=|>="
+				},
+				{
+					"name": "keyword.operators.indirect.bmasm",
+					"match" : "\\(|\\)"
 				}
 			]
 		},
