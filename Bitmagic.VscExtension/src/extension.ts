@@ -10,6 +10,8 @@ import { VisualiserTree } from './visualiserTree';
 import { PaletteViewProvider } from './paletteViewProvider';
 import BitMagicDebugAdaptorTrackerFactory from './debugTracker';
 import DotNetInstaller from './dotnetinstaller';
+import EmulatorDownloader from './emulatorDownloader';
+import path = require('path');
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -91,7 +93,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	_dni = new DotNetInstaller();
 	// first check that we have the framework installed
-	new AutoUpdater().CheckForUpdate(context, bmOutput, _dni);
+	new AutoUpdater().CheckForUpdate(context, bmOutput, _dni).then(_ => {
+		new EmulatorDownloader().CheckEmulator(context, bmOutput);
+	});	
 }
 
 class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
@@ -102,6 +106,9 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 	private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
 	private readonly settingsDebugger = 'bitMagic.debugger.path';
 	private readonly settingsUseOwnDotnet = "bitMagic.debugger.useOwnDotnet";
+
+    private readonly settingsEmulatorLocation = 'bitMagic.officialEmulator.officialEmulatorLocation';
+    private readonly settingsCustomEmulatorLocation = 'bitMagic.officialEmulator.customOfficialEmulatorLocation';
 
 	createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
 		const config = vscode.workspace.getConfiguration();
@@ -126,8 +133,11 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		if (executable)  // overridden somewhere?
 			return executable;
 
-		const exeExtension = os == 'win32' ? '\\X16D.exe' : '/X16D';
+		const exeExtension = os == 'win32' ? 'X16D.exe' : 'X16D';
 		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
+
+		if (!debuggerTarget.endsWith(path.sep))
+			debuggerTarget += path.sep;
 
 		if (debuggerTarget)
 			return this.GetDebugAdaptor(debuggerTarget + exeExtension, config, _dni);
@@ -145,11 +155,30 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 	private GetDebugAdaptor(debuggerLocation: string, config: vscode.WorkspaceConfiguration, dni: DotNetInstaller) : vscode.DebugAdapterExecutable
 	{
 		const _useOwnDotnet = config.get(this.settingsUseOwnDotnet, false);
+		var emulatorLocation = config.get(this.settingsCustomEmulatorLocation, "");
+
+		if (!emulatorLocation)
+		{
+			emulatorLocation = config.get(this.settingsEmulatorLocation, "");
+		}
+
+		let args: string[] = [];
 
 		if (_useOwnDotnet)
-			return new vscode.DebugAdapterExecutable(dni.Location, [debuggerLocation.replace('.exe', '') + '.dll']);
+		{
+			args.push(debuggerLocation.replace('.exe', '') + '.dll');
+		}
 
-		return new vscode.DebugAdapterExecutable(debuggerLocation);
+		if (emulatorLocation)
+		{
+			args.push(`--officialEmulator`);
+			args.push(emulatorLocation)
+		}
+
+		if (_useOwnDotnet)
+			return new vscode.DebugAdapterExecutable(dni.Location, args);
+
+		return new vscode.DebugAdapterExecutable(debuggerLocation, args);
 	}
 
 	dispose() {

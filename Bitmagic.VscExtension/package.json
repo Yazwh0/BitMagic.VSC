@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -43,9 +43,29 @@
                     "default": true,
                     "description": "Automatically update the local copy of the debugger."
                 },
+                "bitMagic.officialEmulator.downloadOfficialEmulator" : {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically download the official emulator for the ROM.BIN and symbol files."
+                },
+                "bitMagic.officialEmulator.officialEmulatorLocation": {
+                    "type" : "string",
+                    "default" : "",
+                    "description": "Path to the official emulator that is automatically downloaded."
+                },
+                "bitMagic.officialEmulator.customOfficialEmulatorLocation": {
+                    "type" : "string",
+                    "default" : "",
+                    "description": "Custom Location of the official emulator for the ROM.BIN and symbol files. This can be overridden in the project.json file."
+                },
+                "bitMagic.officialEmulator.version": {
+                    "type": "string",
+                    "default": "r46",
+                    "description": "Version of the official emulator to download."
+                },
                 "bitMagic.debugger.useOwnDotnet": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Automatically download a copy of the dotnet runtime for the extension."
                 },
                 "bitMagic.debugger.path": {

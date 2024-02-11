@@ -161,7 +161,7 @@ export default class AutoUpdater {
             }
         }
         else
-            throw new Error(`Unsupported Platform '${os}', only windows and linux art currently supported.`);
+            throw new Error(`Unsupported Platform '${os}', only windows and linux are currently supported.`);
 
         var config = vscode.workspace.getConfiguration();
 
