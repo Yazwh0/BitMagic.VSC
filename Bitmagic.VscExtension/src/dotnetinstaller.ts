@@ -19,7 +19,8 @@ export default class DotNetInstaller {
 
         await vscode.commands.executeCommand('dotnet.showAcquisitionLog');            
 
-        output.append("Checking dotnet is installed... ");
+        output.append("Downloading DotNet... ");
+        output.show();
 
         const result = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', { 
             version: "6.0", 

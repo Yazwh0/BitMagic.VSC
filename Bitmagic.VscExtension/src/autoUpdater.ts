@@ -5,6 +5,7 @@ import { getApi, FileDownloader } from "@microsoft/vscode-file-downloader-api";
 import path = require('path');
 import { platform } from 'os';
 import DotNetInstaller from './dotnetinstaller';
+import Constants from './constants';
 const decompress = require('decompress');
 const decompressTargz = require('decompress-targz');
 
@@ -13,41 +14,36 @@ export default class AutoUpdater {
     private readonly debuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/latest/BitMagic-TheDebugger';
     private readonly developVersionUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/prerelease/version.txt';
     private readonly developDebuggerUrl = 'https://github.com/Yazwh0/BitMagic/releases/download/prerelease/BitMagic-TheDebugger';
-    private readonly settingsDebuggerPath = 'bitMagic.debugger.path';
-    private readonly settingsAutoUpdate = 'bitMagic.debugger.autoUpdateDebugger';
-    private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
-    private readonly settingsUseDevelop = "bitMagic.debugger.developRelease";
-    private readonly settingsUseOwnDotnet = "bitMagic.debugger.useOwnDotnet";
 
     public async CheckForUpdate(context: vscode.ExtensionContext, output: vscode.OutputChannel, dni: DotNetInstaller) {
         try {
             var config = vscode.workspace.getConfiguration();
 
-            const _useOwnDotnet = config.get(this.settingsUseOwnDotnet, false);
+            const _useOwnDotnet = config.get(Constants.SettingsUseOwnDotnet, false);
 
             if (_useOwnDotnet)
             {
                 await dni.CheckDotnet(context, output);
             }
 
-            const _versionUrl = config.get(this.settingsUseDevelop, false) ? this.developVersionUrl : this.versionUrl;
-            const _debuggerUrl = config.get(this.settingsUseDevelop, false) ? this.developDebuggerUrl : this.debuggerUrl;
+            const _versionUrl = config.get(Constants.SettingsUseDevelop, false) ? this.developVersionUrl : this.versionUrl;
+            const _debuggerUrl = config.get(Constants.SettingsUseDevelop, false) ? this.developDebuggerUrl : this.debuggerUrl;
 
-            var autoUpdate = config.get(this.settingsAutoUpdate, true);
+            var autoUpdate = config.get(Constants.SettingsAutoUpdate, true);
 
             if (!autoUpdate) {
                 output.append('Skipping update check as not enabled.');
                 return;
             }
 
-            var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
+            var debuggerTarget = config.get(Constants.SettingsAlternativeDebugger, '');
 
             if (debuggerTarget) {
                 output.append('Skipping update check as a custom location for the debugger is used.');
                 return;
             }
 
-            var localCopy = config.get(this.settingsDebuggerPath, '');
+            var localCopy = config.get(Constants.SettingsDebuggerPath, '');
 
             if (localCopy) {
                 output.append('Checking for update... ');
@@ -165,6 +161,6 @@ export default class AutoUpdater {
 
         var config = vscode.workspace.getConfiguration();
 
-        config.update(this.settingsDebuggerPath, fsPath, true);
+        config.update(Constants.SettingsDebuggerPath, fsPath, true);
     }
 }

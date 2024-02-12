@@ -12,6 +12,7 @@ import BitMagicDebugAdaptorTrackerFactory from './debugTracker';
 import DotNetInstaller from './dotnetinstaller';
 import EmulatorDownloader from './emulatorDownloader';
 import path = require('path');
+import Constants from './constants';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -64,6 +65,59 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		})
 	);
+
+	let UpdateBitMagic = false;
+	let UpdateOfficialEmulator = false; 
+
+	vscode.workspace.onDidChangeConfiguration(evt => {
+		var startUpdater = false;
+		if (evt.affectsConfiguration(Constants.SettingsUseDevelop))
+		{
+			UpdateBitMagic = true;
+			startUpdater = true;
+		}
+
+		if (evt.affectsConfiguration(Constants.SettingsAutoUpdate))
+		{
+			UpdateBitMagic = true;
+			startUpdater = true;
+		}
+
+		if (evt.affectsConfiguration(Constants.SettingsUseOwnDotnet))
+		{
+			UpdateBitMagic = true;
+			startUpdater = true;
+		}
+
+		if (evt.affectsConfiguration(Constants.SettingsEmulatorVersion))
+		{			
+			UpdateOfficialEmulator = true;
+			startUpdater = true;
+		}
+
+		if (evt.affectsConfiguration(Constants.SettingsDownloadEmulator))
+		{			
+			UpdateOfficialEmulator = true;
+			startUpdater = true;
+		}
+
+		if (startUpdater) 
+		{
+			setTimeout(() => {
+				if (UpdateBitMagic)
+				{
+					new AutoUpdater().CheckForUpdate(context, bmOutput, _dni);
+					UpdateBitMagic = false;
+				}
+
+				if (UpdateOfficialEmulator)
+				{
+					new EmulatorDownloader().CheckEmulator(context, bmOutput);
+					UpdateOfficialEmulator = false;
+				}
+			}, 5000); // 5 second debounce
+		}
+	});
 
 	// Debug tracker for compilation errors
 	vscode.debug.registerDebugAdapterTrackerFactory('bmasm', new BitMagicDebugAdaptorTrackerFactory(bmOutput));
