@@ -2,13 +2,13 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.1.7",
-    "preview": false,
+    "version": "0.1.8",
+    "preview": true,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
     "homepage": "https://github.com/Yazwh0/BitMagic",
     "engines": {
-        "vscode": "^1.63.0"
+        "vscode": "^1.86.0"
     },
     "repository": {
         "type": "git",
@@ -30,9 +30,8 @@
         "ms-dotnettools.vscode-dotnet-runtime"
     ],
     "activationEvents": [
-        "onLanguage",
-        "onDebugInitialConfigurations",
-        "workspaceContains:project.json"
+        "onDebugResolve:bmasm",
+        "onDebugInitialConfigurations"
     ],
     "contributes": {
         "configuration": {
@@ -249,14 +248,14 @@
     },
     "dependencies": {
         "@microsoft/vscode-file-downloader-api": "^1.0.1",
-        "@types/vscode": "^1.75.1",
-        "@vscode/debugprotocol": "^1.59.0",
+        "@types/vscode": "^1.86.0",
+        "@vscode/debugprotocol": "^1.64.0",
         "decompress": "^4.2.1",
         "decompress-targz": "^4.1.1",
         "vscode-nls": "^5.2.0"
     },
     "devDependencies": {
-        "@types/node": "^18.14.0",
-        "@vscode/vsce": "^2.18.0"
+        "@types/node": "^20.11.19",
+        "@vscode/vsce": "^2.23.0"
     }
 }
