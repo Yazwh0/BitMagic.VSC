@@ -2,17 +2,18 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "BitMagic X16 Asm",
 	"patterns": [			
-		{ "include": "#asm-strings" },
-		{ "include": "#asm-literals" },
-		{ "include": "#asm-comments" },
-		{ "include": "#asm-operators" },
-		{ "include": "#asm-opcodes" },
-		{ "include": "#asm-labels" },
-		{ "include": "#asm-pseudofunctions" },
-		{ "include": "#asm-variabledefinition" },
-		{ "include": "#asm-blockstarts" },
-		{ "include": "#asm-blockends" },
+		{ "include" : "#asm-strings" },
+		{ "include" : "#asm-literals" },
+		{ "include" : "#asm-comments" },
+		{ "include" : "#asm-operators" },
+		{ "include" : "#asm-opcodes" },
+		{ "include" : "#asm-labels" },
+		{ "include" : "#asm-pseudofunctions" },
+		{ "include" : "#asm-variabledefinition" },
+		{ "include" : "#asm-blockstarts" },
+		{ "include" : "#asm-blockends" },
 		{ "include" : "#magic-import" },
+		{ "include" : "#magic-include" },
 		{ "include" : "#magic-library"},
 		{ "include" : "source.csasm" }
 	],
@@ -162,6 +163,24 @@
 						},
 						"3" :{
 							"name" : "string.quote"
+						}
+					}
+				}
+			]
+		},
+		"magic-include" : {
+			"patterns" : [
+				{
+					"match" : "^\\s*(include)\\s+(\"[\\w.\\\\:\\/-]+\");",
+					"captures" : {
+						"1": {
+							"name" : "keyword.other.include"
+						},
+						"2" : {
+							"name" : "entity.name.class"
+						},
+						"3" :{
+							"name" : "string.include"
 						}
 					}
 				}
