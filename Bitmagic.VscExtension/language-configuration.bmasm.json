@@ -25,5 +25,12 @@
         ["(", ")"],
         ["\"", "\""],
         ["'", "'"]
-    ]
+    ],
+    // todo: add language aware folding
+    "folding": {
+        "markers": {
+            "start" : "^\\s*.proc\\b",
+            "end" : "^\\s*.endproc\\b"
+        }
+    }
 }

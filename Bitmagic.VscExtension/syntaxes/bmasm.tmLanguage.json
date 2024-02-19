@@ -112,7 +112,7 @@
 		"asm-variabledefinition": {
 			"patterns": [
 				{
-					"match": "(\\.var|\\.padvar|\\.constvar)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string))",
+					"match": "(\\.var|\\.padvar|\\.constvar)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string|proc))",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.pseudofunction.bmasm"
