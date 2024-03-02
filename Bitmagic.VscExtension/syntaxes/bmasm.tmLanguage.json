@@ -205,7 +205,7 @@
 		"magic-nuget" : {
 			"patterns" : [
 				{
-					"match" : "^\\s*(nuget)\\s+(\"[\\w.-_]+\")(\\s+(\"[\\w.-_]+\"))?",
+					"match" : "^\\s*(nuget)\\s+(\"?[\\w.-_]+\"?)(\\s+(\"?[\\w.-_]+\"?))?",
 					"captures" : {
 						"1" : {
 							"name" : "keyword.other.nuget"							
