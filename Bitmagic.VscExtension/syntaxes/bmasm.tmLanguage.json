@@ -15,6 +15,7 @@
 		{ "include" : "#magic-import" },
 		{ "include" : "#magic-include" },
 		{ "include" : "#magic-library"},
+		{ "include" : "#magic-nuget" },
 		{ "include" : "source.csasm" }
 	],
 	"repository": {
@@ -153,7 +154,7 @@
 		"magic-import" : {
 			"patterns" : [
 				{
-					"match" : "^\\s*(import)\\s+(\\w+)\\s*=\\s*(\"[\\w.\\\\:\\/-]+\");",
+					"match" : "^\\s*(import)\\s+(\\w+)\\s*=\\s*(\"[\\w.\\\\:\\/-]+\")",
 					"captures" : {
 						"1": {
 							"name" : "keyword.other.import"
@@ -171,7 +172,7 @@
 		"magic-include" : {
 			"patterns" : [
 				{
-					"match" : "^\\s*(include)\\s+(\"[\\w.\\\\:\\/-]+\");",
+					"match" : "^\\s*(include)\\s+(\"[\\w.\\\\:\\/-]+\")",
 					"captures" : {
 						"1": {
 							"name" : "keyword.other.include"
@@ -189,13 +190,31 @@
 		"magic-library" : {
 			"patterns" : [
 				{
-					"match" : "^\\s*(library)\\s+([\\w.-_]+);",
+					"match" : "^\\s*(library)\\s+([\\w.-_]+)",
 					"captures" : {
 						"1" : {
 							"name" : "keyword.other.library"							
 						},
 						"2" : {
 							"name" : "entity.name.class"
+						}
+					}
+				}
+			]
+		},
+		"magic-nuget" : {
+			"patterns" : [
+				{
+					"match" : "^\\s*(nuget)\\s+(\"[\\w.-_]+\")(\\s+(\"[\\w.-_]+\"))?",
+					"captures" : {
+						"1" : {
+							"name" : "keyword.other.nuget"							
+						},
+						"2" : {
+							"name" : "string.quoted"
+						},
+						"3" : {
+							"name" : "string.quoted"
 						}
 					}
 				}
