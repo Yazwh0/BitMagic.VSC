@@ -1,0 +1,294 @@
+{
+  "definitions": {
+    "compileOptions": {
+      "$id": "compileOptions",
+      "description": "Compilation Options.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "displayVariables": {
+          "description": "Display all the variables and their values.",
+          "type": "boolean"
+        },
+        "displaySegments": {
+          "description": "Display segments.",
+          "type": "boolean"
+        },
+        "displayCode": {
+          "description": "Display generated code.",
+          "type": "boolean"
+        },
+        "displayData": {
+          "description": "Display generated data.",
+          "type": "boolean"
+        },
+        "rebuild": {
+          "description": "Force rebuild.",
+          "type": "boolean"
+        },
+        "binFolder": {
+          "description": "Bin folder for the dlls.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "rangeDefinition": {
+      "$id": "rangeDefinition",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "start": {
+          "description": "Start address of the jump table.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end": {
+          "description": "End address of the jump table.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Type of definition, supported : 'jumptable'",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "rtcNvram": {
+      "$id": "rtcNvram",
+      "description": "RTC NvRam Data",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "file": {
+          "description": "Filename to load into 0x00 -> 0x60 in the RTCs NVRAM.\r\n Not used if Data has values.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data": {
+          "description": "Data to load into 0x00 -> 0x60 in the RTCs NVRAM.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "writeFile": {
+          "description": "Filename to store the RTCs NVRAM in. This will overwrite.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "symbolsFile": {
+      "$id": "symbolsFile",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "symbols": {
+          "description": "File name.",
+          "type": "string"
+        },
+        "romBank": {
+          "description": "ROM bank that the symbols are for. Omit if not a rombank file. Any symbols in the ROM area will be discarded.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "ramBank": {
+          "description": "RAM bank that the symbols are for. Omit if not a rambank file. Any symbols in the RAM area will be discarded.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "filename": {
+          "description": "X16 Filename that the symbols are for. Omit if not a X16 binary.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rangeDefinitions": {
+          "description": "Range of memory that is a jump table. Used to create extra symbols.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "rangeDefinition"
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "startStepping": {
+      "description": "Start the application in stepping mode.",
+      "type": "boolean"
+    },
+    "source": {
+      "description": "Main source file.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "directRun": {
+      "description": "Directly run the compiled code, or if false compile the source and add it as a file to the SDCard.",
+      "type": "boolean"
+    },
+    "autobootRun": {
+      "description": "Run the main application by creating a AUTOBOOT.X16 file. This will not overwrite if the file already exists.",
+      "type": "boolean"
+    },
+    "outputFolder": {
+      "description": "Location to save the .prg and other files from the source file on the host. (Not on the sdcard.)",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "startAddress": {
+      "description": "Start address. If omitted or -1, will start the ROM normally from the vector at $fffc.",
+      "type": "integer"
+    },
+    "romFile": {
+      "description": "ROM file to use.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "emulatorDirectory": {
+      "description": "Folder for the official X16 Emulator.\r\nThe rom.bin file from this directory will be used if not set by RomFile.\r\nSymbols for the ROM banks will also be loaded from here, using the names from RomBankNames + .sym extension.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "symbols": {
+      "description": "List of files that can be imported for symbols.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "symbolsFile"
+      }
+    },
+    "romBankNames": {
+      "description": "Display names for the Rom banks.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "ramBankNames": {
+      "description": "Display names for the Ram banks.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "machine": {
+      "description": "Machine to load globals from if there is no bmasm source.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "keyboardBuffer": {
+      "description": "Prefill the keyboard buffer with this data. 16bytes max, rest are discarded.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mouseBuffer": {
+      "description": "Prefill the mouse buffer with this data. 8bytes max, rest are discarded.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nvRam": {
+      "$ref": "rtcNvram"
+    },
+    "sdCard": {
+      "description": "SD Card image to start with",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sdCardFiles": {
+      "description": "Files to add to the root directory of the SDCard. Wildcards accepted.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "cartridge": {
+      "description": "Cartridge file to load.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "compileOptions": {
+      "$ref": "compileOptions"
+    },
+    "memoryFillValue": {
+      "description": "Value to fill CPU RAM and VRAM with at startup.",
+      "type": "integer"
+    },
+    "basePath": {
+      "description": "Base Path, should try to use this for all other paths.",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
