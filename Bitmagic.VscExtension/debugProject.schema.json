@@ -137,7 +137,7 @@
             "null"
           ],
           "items": {
-            "$ref": "rangeDefinition"
+            "$ref": "#/definitions/rangeDefinition"
           }
         }
       }
@@ -196,7 +196,7 @@
         "null"
       ],
       "items": {
-        "$ref": "symbolsFile"
+        "$ref": "#/definitions/symbolsFile"
       }
     },
     "romBankNames": {
@@ -247,7 +247,7 @@
       ]
     },
     "nvRam": {
-      "$ref": "rtcNvram"
+      "$ref": "#/definitions/rtcNvram"
     },
     "sdCard": {
       "description": "SD Card image to start with",
@@ -277,7 +277,7 @@
       ]
     },
     "compileOptions": {
-      "$ref": "compileOptions"
+      "$ref": "#/definitions/compileOptions"
     },
     "memoryFillValue": {
       "description": "Value to fill CPU RAM and VRAM with at startup.",
