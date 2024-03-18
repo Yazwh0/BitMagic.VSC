@@ -1,148 +1,5 @@
 {
-  "definitions": {
-    "compileOptions": {
-      "$id": "compileOptions",
-      "description": "Compilation Options.",
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "displayVariables": {
-          "description": "Display all the variables and their values.",
-          "type": "boolean"
-        },
-        "displaySegments": {
-          "description": "Display segments.",
-          "type": "boolean"
-        },
-        "displayCode": {
-          "description": "Display generated code.",
-          "type": "boolean"
-        },
-        "displayData": {
-          "description": "Display generated data.",
-          "type": "boolean"
-        },
-        "rebuild": {
-          "description": "Force rebuild.",
-          "type": "boolean"
-        },
-        "binFolder": {
-          "description": "Bin folder for the dlls.",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "rangeDefinition": {
-      "$id": "rangeDefinition",
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "start": {
-          "description": "Start address of the jump table.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "end": {
-          "description": "End address of the jump table.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "type": {
-          "description": "Type of definition, supported : 'jumptable'",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "rtcNvram": {
-      "$id": "rtcNvram",
-      "description": "RTC NvRam Data",
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "file": {
-          "description": "Filename to load into 0x00 -> 0x60 in the RTCs NVRAM.\r\n Not used if Data has values.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "data": {
-          "description": "Data to load into 0x00 -> 0x60 in the RTCs NVRAM.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "writeFile": {
-          "description": "Filename to store the RTCs NVRAM in. This will overwrite.",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "symbolsFile": {
-      "$id": "symbolsFile",
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "symbols": {
-          "description": "File name.",
-          "type": "string"
-        },
-        "romBank": {
-          "description": "ROM bank that the symbols are for. Omit if not a rombank file. Any symbols in the ROM area will be discarded.",
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "ramBank": {
-          "description": "RAM bank that the symbols are for. Omit if not a rambank file. Any symbols in the RAM area will be discarded.",
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "filename": {
-          "description": "X16 Filename that the symbols are for. Omit if not a X16 binary.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rangeDefinitions": {
-          "description": "Range of memory that is a jump table. Used to create extra symbols.",
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/definitions/rangeDefinition"
-          }
-        }
-      }
-    }
-  },
+  "$id": "X16DebugProject",
   "type": "object",
   "properties": {
     "startStepping": {
@@ -190,16 +47,87 @@
       ]
     },
     "symbols": {
+      "$id": "SymbolsFile[]",
       "description": "List of files that can be imported for symbols.",
       "type": [
         "array",
         "null"
       ],
       "items": {
-        "$ref": "#/definitions/symbolsFile"
+        "$id": "symbolsFile",
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "symbols": {
+            "description": "File name.",
+            "type": "string"
+          },
+          "romBank": {
+            "description": "ROM bank that the symbols are for. Omit if not a rombank file. Any symbols in the ROM area will be discarded.",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "ramBank": {
+            "description": "RAM bank that the symbols are for. Omit if not a rambank file. Any symbols in the RAM area will be discarded.",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "filename": {
+            "description": "X16 Filename that the symbols are for. Omit if not a X16 binary.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rangeDefinitions": {
+            "$id": "RangeDefinition[]",
+            "description": "Range of memory that is a jump table. Used to create extra symbols.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$id": "rangeDefinition",
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "start": {
+                  "description": "Start address of the jump table.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "end": {
+                  "description": "End address of the jump table.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "type": {
+                  "description": "Type of definition, supported : 'jumptable'",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     },
     "romBankNames": {
+      "$id": "String[]",
       "description": "Display names for the Rom banks.",
       "type": [
         "array",
@@ -213,6 +141,7 @@
       }
     },
     "ramBankNames": {
+      "$id": "String[]-1",
       "description": "Display names for the Ram banks.",
       "type": [
         "array",
@@ -247,7 +176,35 @@
       ]
     },
     "nvRam": {
-      "$ref": "#/definitions/rtcNvram"
+      "$id": "rtcNvram",
+      "description": "RTC NvRam Data",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "file": {
+          "description": "Filename to load into 0x00 -> 0x60 in the RTCs NVRAM.\r\n Not used if Data has values.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data": {
+          "description": "Data to load into 0x00 -> 0x60 in the RTCs NVRAM.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "writeFile": {
+          "description": "Filename to store the RTCs NVRAM in. This will overwrite.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
     },
     "sdCard": {
       "description": "SD Card image to start with",
@@ -257,6 +214,7 @@
       ]
     },
     "sdCardFiles": {
+      "$id": "String[]-2",
       "description": "Files to add to the root directory of the SDCard. Wildcards accepted.",
       "type": [
         "array",
@@ -277,7 +235,41 @@
       ]
     },
     "compileOptions": {
-      "$ref": "#/definitions/compileOptions"
+      "$id": "compileOptions",
+      "description": "Compilation Options.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "displayVariables": {
+          "description": "Display all the variables and their values.",
+          "type": "boolean"
+        },
+        "displaySegments": {
+          "description": "Display segments.",
+          "type": "boolean"
+        },
+        "displayCode": {
+          "description": "Display generated code.",
+          "type": "boolean"
+        },
+        "displayData": {
+          "description": "Display generated data.",
+          "type": "boolean"
+        },
+        "rebuild": {
+          "description": "Force rebuild.",
+          "type": "boolean"
+        },
+        "binFolder": {
+          "description": "Bin folder for the dlls.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
     },
     "memoryFillValue": {
       "description": "Value to fill CPU RAM and VRAM with at startup.",
