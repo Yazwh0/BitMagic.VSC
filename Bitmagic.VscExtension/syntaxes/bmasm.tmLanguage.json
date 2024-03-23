@@ -107,7 +107,7 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.pseudofunction.bmasm",
-					"match": "\\.(?i:byte|word|const|pad|align|importfile|org|cpu|machine)\\b"
+					"match": "\\.(?i:byte|word|const|pad|align|importfile|org|cpu|machine|exception|breakpoint|nostop)\\b"
 				}
 			]
 		},
@@ -131,7 +131,7 @@
 				{
 					"name": "keyword.control.block.bmasm",
 					"contentName": "entity.name.function.bmasm",
-					"match": "\\.(?i:proc|scope|segment|machine)\\b"
+					"match": "\\.(?i:proc|scope|segment)\\b"
 				}
 			]
 		},
