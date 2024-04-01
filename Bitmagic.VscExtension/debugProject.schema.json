@@ -120,10 +120,22 @@
                     "null"
                   ]
                 }
-              }
+              },
+              "required": [
+                "start",
+                "end",
+                "type"
+              ]
             }
           }
-        }
+        },
+        "required": [
+          "symbols",
+          "romBank",
+          "ramBank",
+          "filename",
+          "rangeDefinitions"
+        ]
       }
     },
     "romBankNames": {
@@ -204,7 +216,12 @@
             "null"
           ]
         }
-      }
+      },
+      "required": [
+        "file",
+        "data",
+        "writeFile"
+      ]
     },
     "sdCard": {
       "description": "SD Card image to start with",
@@ -214,16 +231,35 @@
       ]
     },
     "sdCardFiles": {
-      "$id": "String[]-2",
+      "$id": "SdCardFiles[]",
       "description": "Files to add to the root directory of the SDCard. Wildcards accepted.",
       "type": [
         "array",
         "null"
       ],
       "items": {
+        "$id": "SdCardFiles",
         "type": [
-          "string",
+          "object",
           "null"
+        ],
+        "properties": {
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "source",
+          "dest"
         ]
       }
     },
@@ -281,6 +317,56 @@
         "string",
         "null"
       ]
+    },
+    "files": {
+      "$id": "IDebugProjectFile[]",
+      "description": "Files that are to be debugged.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$id": "IDebugProjectFile",
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
     }
-  }
+  },
+  "required": [
+    "startStepping",
+    "source",
+    "directRun",
+    "autobootRun",
+    "outputFolder",
+    "startAddress",
+    "romFile",
+    "emulatorDirectory",
+    "symbols",
+    "romBankNames",
+    "ramBankNames",
+    "machine",
+    "keyboardBuffer",
+    "mouseBuffer",
+    "nvRam",
+    "sdCard",
+    "sdCardFiles",
+    "cartridge",
+    "compileOptions",
+    "memoryFillValue",
+    "basePath",
+    "files"
+  ]
 }
