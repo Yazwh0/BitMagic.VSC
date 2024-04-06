@@ -51,9 +51,13 @@ jobs:
               working-directory: ./BitMagic.VscExtension
               run: npm install -g @vscode/vsce
 
+            - name: Install Win-Node-Env
+              working-directory: ./BitMagic.VscExtension
+              run: npm install -g win-node-env
+
             - name: Compile Extension
               working-directory: ./BitMagic.VscExtension
-              run: tsc -p ./src
+              run: node ./esbuild.js
               
             - name: Compile and Create VSIX
               working-directory: ./Bitmagic.VscExtension
