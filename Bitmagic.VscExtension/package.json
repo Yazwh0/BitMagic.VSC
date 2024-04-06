@@ -264,7 +264,7 @@
     },
     "devDependencies": {
         "@types/node": "^20.11.19",
-        "@types/vscode": "^1.88.0",
+        "@types/vscode": "^1.86.0",
         "@types/vscode-webview": "^1.57.5",
         "@vscode/debugprotocol": "^1.65.0",
         "@vscode/vsce": "^2.24.0",

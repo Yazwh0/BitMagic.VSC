@@ -88,7 +88,7 @@ export class ActionReplay {
         const nonce = getNonce();
         const styleUri = getUri(webview, extensionUri, ["out", "actionReplay.css"]);
 
-        
+
         return /*html*/ `<!DOCTYPE html>
         <html lang="en">
             <head>
@@ -106,26 +106,8 @@ export class ActionReplay {
                 <div class="layer_container">
                     <div class="layer">
                         <div>
-                            <h4>Background</h4>
-                            <img id="data_0" class="layer_display"/>
-                        </div>
-                    </div>
-                    <div class="layer">
-                        <div>
-                            <h4>Sprite 1</h4>
-                            <img id="data_1" class="layer_display"/>
-                        </div>
-                    </div>
-                    <div class="layer">
-                        <div>
-                            <h4>Layer 1</h4>
-                            <img id="data_2" class="layer_display"/>
-                            </div>
-                    </div>
-                    <div class="layer">
-                        <div>
-                            <h4>Sprite 2</h4>
-                            <img id="data_3" class="layer_display"/>
+                            <h4>Sprite 0</h4>
+                            <img id="data_5" class="layer_display"/>
                         </div>
                     </div>
                     <div class="layer">
@@ -136,8 +118,26 @@ export class ActionReplay {
                     </div>
                     <div class="layer">
                         <div>
-                            <h4>Sprite 0</h4>
-                            <img id="data_5" class="layer_display"/>
+                            <h4>Sprite 2</h4>
+                            <img id="data_3" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Layer 1</h4>
+                            <img id="data_2" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Sprite 1</h4>
+                            <img id="data_1" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Background</h4>
+                            <img id="data_0" class="layer_display"/>
                         </div>
                     </div>
                 </div>
