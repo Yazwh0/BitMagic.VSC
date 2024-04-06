@@ -20,10 +20,15 @@ div.layer
 
 div.display_control
 {
-    margin: 10px;
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 }
 
-div.display_control vscode-checkbox
+div.control_holder
 {
-    margin: auto;
+    margin: 0 5px;
 }

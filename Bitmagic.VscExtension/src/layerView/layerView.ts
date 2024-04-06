@@ -2,34 +2,34 @@ import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, ExtensionCo
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 
-export class ActionReplay {
+export class LayerView {
 
-    public static currentPanel: ActionReplay | undefined;
+    public static currentPanel: LayerView | undefined;
 
     public static activate(context: ExtensionContext) {
 
         const uri = context.extensionUri;
 
         context.subscriptions.push(
-            commands.registerCommand('actionReplay.start', () => {
+            commands.registerCommand('layerView.start', () => {
                 const columnToShowIn = window.activeTextEditor
                     ? window.activeTextEditor.viewColumn
                     : undefined;
 
-                if (ActionReplay.currentPanel) {
-                    ActionReplay.currentPanel._panel.reveal(columnToShowIn);
+                if (LayerView.currentPanel) {
+                    LayerView.currentPanel._panel.reveal(columnToShowIn);
                 }
                 else {
                     const panel = window.createWebviewPanel(
-                        'actionReplay',
-                        'Action Replay',
+                        'layerView',
+                        'Layer View',
                         columnToShowIn || ViewColumn.One,
                         {
                             enableScripts: true
                         }
                     );
 
-                    ActionReplay.currentPanel = new ActionReplay(panel, uri);
+                    LayerView.currentPanel = new LayerView(panel, uri);
                 }
             })
         );
@@ -49,7 +49,7 @@ export class ActionReplay {
     }
 
     private dispose() {
-        ActionReplay.currentPanel = undefined;
+        LayerView.currentPanel = undefined;
 
         this._panel.dispose();
 
@@ -82,12 +82,12 @@ export class ActionReplay {
             webview.postMessage({ command: "layerUpdate", payload: JSON.stringify(i) });
         });
     }
-
+    
+    
     private _getWebviewContent(webview: Webview, extensionUri: Uri) {
-        const webviewUri = getUri(webview, extensionUri, ["out", "actionReplay.webview.js"]);
+        const webviewUri = getUri(webview, extensionUri, ["out", "LayerView.webview.js"]);
         const nonce = getNonce();
-        const styleUri = getUri(webview, extensionUri, ["out", "actionReplay.css"]);
-
+        const styleUri = getUri(webview, extensionUri, ["out", "LayerView.css"]);
 
         return /*html*/ `<!DOCTYPE html>
         <html lang="en">
@@ -95,13 +95,17 @@ export class ActionReplay {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-                <title>Action Replay</title>
+                <title>Layer View</title>
                 <link rel="stylesheet" href="${styleUri}">
             </head>
             <body>
                 <div class="display_control">
-                    <vscode-button appearance="primary" id="update">Update</vscode-button>
-                    <vscode-checkbox id="automatically_update">Automatically Update</vscode-checkbox>
+                    <div class="control_holder">
+                        <vscode-button appearance="primary" id="update">Update</vscode-button>
+                    </div>
+                    <div class="control_holder">
+                        <vscode-checkbox id="automatically_update">Automatically Update</vscode-checkbox>
+                    </div>
                 </div>
                 <div class="layer_container">
                     <div class="layer">

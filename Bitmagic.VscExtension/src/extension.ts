@@ -9,7 +9,7 @@ import DotNetInstaller from './dotnetinstaller';
 import EmulatorDownloader from './emulatorDownloader';
 import path = require('path');
 import Constants from './constants';
-import { ActionReplay } from './actionReplay/actionReplay';
+import { LayerView } from './layerView/layerView';
 import { provideVSCodeDesignSystem, vsCodeButton } from "@vscode/webview-ui-toolkit";
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
@@ -123,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.debug.registerDebugAdapterTrackerFactory('bmasm', new BitMagicDebugAdaptorTrackerFactory(bmOutput));
 
 	// Action Replay
-	ActionReplay.activate(context);
+	LayerView.activate(context);
 
 
 	// Visualiser

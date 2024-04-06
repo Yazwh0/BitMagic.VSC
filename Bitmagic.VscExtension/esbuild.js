@@ -29,14 +29,14 @@ const webviewConfig = {
     ...baseConfig,
     target: "es2020",
     format: "esm",
-    entryPoints: ["./src/actionReplay/actionReplay.webview.ts"],
+    entryPoints: ["./src/layerView/layerView.webview.ts"],
     outdir: "./out/",
     plugins: [
         // Copy webview css files to `out` directory unaltered
         copy({
             resolveFrom: "cwd",
             assets: {
-                from: ["./src/actionReplay/actionReplay.css"],
+                from: ["./src/layerView/layerView.css"],
                 to: ["./out"],
             },
         }),
