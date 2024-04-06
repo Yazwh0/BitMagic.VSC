@@ -1,0 +1,29 @@
+img.layer_display
+{
+    height : 480px;
+    width : 640px;
+    border : 1px white solid;
+}
+
+div.layer_container
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+div.layer
+{
+    margin: 0 5px;
+}
+
+div.display_control
+{
+    margin: 10px;
+}
+
+div.display_control vscode-checkbox
+{
+    margin: auto;
+}

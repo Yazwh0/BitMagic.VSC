@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.1.18",
+    "version": "0.1.19-beta1",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -22,8 +22,13 @@
         "Debuggers"
     ],
     "scripts": {
-        "watch": "tsc -watch -p ./src"
+        "vscode:prepublish": "npm run package",
+        "compile": "node ./esbuild.js",
+        "package": "NODE_ENV=production node ./esbuild.js",
+        "watch": "node ./esbuild.js --watch",
+        "lint": "eslint src --ext ts"
     },
+    "_unused" : { "watch": "tsc -watch -p ./src" },
     "main": "./out/extension.js",
     "extensionDependencies": [
         "mindaro-dev.file-downloader",
@@ -42,19 +47,19 @@
                     "default": true,
                     "description": "Automatically update the local copy of the debugger."
                 },
-                "bitMagic.officialEmulator.downloadOfficialEmulator" : {
+                "bitMagic.officialEmulator.downloadOfficialEmulator": {
                     "type": "boolean",
                     "default": true,
                     "description": "Automatically download the official emulator for the ROM.BIN and symbol files."
                 },
                 "bitMagic.officialEmulator.officialEmulatorLocation": {
-                    "type" : "string",
-                    "default" : "",
+                    "type": "string",
+                    "default": "",
                     "description": "Path to the official emulator that is automatically downloaded."
                 },
                 "bitMagic.officialEmulator.customOfficialEmulatorLocation": {
-                    "type" : "string",
-                    "default" : "",
+                    "type": "string",
+                    "default": "",
                     "description": "Custom Location of the official emulator for the ROM.BIN and symbol files. This can be overridden in the project.json file."
                 },
                 "bitMagic.officialEmulator.version": {
@@ -111,10 +116,8 @@
             },
             {
                 "id": "csasm",
-                "aliases": [
-                ],
-                "extensions": [
-                ],
+                "aliases": [],
+                "extensions": [],
                 "configuration": "./language-configuration.csasm.json"
             }
         ],
@@ -173,6 +176,11 @@
                 "category": "BMASM Debug",
                 "enablement": "!inDebugMode",
                 "icon": "$(play)"
+            },
+            {
+                "command": "actionReplay.start",
+                "title": "Open The Action Replay",
+                "category": "BitMagic"
             }
         ],
         "debuggers": [
@@ -234,14 +242,9 @@
         "views": {
             "debug": [
                 {
-                    "id": "x16-visualiser",
-                    "name": "X16 Visualiser",
-                    "contextualTitle": "X16 Visualiser"
-                },
-                {
-                    "id": "bitmagic.paletteView",
-                    "name": "Palette",
-                    "contextualTitle": "VERA Palette"
+                    "id": "x16-debugger",
+                    "name": "X16 Debugger",
+                    "contextualTitle": "X16 Debugger"
                 }
             ]
         },
@@ -254,14 +257,19 @@
     },
     "dependencies": {
         "@microsoft/vscode-file-downloader-api": "^1.0.1",
-        "@types/vscode": "^1.86.0",
-        "@vscode/debugprotocol": "^1.64.0",
+        "@vscode/webview-ui-toolkit": "^1.4.0",
         "decompress": "^4.2.1",
         "decompress-targz": "^4.1.1",
         "vscode-nls": "^5.2.0"
     },
     "devDependencies": {
         "@types/node": "^20.11.19",
-        "@vscode/vsce": "^2.23.0"
+        "@types/vscode": "^1.88.0",
+        "@types/vscode-webview": "^1.57.5",
+        "@vscode/debugprotocol": "^1.65.0",
+        "@vscode/vsce": "^2.24.0",
+        "esbuild": "^0.16.10",
+        "esbuild-plugin-copy": "^2.0.1",
+        "eslint": "^8.26.0"
     }
 }

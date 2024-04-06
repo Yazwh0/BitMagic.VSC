@@ -2,17 +2,15 @@
 
 import * as vscode from 'vscode';
 import * as Net from 'net';
-import * as nls from 'vscode-nls';
-import { DebugProtocol } from '@vscode/debugprotocol';
 import AutoUpdater from './autoUpdater';
 import { platform } from 'os';
-import { VisualiserTree } from './visualiserTree';
-import { PaletteViewProvider } from './paletteViewProvider';
 import BitMagicDebugAdaptorTrackerFactory from './debugTracker';
 import DotNetInstaller from './dotnetinstaller';
 import EmulatorDownloader from './emulatorDownloader';
 import path = require('path');
 import Constants from './constants';
+import { ActionReplay } from './actionReplay/actionReplay';
+import { provideVSCodeDesignSystem, vsCodeButton } from "@vscode/webview-ui-toolkit";
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -20,6 +18,8 @@ var _dni: DotNetInstaller;
 
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
+
+	//provideVSCodeDesignSystem().register(vsCodeButton());        
 
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new BitMagicDebugAdapterServerDescriptorFactory()));
 
@@ -122,6 +122,10 @@ export function activate(context: vscode.ExtensionContext) {
 	// Debug tracker for compilation errors
 	vscode.debug.registerDebugAdapterTrackerFactory('bmasm', new BitMagicDebugAdaptorTrackerFactory(bmOutput));
 
+	// Action Replay
+	ActionReplay.activate(context);
+
+
 	// Visualiser
 	// vscode.window.registerTreeDataProvider('x16-visualiser', new VisualiserTree())
 	// vscode.commands.registerCommand('x16-visualiser.view_bitmap', (i) => {
@@ -139,6 +143,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// vscode.commands.registerCommand('x16-visualiser.view_palette', (i) => {
 	// 	vscode.debug.activeDebugSession?.customRequest("bm_palette").then(i => {
 
+	
 	// 	});
 	// 	vscode.window.showInformationMessage("Palette!");
 	// })
