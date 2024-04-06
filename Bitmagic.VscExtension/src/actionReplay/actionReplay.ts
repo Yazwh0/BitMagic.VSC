@@ -1,4 +1,4 @@
-import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, ExtensionContext, commands } from "vscode";
+import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, ExtensionContext, commands, debug } from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 
@@ -65,15 +65,11 @@ export class ActionReplay {
         webview.onDidReceiveMessage(
             (message: any) => {
                 const command = message.command;
-                const text = message.text;
 
                 switch (command) {
-                    case "hello":
-                        // Code that should run in response to the hello message command
-                        window.showInformationMessage(text);
+                    case "updateLayers":
+                        this._updateLayers(webview);
                         return;
-                    // Add more switch case statements here as more webview message commands
-                    // are created within the webview context (i.e. inside src/webview/main.ts)
                 }
             },
             undefined,
@@ -81,26 +77,70 @@ export class ActionReplay {
         );
     }
 
+    private _updateLayers(webview: Webview) {
+        debug.activeDebugSession?.customRequest("getLayers").then(i => {
+            webview.postMessage({ command: "layerUpdate", payload: JSON.stringify(i) });
+        });
+    }
+
     private _getWebviewContent(webview: Webview, extensionUri: Uri) {
         const webviewUri = getUri(webview, extensionUri, ["out", "actionReplay.webview.js"]);
         const nonce = getNonce();
         const styleUri = getUri(webview, extensionUri, ["out", "actionReplay.css"]);
 
+        
         return /*html*/ `<!DOCTYPE html>
         <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
                 <title>Action Replay</title>
                 <link rel="stylesheet" href="${styleUri}">
             </head>
             <body>
-                <div>
-                    <span>Layer 0</span>
-                    <img id="layer_0" class="layer_display"/>
+                <div class="display_control">
+                    <vscode-button appearance="primary" id="update">Update</vscode-button>
+                    <vscode-checkbox id="automatically_update">Automatically Update</vscode-checkbox>
                 </div>
-                <vscode-button appearance="primary">Update</vscode-button>
+                <div class="layer_container">
+                    <div class="layer">
+                        <div>
+                            <h4>Background</h4>
+                            <img id="data_0" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Sprite 1</h4>
+                            <img id="data_1" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Layer 1</h4>
+                            <img id="data_2" class="layer_display"/>
+                            </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Sprite 2</h4>
+                            <img id="data_3" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Layer 0</h4>
+                            <img id="data_4" class="layer_display"/>
+                        </div>
+                    </div>
+                    <div class="layer">
+                        <div>
+                            <h4>Sprite 0</h4>
+                            <img id="data_5" class="layer_display"/>
+                        </div>
+                    </div>
+                </div>
                 <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
             </body>
         </html>`;

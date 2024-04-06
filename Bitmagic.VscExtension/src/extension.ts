@@ -143,6 +143,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// vscode.commands.registerCommand('x16-visualiser.view_palette', (i) => {
 	// 	vscode.debug.activeDebugSession?.customRequest("bm_palette").then(i => {
 
+	
 	// 	});
 	// 	vscode.window.showInformationMessage("Palette!");
 	// })
