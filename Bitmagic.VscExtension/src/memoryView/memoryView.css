@@ -1,0 +1,35 @@
+img.memory_display
+{
+    height : 512px;
+    width : 512px;
+    border : 1px white solid;
+    image-rendering: pixelated;
+}
+
+div.memory_container
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+div.memory
+{
+    margin: 0 5px;
+}
+
+div.display_control
+{
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+div.control_holder
+{
+    margin: 0 5px;
+}

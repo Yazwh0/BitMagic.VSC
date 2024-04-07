@@ -25,18 +25,44 @@ const extensionConfig = {
 
 // Config for webview source code (to be run in a web-based context)
 /** @type BuildOptions */
-const webviewConfig = {
+const layerViewWebviewConfig = {
     ...baseConfig,
     target: "es2020",
     format: "esm",
-    entryPoints: ["./src/layerView/layerView.webview.ts"],
+    entryPoints: [
+        "./src/layerView/layerView.webview.ts"
+    ],
     outdir: "./out/",
     plugins: [
         // Copy webview css files to `out` directory unaltered
         copy({
             resolveFrom: "cwd",
             assets: {
-                from: ["./src/layerView/layerView.css"],
+                from: [
+                    "./src/layerView/layerView.css",
+                ],
+                to: ["./out"],
+            },
+        }),
+    ],
+};
+
+const memoryViewWebviewConfig = {
+    ...baseConfig,
+    target: "es2020",
+    format: "esm",
+    entryPoints: [
+        "./src/memoryView/memoryView.webview.ts"
+    ],
+    outdir: "./out/",
+    plugins: [
+        // Copy webview css files to `out` directory unaltered
+        copy({
+            resolveFrom: "cwd",
+            assets: {
+                from: [
+                    "./src/memoryView/memoryView.css",
+                ],
                 to: ["./out"],
             },
         }),
@@ -75,14 +101,19 @@ const watchConfig = {
                 ...watchConfig,
             });
             await build({
-                ...webviewConfig,
+                ...layerViewWebviewConfig,
+                ...watchConfig,
+            });
+            await build({
+                ...memoryViewWebviewConfig,
                 ...watchConfig,
             });
             console.log("[watch] build finished");
         } else {
             // Build extension and webview code
             await build(extensionConfig);
-            await build(webviewConfig);
+            await build(layerViewWebviewConfig);
+            await build(memoryViewWebviewConfig);
             console.log("build complete");
         }
     } catch (err) {

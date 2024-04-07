@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.1.21",
+    "version": "0.1.22",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -180,6 +180,11 @@
             {
                 "command": "layerView.start",
                 "title": "Open The Layer View",
+                "category": "BitMagic"
+            },
+            {
+                "command": "memoryView.start",
+                "title": "Open The Memory View",
                 "category": "BitMagic"
             }
         ],
