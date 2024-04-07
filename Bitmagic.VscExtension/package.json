@@ -199,7 +199,7 @@
                         "properties": {
                             "program": {
                                 "type": "string",
-                                "description": "Absolute path to a bmasm file, or project.json.",
+                                "description": "Path to a bmasm file, or project.json.",
                                 "default": "${workspaceFolder}/${command:AskForProgramName}"
                             },
                             "stopOnEntry": {

@@ -82,8 +82,7 @@ export class LayerView {
             webview.postMessage({ command: "layerUpdate", payload: JSON.stringify(i) });
         });
     }
-    
-    
+        
     private _getWebviewContent(webview: Webview, extensionUri: Uri) {
         const webviewUri = getUri(webview, extensionUri, ["out", "LayerView.webview.js"]);
         const nonce = getNonce();
