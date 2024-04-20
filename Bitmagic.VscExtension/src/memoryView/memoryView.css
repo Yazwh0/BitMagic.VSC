@@ -33,3 +33,29 @@ div.control_holder
 {
     margin: 0 5px;
 }
+
+#search_results
+{
+    min-width: 200px;
+    min-height: 200px;
+}
+
+div.search_control_box
+{
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.search_control
+{
+    margin-right:10px;
+}
+
+.search_results_container
+{
+    width: auto;
+}

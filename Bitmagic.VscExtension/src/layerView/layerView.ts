@@ -25,7 +25,8 @@ export class LayerView {
                         'Layer View',
                         columnToShowIn || ViewColumn.One,
                         {
-                            enableScripts: true
+                            enableScripts: true,
+                            retainContextWhenHidden: true
                         }
                     );
 
