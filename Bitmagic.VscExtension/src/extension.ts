@@ -20,7 +20,7 @@ var _dni: DotNetInstaller;
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
 
-	//provideVSCodeDesignSystem().register(vsCodeButton());        
+	//provideVSCodeDesignSystem().register(vsCodeButton());
 
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new BitMagicDebugAdapterServerDescriptorFactory()));
 
@@ -68,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	let UpdateBitMagic = false;
-	let UpdateOfficialEmulator = false; 
+	let UpdateOfficialEmulator = false;
 
 	vscode.workspace.onDidChangeConfiguration(evt => {
 		var startUpdater = false;
@@ -91,18 +91,18 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		if (evt.affectsConfiguration(Constants.SettingsEmulatorVersion))
-		{			
+		{
 			UpdateOfficialEmulator = true;
 			startUpdater = true;
 		}
 
 		if (evt.affectsConfiguration(Constants.SettingsDownloadEmulator))
-		{			
+		{
 			UpdateOfficialEmulator = true;
 			startUpdater = true;
 		}
 
-		if (startUpdater) 
+		if (startUpdater)
 		{
 			setTimeout(() => {
 				if (UpdateBitMagic)
@@ -145,7 +145,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// vscode.commands.registerCommand('x16-visualiser.view_palette', (i) => {
 	// 	vscode.debug.activeDebugSession?.customRequest("bm_palette").then(i => {
 
-	
+
 	// 	});
 	// 	vscode.window.showInformationMessage("Palette!");
 	// })
@@ -156,20 +156,20 @@ export function activate(context: vscode.ExtensionContext) {
 	// first check that we have the framework installed
 	new AutoUpdater().CheckForUpdate(context, bmOutput, _dni).then(_ => {
 		new EmulatorDownloader().CheckEmulator(context, bmOutput);
-	});	
+	});
 }
 
 class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
 	private server?: Net.Server;
-	private readonly settingsPortNumber = 'bitMagic.debugger.port';
-	private readonly settingsDisablePlatformCheck = 'bitMagic.debugger.disablePlatformCheck';
-	private readonly settingsAlternativeDebugger = 'bitMagic.debugger.alternativePath';
-	private readonly settingsDebugger = 'bitMagic.debugger.path';
-	private readonly settingsUseOwnDotnet = "bitMagic.debugger.useOwnDotnet";
+	private readonly settingsPortNumber = Constants.SettingsDebuggerPort;
+	private readonly settingsDisablePlatformCheck = Constants.SettingsDisablePlatformCheck;
+	private readonly settingsAlternativeDebugger = Constants.SettingsAlternativeDebugger;
+	private readonly settingsDebugger = Constants.SettingsDebuggerPath;
+	private readonly settingsUseOwnDotnet = Constants.SettingsUseOwnDotnet;
 
-    private readonly settingsEmulatorLocation = 'bitMagic.officialEmulator.officialEmulatorLocation';
-    private readonly settingsCustomEmulatorLocation = 'bitMagic.officialEmulator.customOfficialEmulatorLocation';
+    private readonly settingsEmulatorLocation = Constants.SettingsEmulatorLocation;
+    private readonly settingsCustomEmulatorLocation = Constants.SettingsCustomEmulatorLocation;
 
 	createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
 		const config = vscode.workspace.getConfiguration();
