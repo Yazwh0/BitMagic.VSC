@@ -239,10 +239,10 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 			args.push(emulatorLocation)
 		}
 
-		if (_useOwnDotnet)
-			return new vscode.DebugAdapterExecutable(dni.Location, args);
+		const location = _useOwnDotnet ? dni.Location : debuggerLocation;
+		var options = { cwd : path.dirname(location) };
 
-		return new vscode.DebugAdapterExecutable(debuggerLocation, args);
+		return new vscode.DebugAdapterExecutable(location, args, options);
 	}
 
 	dispose() {
