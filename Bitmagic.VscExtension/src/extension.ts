@@ -240,7 +240,7 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		}
 
 		const location = _useOwnDotnet ? dni.Location : debuggerLocation;
-		var options = { cwd : path.dirname(location) };
+		var options =  new DapOptions( path.dirname(location) );
 
 		return new vscode.DebugAdapterExecutable(location, args, options);
 	}
@@ -250,6 +250,15 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 			this.server.close();
 		}
 	}
+}
+
+class DapOptions implements vscode.DebugAdapterExecutableOptions
+{
+	constructor(cwd:string)
+	{
+		this.cwd = cwd;
+	}
+	cwd?: string;
 }
 
 export function deactivate() {
