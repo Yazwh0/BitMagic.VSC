@@ -47,6 +47,28 @@ const layerViewWebviewConfig = {
     ],
 };
 
+const historyViewWebviewConfig = {
+    ...baseConfig,
+    target: "es2020",
+    format: "esm",
+    entryPoints: [
+        "./src/historyView/historyView.webview.ts"
+    ],
+    outdir: "./out/",
+    plugins: [
+        // Copy webview css files to `out` directory unaltered
+        copy({
+            resolveFrom: "cwd",
+            assets: {
+                from: [
+                    "./src/historyView/historyView.css",
+                ],
+                to: ["./out"],
+            },
+        }),
+    ],
+};
+
 const memoryViewWebviewConfig = {
     ...baseConfig,
     target: "es2020",
@@ -108,12 +130,17 @@ const watchConfig = {
                 ...memoryViewWebviewConfig,
                 ...watchConfig,
             });
+            await build({
+                ...historyViewWebviewConfig,
+                ...watchConfig,
+            });
             console.log("[watch] build finished");
         } else {
             // Build extension and webview code
             await build(extensionConfig);
             await build(layerViewWebviewConfig);
             await build(memoryViewWebviewConfig);
+            await build(historyViewWebviewConfig);
             console.log("build complete");
         }
     } catch (err) {

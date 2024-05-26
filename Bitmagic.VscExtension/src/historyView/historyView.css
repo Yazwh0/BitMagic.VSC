@@ -1,0 +1,63 @@
+span.name
+{
+    color: var(--vscode-debugTokenExpression-name)
+}
+
+span.number
+{
+    color: var(--vscode-debugTokenExpression-number)
+}
+
+span.string
+{
+    color: var(--vscode-debugTokenExpression-string)
+}
+
+span.rawvalue
+{
+    color: var(--vscode-debugTokenExpression-string)
+}
+
+span.label
+{
+    color: var(--vscode-debugTokenExpression-value)
+}
+
+span.clickable
+{
+    cursor: pointer;
+}
+
+span.clickable:hover
+{
+    text-decoration: underline;
+}
+
+p.history
+{
+    margin: 0;
+    font-family:  var(--vscode-editor-font-family);
+    font-weight: var(--vscode-editor-font-weight);
+    font-size: var(--vscode-editor-font-size);
+    white-space: pre;
+}
+
+p.label
+{
+    margin: 0 0 5px 0;
+    font-family:  var(--vscode-editor-font-family);
+    font-weight: var(--vscode-editor-font-weight);
+    font-size: var(--vscode-editor-font-size);
+    white-space: pre;
+}
+
+#results
+{
+    margin-top: 10px;
+}
+
+.display_control
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

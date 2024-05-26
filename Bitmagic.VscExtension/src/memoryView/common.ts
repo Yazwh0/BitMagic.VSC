@@ -5,7 +5,10 @@ export class messages
     public static updateRows = "updateRows";
     public static updateMemoryDisplay = "memoryUpdate";
     public static displaySearchResults = "memoryValueLocations";
+    public static updateHistory = "history";
+    public static showFile = "showFile";
 
     public static debuggerSearch = "getMemoryValueLocations";   // DEBUGGER
     public static getMemoryUse = "getMemoryUse";                // DEBUGGER
+    public static getHistory = "getHistory";                    // DEBUGGER
 }

@@ -12,6 +12,7 @@ import Constants from './constants';
 import { LayerView } from './layerView/layerView';
 import { provideVSCodeDesignSystem, vsCodeButton } from "@vscode/webview-ui-toolkit";
 import { MemoryView } from './memoryView/memoryView';
+import { HistoryView } from './historyView/historyView';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -126,7 +127,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Action Replay
 	LayerView.activate(context);
 	MemoryView.activate(context);
-
+	HistoryView.activate(context);
 
 	// Visualiser
 	// vscode.window.registerTreeDataProvider('x16-visualiser', new VisualiserTree())
