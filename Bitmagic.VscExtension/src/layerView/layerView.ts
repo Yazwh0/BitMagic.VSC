@@ -83,7 +83,7 @@ export class LayerView {
             webview.postMessage({ command: "layerUpdate", payload: JSON.stringify(i) });
         });
     }
-        
+
     private _getWebviewContent(webview: Webview, extensionUri: Uri) {
         const webviewUri = getUri(webview, extensionUri, ["out", "LayerView.webview.js"]);
         const nonce = getNonce();
@@ -110,13 +110,13 @@ export class LayerView {
                 <div class="layer_container">
                     <div class="layer">
                         <div>
-                            <h4>Sprite 0</h4>
+                            <h4>Sprite 3</h4>
                             <img id="data_5" class="layer_display"/>
                         </div>
                     </div>
                     <div class="layer">
                         <div>
-                            <h4>Layer 0</h4>
+                            <h4>Layer 1</h4>
                             <img id="data_4" class="layer_display"/>
                         </div>
                     </div>
@@ -128,7 +128,7 @@ export class LayerView {
                     </div>
                     <div class="layer">
                         <div>
-                            <h4>Layer 1</h4>
+                            <h4>Layer 0</h4>
                             <img id="data_2" class="layer_display"/>
                         </div>
                     </div>
