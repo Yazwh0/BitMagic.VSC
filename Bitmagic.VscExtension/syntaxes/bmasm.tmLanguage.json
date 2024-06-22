@@ -1,7 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "BitMagic X16 Asm",
-	"patterns": [			
+	"patterns": [
 		{ "include" : "#asm-strings" },
 		{ "include" : "#asm-literals" },
 		{ "include" : "#asm-comments" },
@@ -107,14 +107,14 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.pseudofunction.bmasm",
-					"match": "\\.(?i:byte|word|const|pad|align|importfile|org|cpu|machine|exception|breakpoint|nostop)\\b"
+					"match": "\\.(?i:byte|word|const|pad|align|importfile|org|cpu|machine|exception|breakpoint|nostop|stop)\\b"
 				}
 			]
 		},
 		"asm-variabledefinition": {
 			"patterns": [
 				{
-					"match": "(\\.var|\\.padvar|\\.constvar)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string|proc))",
+					"match": "(\\.var|\\.padvar|\\.constvar|\\.debugalias)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string|proc))",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.pseudofunction.bmasm"
@@ -193,7 +193,7 @@
 					"match" : "^\\s*(library)\\s+([\\w.-_]+)",
 					"captures" : {
 						"1" : {
-							"name" : "keyword.other.library"							
+							"name" : "keyword.other.library"
 						},
 						"2" : {
 							"name" : "entity.name.class"
@@ -208,7 +208,7 @@
 					"match" : "^\\s*(nuget)\\s+(\"?[\\w.-_]+\"?)(\\s+(\"?[\\w.-_]+\"?))?",
 					"captures" : {
 						"1" : {
-							"name" : "keyword.other.nuget"							
+							"name" : "keyword.other.nuget"
 						},
 						"2" : {
 							"name" : "string.quoted"
