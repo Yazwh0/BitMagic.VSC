@@ -243,6 +243,8 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		const location = _useOwnDotnet ? dni.Location : debuggerLocation;
 		var options =  new DapOptions( path.dirname(location) );
 
+		bmOutput.appendLine(`Running: ${location} ${args.join(' ')}`);
+
 		return new vscode.DebugAdapterExecutable(location, args, options);
 	}
 
