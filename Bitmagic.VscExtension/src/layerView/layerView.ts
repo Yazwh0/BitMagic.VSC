@@ -85,9 +85,9 @@ export class LayerView {
     }
 
     private _getWebviewContent(webview: Webview, extensionUri: Uri) {
-        const webviewUri = getUri(webview, extensionUri, ["out", "LayerView.webview.js"]);
+        const webviewUri = getUri(webview, extensionUri, ["out", "layerView.webview.js"]);
         const nonce = getNonce();
-        const styleUri = getUri(webview, extensionUri, ["out", "LayerView.css"]);
+        const styleUri = getUri(webview, extensionUri, ["out", "layerView.css"]);
 
         return /*html*/ `<!DOCTYPE html>
         <html lang="en">
