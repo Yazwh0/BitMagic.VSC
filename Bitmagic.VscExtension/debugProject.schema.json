@@ -1,6 +1,9 @@
 {
   "$id": "X16DebugProject",
-  "type": "object",
+  "type": [
+    "object",
+    "null"
+  ],
   "properties": {
     "startStepping": {
       "description": "Start the application in stepping mode.",
@@ -65,14 +68,14 @@
             "type": "string"
           },
           "romBank": {
-            "description": "ROM bank that the symbols are for. Omit if not a rombank file. Any symbols in the ROM area will be discarded.",
+            "description": "ROM bank that the symbols are for. Omit if not a rombank file. If set any symbols in the ROM area will be discarded.",
             "type": [
               "integer",
               "null"
             ]
           },
           "ramBank": {
-            "description": "RAM bank that the symbols are for. Omit if not a rambank file. Any symbols in the RAM area will be discarded.",
+            "description": "RAM bank that the symbols are for. Omit if not a rambank file. If set any symbols in the RAM area will be discarded.",
             "type": [
               "integer",
               "null"
@@ -189,7 +192,7 @@
     },
     "nvRam": {
       "$id": "rtcNvram",
-      "description": "RTC NvRam Data",
+      "description": "RTC NvRam Data.",
       "type": [
         "object",
         "null"
@@ -224,21 +227,21 @@
       ]
     },
     "sdCard": {
-      "description": "SD Card image to start with",
+      "description": "SD Card image to start with.",
       "type": [
         "string",
         "null"
       ]
     },
     "sdCardFiles": {
-      "$id": "SdCardFiles[]",
+      "$id": "SdCardFile[]",
       "description": "Files to add to the root directory of the SDCard. Wildcards accepted.",
       "type": [
         "array",
         "null"
       ],
       "items": {
-        "$id": "SdCardFiles",
+        "$id": "SdCardFile",
         "type": [
           "object",
           "null"
@@ -255,11 +258,15 @@
               "string",
               "null"
             ]
+          },
+          "allowOverwrite": {
+            "type": "boolean"
           }
         },
         "required": [
           "source",
-          "dest"
+          "dest",
+          "allowOverwrite"
         ]
       }
     },
@@ -304,6 +311,18 @@
             "string",
             "null"
           ]
+        },
+        "saveGeneratedBmasm": {
+          "description": "Save Generated BMASM files in the bin folder.",
+          "type": "boolean"
+        },
+        "saveGeneratedTemplate": {
+          "description": "Save Generated Template C# files in the bin folder.",
+          "type": "boolean"
+        },
+        "savePreGeneratedTemplate": {
+          "description": "Save Generated Pre-Template BMASM \\ C# files in the bin folder.",
+          "type": "boolean"
         }
       }
     },
@@ -320,7 +339,7 @@
     },
     "files": {
       "$id": "IDebugProjectFile[]",
-      "description": "Files that are to be debugged.",
+      "description": "Files to be debugged.",
       "type": [
         "array",
         "null"
@@ -344,29 +363,5 @@
         ]
       }
     }
-  },
-  "required": [
-    "startStepping",
-    "source",
-    "directRun",
-    "autobootRun",
-    "outputFolder",
-    "startAddress",
-    "romFile",
-    "emulatorDirectory",
-    "symbols",
-    "romBankNames",
-    "ramBankNames",
-    "machine",
-    "keyboardBuffer",
-    "mouseBuffer",
-    "nvRam",
-    "sdCard",
-    "sdCardFiles",
-    "cartridge",
-    "compileOptions",
-    "memoryFillValue",
-    "basePath",
-    "files"
-  ]
+  }
 }
