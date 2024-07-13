@@ -131,14 +131,7 @@
               ]
             }
           }
-        },
-        "required": [
-          "symbols",
-          "romBank",
-          "ramBank",
-          "filename",
-          "rangeDefinitions"
-        ]
+        }
       }
     },
     "romBankNames": {
@@ -262,11 +255,7 @@
           "allowOverwrite": {
             "type": "boolean"
           }
-        },
-        "required": [
-          "source",
-          "dest",
-          "allowOverwrite"
+        }
         ]
       }
     },
