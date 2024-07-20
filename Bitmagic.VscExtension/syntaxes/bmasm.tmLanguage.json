@@ -16,6 +16,7 @@
 		{ "include" : "#magic-include" },
 		{ "include" : "#magic-library"},
 		{ "include" : "#magic-nuget" },
+		{ "include" : "#magic-reference" },
 		{ "include" : "source.csasm" }
 	],
 	"repository": {
@@ -209,6 +210,24 @@
 					"captures" : {
 						"1" : {
 							"name" : "keyword.other.nuget"
+						},
+						"2" : {
+							"name" : "string.quoted"
+						},
+						"3" : {
+							"name" : "string.quoted"
+						}
+					}
+				}
+			]
+		},
+		"magic-reference" : {
+			"patterns" : [
+				{
+					"match" : "^\\s*(reference)\\s+(\"?[\\w.-_]+\"?)(\\s+(\"?[\\w.-_]+\"?))?",
+					"captures" : {
+						"1" : {
+							"name" : "keyword.other.reference"
 						},
 						"2" : {
 							"name" : "string.quoted"
