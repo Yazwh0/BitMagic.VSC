@@ -5,6 +5,7 @@ import { messages } from "../memoryView/common";
 
 export class HistoryView {
     public static currentPanel: HistoryView | undefined;
+    private index: number = 0;
 
     public static activate(context: ExtensionContext) {
         const uri = context.extensionUri;
@@ -68,10 +69,16 @@ export class HistoryView {
 
                 switch (command) {
                     case messages.getHistory:
-                        this._getHistory(webview);
+                        this._getHistory(webview, 0);
+                        return;
+                    case messages.resetHistory:
+                        this._resetHistory(webview);
                         return;
                     case messages.showFile:
                         this._showFile(message.fileName, message.lineNumber);
+                        return;
+                    case messages.getMoreHistory:
+                        this._getHistory(webview, message.index);
                         return;
                 }
             },
@@ -95,9 +102,20 @@ export class HistoryView {
         });
     }
 
-    private _getHistory(webview: Webview) {
-        debug.activeDebugSession?.customRequest(messages.getHistory, {}
-        ).then(i => {
+    private _getHistory(webview: Webview, index: number) {
+        this.index = 0;
+        debug.activeDebugSession?.customRequest(messages.getHistory, { Message: "history", Index: index })
+        .then(i => {
+            webview.postMessage({
+                command: messages.updateHistory, payload:
+                    JSON.stringify(i)
+            });
+        });
+    }
+
+    private _resetHistory(webview: Webview) {
+        debug.activeDebugSession?.customRequest(messages.getHistory, { Message: "reset" })
+        .then(i => {
             webview.postMessage({
                 command: messages.updateHistory, payload:
                     JSON.stringify(i)
@@ -122,7 +140,8 @@ export class HistoryView {
             <body>
                 <div class="display_control">
                     <div class="control_holder">
-                        <vscode-button appearance="primary" id="update">Update</vscode-button>
+                        <vscode-button appearance="primary" id="update">Fetch History</vscode-button>
+                        <vscode-button appearance="primary" id="reset">Reset</vscode-button>
                     </div>
                 </div>
                 <div class="history_results_container">

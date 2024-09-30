@@ -16,6 +16,9 @@ function main() {
     // to the element (i.e. the `as Button` syntax)
     const updateButton = document.getElementById("update") as Button;
     updateButton.addEventListener("click", () => getHistory());
+
+    const resetButton = document.getElementById("reset") as Button;
+    resetButton.addEventListener("click", () => resetHistory());
 }
 
 function setVSCodeMessageListener() {
@@ -32,7 +35,20 @@ function setVSCodeMessageListener() {
 }
 
 function getHistory() {
+    var resultsDiv = document.getElementById("results") as HTMLDivElement;
+    resultsDiv.innerHTML = "Loading...";
     vscode.postMessage({ command: messages.getHistory });
+}
+
+function resetHistory() {
+    var resultsDiv = document.getElementById("results") as HTMLDivElement;
+    resultsDiv.innerHTML = "Loading...";
+    vscode.postMessage({ command: messages.resetHistory });
+}
+
+function getMoreHistory(index: number) {
+    document.getElementById('more')?.remove();
+    vscode.postMessage({ command: messages.getMoreHistory, index: index });
 }
 
 function updateDisplay(messageData: historyResponse) {
@@ -48,10 +64,12 @@ function updateDisplay(messageData: historyResponse) {
         return;
     }
 
-    resultsDiv.innerHTML = "";
+    // only clear the div if index is zero, as thats a new request
+    if (messageData.Index === 0)
+        resultsDiv.innerHTML = "";
 
     for (var i = 0; i < results?.length; i++) {
-        var p = document.createElement("p") as HTMLParagraphElement;
+        const p = document.createElement("p") as HTMLParagraphElement;
         p.classList.add("history");
 
         p.append(createSpan("Ram ", "name"))
@@ -85,23 +103,33 @@ function updateDisplay(messageData: historyResponse) {
         resultsDiv.append(p);
 
         if (results[i].Proc) {
-            var p = document.createElement("p") as HTMLParagraphElement;
-            p.classList.add("label");
-            p.append(createSpan(results[i].Proc ?? "", "label"))
-            resultsDiv.append(p);
+            const proc = document.createElement("p") as HTMLParagraphElement;
+            proc.classList.add("label");
+            proc.append(createSpan(results[i].Proc ?? "", "label"))
+            resultsDiv.append(proc);
         }
+    }
+
+    if (messageData.More)
+    {
+        const moreButton = document.createElement("vscode-button") as Button;
+        const nextIndex = messageData.Index + 1;
+        moreButton.addEventListener('click', () => getMoreHistory(nextIndex));
+        moreButton.id = "more";
+        moreButton.textContent = "More...";
+        resultsDiv.append(moreButton);
     }
 }
 
 function createSpan(text: string, spanClass: string): HTMLSpanElement {
-    var s = document.createElement("span") as HTMLSpanElement;
+    const s = document.createElement("span") as HTMLSpanElement;
     s.innerText = text;
     s.classList.add(spanClass);
     return s;
 }
 
 function createLink(text: string, spanClass: string, fileName: string, lineNumber: number): HTMLSpanElement {
-    var s = document.createElement("span") as HTMLSpanElement;
+    const s = document.createElement("span") as HTMLSpanElement;
     s.innerText = text;
     s.classList.add(spanClass);
     const f = fileName;
@@ -117,6 +145,8 @@ function createLink(text: string, spanClass: string, fileName: string, lineNumbe
 
 class historyResponse {
     HistoryItems: historyItem[] | undefined;
+    More: boolean = false;
+    Index: number = 0;
 }
 
 class historyItem {

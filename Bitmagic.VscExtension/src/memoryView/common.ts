@@ -11,4 +11,6 @@ export class messages
     public static debuggerSearch = "getMemoryValueLocations";   // DEBUGGER
     public static getMemoryUse = "getMemoryUse";                // DEBUGGER
     public static getHistory = "getHistory";                    // DEBUGGER
+    public static getMoreHistory = "getMoreHistory";                    // DEBUGGER
+    public static resetHistory = "resetHistory";                    // DEBUGGER
 }
