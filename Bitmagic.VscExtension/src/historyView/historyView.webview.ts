@@ -19,6 +19,9 @@ function main() {
 
     const resetButton = document.getElementById("reset") as Button;
     resetButton.addEventListener("click", () => resetHistory());
+
+    const fetchAllButton = document.getElementById("fetchAll") as Button;
+    fetchAllButton.addEventListener("click", () => getAllHistory());
 }
 
 function setVSCodeMessageListener() {
@@ -30,6 +33,9 @@ function setVSCodeMessageListener() {
             case messages.updateHistory:
                 updateDisplay(messageData);
                 break;
+            case messages.fetchAllComplete:
+                fetchAllComplete();
+                break;
         }
     });
 }
@@ -38,6 +44,13 @@ function getHistory() {
     var resultsDiv = document.getElementById("results") as HTMLDivElement;
     resultsDiv.innerHTML = "Loading...";
     vscode.postMessage({ command: messages.getHistory });
+}
+
+function getAllHistory() {
+    const fetchAllButton = document.getElementById("fetchAll") as Button;
+    fetchAllButton.disabled = true;
+
+    vscode.postMessage({ command: messages.getAllHistory });
 }
 
 function resetHistory() {
@@ -49,6 +62,11 @@ function resetHistory() {
 function getMoreHistory(index: number) {
     document.getElementById('more')?.remove();
     vscode.postMessage({ command: messages.getMoreHistory, index: index });
+}
+
+function fetchAllComplete() {
+    const fetchAllButton = document.getElementById("fetchAll") as Button;
+    fetchAllButton.disabled = false;
 }
 
 function updateDisplay(messageData: historyResponse) {
@@ -110,8 +128,7 @@ function updateDisplay(messageData: historyResponse) {
         }
     }
 
-    if (messageData.More)
-    {
+    if (messageData.More) {
         const moreButton = document.createElement("vscode-button") as Button;
         const nextIndex = messageData.Index + 1;
         moreButton.addEventListener('click', () => getMoreHistory(nextIndex));

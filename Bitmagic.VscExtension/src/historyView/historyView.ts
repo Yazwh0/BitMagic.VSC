@@ -80,6 +80,9 @@ export class HistoryView {
                     case messages.getMoreHistory:
                         this._getHistory(webview, message.index);
                         return;
+                    case messages.getAllHistory:
+                        this._getAllHistory(webview);
+                        return;
                 }
             },
             undefined,
@@ -99,6 +102,42 @@ export class HistoryView {
             //     const r = new Range(p, p);
             //     e.revealRange(r);
             // });
+        });
+    }
+
+    private _getAllHistory(webview: Webview) {
+        debug.activeDebugSession?.customRequest(messages.getHistory, { Message: "getall" })
+        .then(reply => {
+            const file = [];
+            const results = reply.HistoryItems;
+
+            for (var i = 0; i < results.length; i++) {
+                const line = results[i];
+
+                file.push(`Ram \$${line.RamBank?.toString(16).padStart(2, "0")}`);
+                file.push(` Rom \$${line.RomBank?.toString(16).padStart(2, "0")}`);
+
+                file.push(` PC \$${line.Pc?.toString(16).padStart(4, "0")} `);
+                file.push(` A \$${line.A?.toString(16).padStart(2, "0")}`);
+                file.push(` X \$${line.X?.toString(16).padStart(2, "0")}`);
+                file.push(` Y \$${line.Y?.toString(16).padStart(2, "0")}`);
+                file.push(` SP \$${line.Sp?.toString(16).padStart(2, "0")} `);
+                file.push(`${line.Flags} --> `);
+                file.push(`${line.OpCode?.padEnd(32, " ")} `);
+                file.push(line.RawParameter ?? "");
+                file.push("\n");
+            }
+
+            workspace.openTextDocument({
+                content: file.join(''),
+                language: "text"
+            }).then(doc => {
+                window.showTextDocument(doc);
+            });
+
+            webview.postMessage({
+                command: messages.fetchAllComplete
+            });
         });
     }
 
@@ -141,6 +180,7 @@ export class HistoryView {
                 <div class="display_control">
                     <div class="control_holder">
                         <vscode-button appearance="primary" id="update">Fetch History</vscode-button>
+                        <vscode-button appearance="primary" id="fetchAll">Fetch All</vscode-button>
                         <vscode-button appearance="primary" id="reset">Reset</vscode-button>
                     </div>
                 </div>
