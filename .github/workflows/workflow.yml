@@ -2,9 +2,9 @@ name: Build Extension
 
 on:
     push:
-      branches: 
+      branches:
         - main
-      paths-ignore: # dont run when changes made to these folders 
+      paths-ignore: # dont run when changes made to these folders
         - '.vscode/**'
 
 jobs:
@@ -21,11 +21,11 @@ jobs:
             #   uses: gittools/actions/gitversion/setup@v0.10.2
             #   with:
             #         versionSpec: '5.x'
-            
+
             # - name: execute gitversion
             #   id: gitversion # step id used as reference for output values
             #   uses: gittools/actions/gitversion/execute@v0.10.2
-            
+
             # - name: print gitversion
             #   run: |
             #     echo "Major: ${{ steps.gitversion.outputs.major }}"
@@ -33,12 +33,12 @@ jobs:
             #     echo "Patch: ${{ steps.gitversion.outputs.patch }}"
             #     echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
             #     echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
-    
+
             - name: Install Node
               uses: actions/setup-node@v3
               with:
                 node-version: '18'
-            
+
             - name: Install Packages
               working-directory: ./BitMagic.VscExtension
               run: npm install
@@ -51,6 +51,10 @@ jobs:
               working-directory: ./BitMagic.VscExtension
               run: npm install -g @vscode/vsce
 
+            - name: Install OVSX
+              working-directory: ./BitMagic.VscExtension
+              run: npm install -g ovsx
+
             - name: Install Win-Node-Env
               working-directory: ./BitMagic.VscExtension
               run: npm install -g win-node-env
@@ -58,7 +62,7 @@ jobs:
             - name: Compile Extension
               working-directory: ./BitMagic.VscExtension
               run: node ./esbuild.js
-              
+
             - name: Compile and Create VSIX
               working-directory: ./Bitmagic.VscExtension
               run: vsce package
@@ -66,4 +70,7 @@ jobs:
             - name: Publish
               working-directory: ./Bitmagic.VscExtension
               run: vsce publish -p ${{ secrets.VSCODEDEPLOY }}
-                 
+
+            - name: Publish VSCodium
+              working-directory: ./Bitmagic.VscExtension
+              run: npx ovsx publish -p ${{ secrets.VSCODIUM }}
