@@ -65,7 +65,7 @@
                 },
                 "bitMagic.officialEmulator.version": {
                     "type": "string",
-                    "default": "r47",
+                    "default": "r48",
                     "description": "Version of the official emulator to download."
                 },
                 "bitMagic.debugger.useBundledDotnet": {
