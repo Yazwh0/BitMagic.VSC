@@ -2,11 +2,11 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic X16 Debugger and Development Solution",
-    "version": "0.1.41",
+    "version": "0.1.42",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
-    "homepage": "https://github.com/Yazwh0/BitMagic",
+    "homepage": "https://bitmagic.org/",
     "engines": {
         "vscode": "^1.86.0"
     },
@@ -250,15 +250,6 @@
                 }
             }
         ],
-        "views": {
-            "debug": [
-                {
-                    "id": "x16-debugger",
-                    "name": "X16 Debugger",
-                    "contextualTitle": "X16 Debugger"
-                }
-            ]
-        },
         "jsonValidation": [
             {
                 "fileMatch": "project.json",
