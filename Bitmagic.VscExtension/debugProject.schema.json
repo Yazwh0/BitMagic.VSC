@@ -24,6 +24,13 @@
       "description": "Run the main application by creating a AUTOBOOT.X16 file. This will not overwrite if the file already exists.",
       "type": "boolean"
     },
+    "autobootFile": {
+      "description": "Run the named file by creating a AUTOBOOT.X16 file. This will not overwrite if the file already exists. Will override AutobootRun.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "outputFolder": {
       "description": "Location to save the .prg and other files from the source file on the host. (Not on the sdcard.)",
       "type": [
@@ -256,7 +263,6 @@
             "type": "boolean"
           }
         }
-        ]
       }
     },
     "cartridge": {
@@ -351,6 +357,25 @@
           "type"
         ]
       }
+    },
+    "breakpoints": {
+      "$id": "Int32[]",
+      "description": "Breakpoints to be set at system startup.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "integer"
+      }
+    },
+    "historySize": {
+      "description": "Size of the history buffer for the history view. Must be a power of 2.",
+      "type": "integer"
+    },
+    "windowScale": {
+      "description": "Multiplier to scale the display window.",
+      "type": "number"
     }
   }
 }
