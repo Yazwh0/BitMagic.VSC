@@ -109,7 +109,19 @@ function updateDisplay(messageData: historyResponse) {
         p.append(createSpan(`\$${results[i].Y?.toString(16).padStart(2, "0")}`, "number"))
 
         p.append(createSpan(" SP ", "name"))
-        p.append(createSpan(`\$${results[i].Sp?.toString(16).padStart(2, "0")} `, "number"))
+        p.append(createSpan(`\$${results[i].Sp?.toString(16).padStart(2, "0")}`, "number"))
+
+        if (results[i].Clock) {
+            if (i == results?.length - 1 || i === 0) {
+                p.append(createSpan("     ", "name"))
+                p.append(createSpan("  ", "number"))
+            }
+            else {
+                var clock = (results[i - 1].Clock ?? 0) - (results[i].Clock ?? 0);
+                p.append(createSpan(" Clk ", "name"))
+                p.append(createSpan(`${clock} `, "number"))
+            }
+        }
 
         p.append(createSpan(`${results[i].Flags}`, "string"))
         p.append(createSpan(` -> `, "name"))
@@ -180,4 +192,5 @@ class historyItem {
     Flags: string | undefined;
     SourceFile: string | undefined;
     LineNumber: number | undefined;
+    Clock: number | undefined;
 }
