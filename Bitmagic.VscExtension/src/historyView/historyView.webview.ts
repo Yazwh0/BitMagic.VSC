@@ -119,7 +119,7 @@ function updateDisplay(messageData: historyResponse) {
             else {
                 var clock = (results[i - 1].Clock ?? 0) - (results[i].Clock ?? 0);
                 p.append(createSpan(" Clk ", "name"))
-                p.append(createSpan(`${clock} `, "number"))
+                p.append(createSpan(`${clock.toString().padStart(2, " ")} `, "number"))
             }
         }
 
