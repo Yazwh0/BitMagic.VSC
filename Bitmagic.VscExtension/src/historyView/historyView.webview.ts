@@ -114,7 +114,7 @@ function updateDisplay(messageData: historyResponse) {
         if (results[i].Clock) {
             if (i == results?.length - 1 || i === 0) {
                 p.append(createSpan("     ", "name"))
-                p.append(createSpan("  ", "number"))
+                p.append(createSpan("   ", "number"))
             }
             else {
                 var clock = (results[i - 1].Clock ?? 0) - (results[i].Clock ?? 0);

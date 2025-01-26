@@ -1,22 +1,15 @@
 # BitMagic
 
-BitMagic is a project with the aim to create a single Commander X16 Development Suite using VSCode.
+BitMagic is a Commander X16 Development Suite using Visual Studio Code or VSCodium. It offers the ability to develop applications for the X16 in a modern environment.
+
+It includes a comprehensive 65c02 assembler, but also supports ca65 projects.
+
+To help get you started there are some [examples](https://github.com/Yazwh0/BitMagic.Examples) within the GitHub repo.
 
 Please note only Windows and Linux are supported.
 
-It is comprised of four parts:
-
-- [Template Engine](https://github.com/Yazwh0/BitMagic.Documentation/blob/main/TemplateEngine.md)
-- [Compiler](https://github.com/Yazwh0/BitMagic.Documentation/blob/main/Compiler.md)
-- [Debugger](https://github.com/Yazwh0/BitMagic.Documentation/blob/main/Debugger.md)
-- [Emulator](https://github.com/Yazwh0/BitMagic.Documentation/blob/main/Emulator.md)
-
-Generally you'll want to start with either the Debugger or the Emulator, so please follow those links for more information!
-
-Please note, this is not an 'official' application that is endorsed by the Commander X16 team.
-
-It is also a work in progress, for development you may find the [Official Emulator](https://github.com/X16Community/x16-emulator) or [Box16](https://github.com/indigodarkwolf/box16) a better choice.
-
 For more info on anything X16, you can join the [Discord server](https://discord.gg/nS2PqEC).
+
+Updates are posted on [BlueSky](https://bsky.app/profile/bitmagic.bsky.social).
 
 ![Debugger Example](https://github.com/Yazwh0/BitMagic.Documentation/blob/9efdfa142d2c69cb8e83a94ef8faf692ab475a1a/Images/DebuggerExample.png?raw=true)
