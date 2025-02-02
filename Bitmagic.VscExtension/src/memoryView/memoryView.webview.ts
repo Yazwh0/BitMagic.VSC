@@ -210,6 +210,8 @@ function updateSearchResults(messageData: MemoryValueTrackerResponse) {
         // only show first 100 entries
         if (i < 100)
             display.push(item.results);
+        else
+            break;
     }
 
     resultsGrid.gridTemplateColumns += " 80px";

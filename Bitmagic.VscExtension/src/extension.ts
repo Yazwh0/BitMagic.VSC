@@ -17,6 +17,7 @@ import { HistoryView } from './historyView/historyView';
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
 var _dni: DotNetInstaller;
+var _startOfficialEmulator = false;
 
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
@@ -34,37 +35,50 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 
-		vscode.commands.registerCommand('extension.bmasm-debug.debugEditorContents', (resource: vscode.Uri) => {
-			let targetResource = resource;
-			if (!targetResource && vscode.window.activeTextEditor) {
-				targetResource = vscode.window.activeTextEditor.document.uri;
-			}
-			if (targetResource) {
-				vscode.debug.startDebugging(undefined, {
-					type: 'bmasm',
-					name: 'Debug File',
-					request: 'launch',
-					program: targetResource.fsPath,
-					stopOnEntry: true
-				});
-			}
-		}),
+		// vscode.commands.registerCommand('extension.bmasm-debug.debugEditorContents', (resource: vscode.Uri) => {
+		// 	let targetResource = resource;
 
-		vscode.commands.registerCommand('extension.bmasm-debug.runEditorContents', (resource: vscode.Uri) => {
-			let targetResource = resource;
-			if (!targetResource && vscode.window.activeTextEditor) {
-				targetResource = vscode.window.activeTextEditor.document.uri;
-			}
-			if (targetResource) {
-				vscode.debug.startDebugging(undefined, {
-					type: 'bmasm',
-					name: 'Run File',
-					request: 'launch',
-					program: targetResource.fsPath
-				},
-					{ noDebug: true }
-				);
-			}
+		// 	_startOfficialEmulator = false;
+
+		// 	if (!targetResource && vscode.window.activeTextEditor) {
+		// 		targetResource = vscode.window.activeTextEditor.document.uri;
+		// 	}
+
+		// 	if (targetResource) {
+		// 		vscode.debug.startDebugging(undefined, {
+		// 			type: 'bmasm',
+		// 			name: 'Debug File',
+		// 			request: 'launch',
+		// 			program: targetResource.fsPath,
+		// 			stopOnEntry: true
+		// 		});
+		// 	}
+		// }),
+
+		// vscode.commands.registerCommand('extension.bmasm-debug.runEditorContents', (resource: vscode.Uri) => {
+		// 	let targetResource = resource;
+
+		// 	_startOfficialEmulator = false;
+
+		// 	if (!targetResource && vscode.window.activeTextEditor) {
+		// 		targetResource = vscode.window.activeTextEditor.document.uri;
+		// 	}
+
+		// 	if (targetResource) {
+		// 		vscode.debug.startDebugging(undefined, {
+		// 			type: 'bmasm',
+		// 			name: 'Run File',
+		// 			request: 'launch',
+		// 			program: targetResource.fsPath
+		// 		},
+		// 			{ noDebug: true }
+		// 		);
+		// 	}
+		// }),
+
+		vscode.commands.registerCommand('extension.bmasm-debug.runInOfficialEmulator', (resource: vscode.Uri) => {
+			_startOfficialEmulator = true;
+			vscode.commands.executeCommand('workbench.action.debug.start')
 		})
 	);
 
@@ -238,6 +252,12 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		{
 			args.push(`--officialEmulator`);
 			args.push(emulatorLocation)
+		}
+
+		if (_startOfficialEmulator)
+		{
+			args.push("--runInOfficialEmulator");
+			_startOfficialEmulator = false;
 		}
 
 		const location = _useOwnDotnet ? dni.Location : debuggerLocation;

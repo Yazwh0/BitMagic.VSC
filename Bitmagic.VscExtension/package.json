@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.46",
+    "version": "0.1.47",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -139,44 +139,12 @@
                 "language": "bmasm"
             }
         ],
-        "menus": {
-            "editor/title/run": [
-                {
-                    "command": "extension.bmasm-debug.runEditorContents",
-                    "when": "resourceLangId == bmasm",
-                    "group": "navigation@1"
-                },
-                {
-                    "command": "extension.bmasm-debug.debugEditorContents",
-                    "when": "resourceLangId == bmasm",
-                    "group": "navigation@2"
-                }
-            ],
-            "commandPalette": [
-                {
-                    "command": "extension.bmasm-debug.debugEditorContents",
-                    "when": "resourceLangId == bmasm"
-                },
-                {
-                    "command": "extension.bmasm-debug.runEditorContents",
-                    "when": "resourceLangId == bmasm"
-                }
-            ]
-        },
         "commands": [
             {
-                "command": "extension.bmasm-debug.debugEditorContents",
-                "title": "Debug File",
-                "category": "BMASM Debug",
-                "enablement": "!inDebugMode",
-                "icon": "$(debug-alt)"
-            },
-            {
-                "command": "extension.bmasm-debug.runEditorContents",
-                "title": "Run File",
-                "category": "BMASM Debug",
-                "enablement": "!inDebugMode",
-                "icon": "$(play)"
+                "command": "extension.bmasm-debug.runInOfficialEmulator",
+                "title": "Run Project In The Official Emulator",
+                "category": "BitMagic",
+                "enablement": "!inDebugMode"
             },
             {
                 "command": "layerView.start",
