@@ -155,8 +155,22 @@
         ]
       }
     },
-    "ramBankNames": {
+    "romBankSymbols": {
       "$id": "String[]-1",
+      "description": "Symbol file for Rom banks, if set it overrides the default.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "ramBankNames": {
+      "$id": "String[]-2",
       "description": "Display names for the Ram banks.",
       "type": [
         "array",
@@ -228,6 +242,20 @@
     },
     "sdCard": {
       "description": "SD Card image to start with.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sdCardOutput": {
+      "description": "SD Card image to write. Can have .gz or .zip extensions if compressed.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sdCardFinalOutput": {
+      "description": "SD Card image to write once the emulation finishes. Can have .gz or .zip extensions if compressed.",
       "type": [
         "string",
         "null"
