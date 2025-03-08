@@ -144,7 +144,7 @@ export class MemoryView {
                             <h4>Main Ram</h4>
                             <img id="main_ram" class="memory_display"/>
                         </div>
-                    </div>                
+                    </div>
                 </div>
                 <div class="memory_value_tracker">
                     <div class="search_control_box">

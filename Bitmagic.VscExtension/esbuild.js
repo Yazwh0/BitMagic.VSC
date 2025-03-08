@@ -1,5 +1,6 @@
 const { build } = require("esbuild");
 const { copy } = require("esbuild-plugin-copy");
+const { watch } = require("fs");
 
 //@ts-check
 /** @typedef {import('esbuild').BuildOptions} BuildOptions **/
@@ -91,6 +92,28 @@ const memoryViewWebviewConfig = {
     ],
 };
 
+const spriteViewWebviewConfig = {
+    ...baseConfig,
+    target: "es2020",
+    format: "esm",
+    entryPoints: [
+        "./src/spriteView/spriteView.webview.ts"
+    ],
+    outdir: "./out/",
+    plugins: [
+        // Copy webview css files to `out` directory unaltered
+        copy({
+            resolveFrom: "cwd",
+            assets: {
+                from: [
+                    "./src/spriteView/spriteView.css",
+                ],
+                to: ["./out"],
+            },
+        }),
+    ],
+};
+
 // This watch config adheres to the conventions of the esbuild-problem-matchers
 // extension (https://github.com/connor4312/esbuild-problem-matchers#esbuild-via-js)
 /** @type BuildOptions */
@@ -134,6 +157,10 @@ const watchConfig = {
                 ...historyViewWebviewConfig,
                 ...watchConfig,
             });
+            await build({
+                ...spriteViewWebviewConfig,
+                ...watchConfig,
+            });
             console.log("[watch] build finished");
         } else {
             // Build extension and webview code
@@ -141,6 +168,7 @@ const watchConfig = {
             await build(layerViewWebviewConfig);
             await build(memoryViewWebviewConfig);
             await build(historyViewWebviewConfig);
+            await build(spriteViewWebviewConfig);
             console.log("build complete");
         }
     } catch (err) {

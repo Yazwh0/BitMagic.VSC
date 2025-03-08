@@ -1,0 +1,31 @@
+.sprite_img_container img
+{
+    zoom: 200%;
+    image-rendering: pixelated;
+    transform-origin: left;
+    /* outline: 1px solid darkred; */
+}
+
+.img_container
+{
+}
+
+.sprites
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));;
+}
+
+.sprite
+{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.sprite_img_container
+{
+    height: 128px;
+    width: 128px;
+    outline: 1px dashed #333
+}
+

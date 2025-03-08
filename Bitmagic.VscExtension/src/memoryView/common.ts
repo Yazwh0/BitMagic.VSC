@@ -15,4 +15,9 @@ export class messages
     public static getAllHistory = "getAllHistory";                    // DEBUGGER
     public static getMoreHistory = "getMoreHistory";                    // DEBUGGER
     public static resetHistory = "resetHistory";                    // DEBUGGER
+
+    public static spriteView = "spriteView";
+    public static getSprites = "getSprites";                    // DEBUGGER
+    public static setSpriteHighlight = "setDebugColours";
+    public static resetSpriteHighlight = "resetDebugColours";
 }

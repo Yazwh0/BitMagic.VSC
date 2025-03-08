@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.49",
+    "version": "0.1.50",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -159,6 +159,11 @@
             {
                 "command": "historyView.start",
                 "title": "Open The History View",
+                "category": "BitMagic"
+            },
+            {
+                "command": "spriteView.start",
+                "title": "Open The Sprite Viewer",
                 "category": "BitMagic"
             }
         ],
