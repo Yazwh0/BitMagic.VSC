@@ -404,6 +404,38 @@
     "windowScale": {
       "description": "Multiplier to scale the display window.",
       "type": "number"
+    },
+    "romSource": {
+      "$id": "RomSource[]",
+      "description": "Files to be loaded into ROM.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$id": "romSource",
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "filename": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bank": {
+            "type": "integer"
+          },
+          "address": {}
+        },
+        "required": [
+          "filename",
+          "bank",
+          "address"
+        ]
+      }
     }
   }
 }
