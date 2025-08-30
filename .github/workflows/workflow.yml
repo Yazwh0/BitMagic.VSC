@@ -40,37 +40,37 @@ jobs:
                 node-version: '24'
 
             - name: Install Packages
-              working-directory: ./BitMagic.VscExtension
+              working-directory: BitMagic.VscExtension
               run: npm install
 
             - name: Install TypeScript
-              working-directory: ./BitMagic.VscExtension
+              working-directory: BitMagic.VscExtension
               run: npm install -g typescript
 
             - name: Install VSCE
-              working-directory: ./BitMagic.VscExtension
+              working-directory: BitMagic.VscExtension
               run: npm install -g @vscode/vsce
 
             - name: Install OVSX
-              working-directory: ./BitMagic.VscExtension
+              working-directory: BitMagic.VscExtension
               run: npm install -g ovsx
 
             - name: Install Win-Node-Env
-              working-directory: ./BitMagic.VscExtension
+              working-directory: BitMagic.VscExtension
               run: npm install -g win-node-env
 
             - name: Compile Extension
-              working-directory: ./BitMagic.VscExtension
+              working-directory: BitMagic.VscExtension
               run: node ./esbuild.js
 
             - name: Compile and Create VSIX
-              working-directory: ./Bitmagic.VscExtension
+              working-directory: Bitmagic.VscExtension
               run: vsce package
 
             - name: Publish
-              working-directory: ./Bitmagic.VscExtension
+              working-directory: Bitmagic.VscExtension
               run: vsce publish -p ${{ secrets.VSCODEDEPLOY }}
 
             - name: Publish VSCodium
-              working-directory: ./Bitmagic.VscExtension
+              working-directory: Bitmagic.VscExtension
               run: npx ovsx publish -p ${{ secrets.VSCODIUM }}
