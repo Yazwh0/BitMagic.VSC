@@ -39,6 +39,9 @@ jobs:
               with:
                 node-version: '24'
 
+            - name: Show Files
+              run: ls -l
+
             - name: Install Packages
               working-directory: BitMagic.VscExtension
               run: npm install
