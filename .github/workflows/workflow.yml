@@ -55,9 +55,9 @@ jobs:
               working-directory: Bitmagic.VscExtension
               run: npm install -g ovsx
 
-            - name: Install Win-Node-Env
-              working-directory: Bitmagic.VscExtension
-              run: npm install -g win-node-env
+            # - name: Install Win-Node-Env
+            #   working-directory: Bitmagic.VscExtension
+            #   run: npm install -g win-node-env
 
             - name: Compile Extension
               working-directory: Bitmagic.VscExtension
