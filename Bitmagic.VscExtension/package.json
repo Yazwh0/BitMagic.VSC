@@ -270,7 +270,7 @@
         "@types/vscode-webview": "^1.57.5",
         "@vscode/debugprotocol": "^1.65.0",
         "@vscode/vsce": "^2.32.0",
-        "esbuild": "^0.16.10",
+        "esbuild": "^0.16.17",
         "esbuild-plugin-copy": "^2.0.1",
         "eslint": "^8.26.0"
     }
