@@ -172,7 +172,12 @@ const watchConfig = {
             console.log("build complete");
         }
     } catch (err) {
-        process.stderr.write(err.stderr);
+        if (err instanceof Error) {
+            process.stderr.write(`Error: ${err.message}\n`);
+        } else {
+            process.stderr.write(`Unknown error: ${String(err)}\n`);
+        }
+
         process.exit(1);
     }
 })();
