@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as Net from 'net';
 import AutoUpdater from './autoUpdater';
-import { platform } from 'os';
+import { platform, version } from 'os';
 import BitMagicDebugAdaptorTrackerFactory from './debugTracker';
 import DotNetInstaller from './dotnetinstaller';
 import EmulatorDownloader from './emulatorDownloader';
@@ -14,6 +14,7 @@ import { provideVSCodeDesignSystem, vsCodeButton } from "@vscode/webview-ui-tool
 import { MemoryView } from './memoryView/memoryView';
 import { HistoryView } from './historyView/historyView';
 import { SpriteView } from './spriteView/spriteView';
+import * as fs from 'fs';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -88,47 +89,39 @@ export function activate(context: vscode.ExtensionContext) {
 
 	vscode.workspace.onDidChangeConfiguration(evt => {
 		var startUpdater = false;
-		if (evt.affectsConfiguration(Constants.SettingsUseDevelop))
-		{
+		if (evt.affectsConfiguration(Constants.SettingsUseDevelop)) {
 			UpdateBitMagic = true;
 			startUpdater = true;
 		}
 
-		if (evt.affectsConfiguration(Constants.SettingsAutoUpdate))
-		{
+		if (evt.affectsConfiguration(Constants.SettingsAutoUpdate)) {
 			UpdateBitMagic = true;
 			startUpdater = true;
 		}
 
-		if (evt.affectsConfiguration(Constants.SettingsUseOwnDotnet))
-		{
+		if (evt.affectsConfiguration(Constants.SettingsUseOwnDotnet)) {
 			UpdateBitMagic = true;
 			startUpdater = true;
 		}
 
-		if (evt.affectsConfiguration(Constants.SettingsEmulatorVersion))
-		{
+		if (evt.affectsConfiguration(Constants.SettingsEmulatorVersion)) {
 			UpdateOfficialEmulator = true;
 			startUpdater = true;
 		}
 
-		if (evt.affectsConfiguration(Constants.SettingsDownloadEmulator))
-		{
+		if (evt.affectsConfiguration(Constants.SettingsDownloadEmulator)) {
 			UpdateOfficialEmulator = true;
 			startUpdater = true;
 		}
 
-		if (startUpdater)
-		{
+		if (startUpdater) {
 			setTimeout(() => {
-				if (UpdateBitMagic)
-				{
+				if (UpdateBitMagic) {
 					new AutoUpdater().CheckForUpdate(context, bmOutput, _dni);
 					UpdateBitMagic = false;
 				}
 
-				if (UpdateOfficialEmulator)
-				{
+				if (UpdateOfficialEmulator) {
 					new EmulatorDownloader().CheckEmulator(context, bmOutput);
 					UpdateOfficialEmulator = false;
 				}
@@ -144,6 +137,11 @@ export function activate(context: vscode.ExtensionContext) {
 	MemoryView.activate(context);
 	HistoryView.activate(context);
 	SpriteView.activate(context);
+
+	// boilerplate
+
+	context.subscriptions.push(vscode.commands.registerCommand('boilerplate.createProject', createBoilerplate));
+
 
 	// Visualiser
 	// vscode.window.registerTreeDataProvider('x16-visualiser', new VisualiserTree())
@@ -176,6 +174,61 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 }
 
+async function createBoilerplate() {
+	const folderUri = await vscode.window.showOpenDialog({
+		canSelectFolders: true,
+		openLabel: 'Select folder for boilerplate'
+	});
+
+	if (!folderUri || folderUri.length === 0) {
+		vscode.window.showErrorMessage('No folder selected');
+		return;
+	}
+
+	const basePath = folderUri[0].fsPath;
+
+	const folders = ['.vscode', 'src', 'bin', 'app'];
+	const files = {
+		'src/main.bmasm': 'import BM="bm.bmasm";\n\nBM.X16Header();\n\tnop\n\n; your code here\n\n\tstp\n.loop:\n\tjmp -loop\n',
+		'project.json': JSON.stringify({
+			files: [{ type: "bitmagic", filename: "src/main.bmasm" }],
+			outputFolder: "app",
+			memoryFillValue: 123,
+			windowScale: 2,
+			compileOptions: {
+				binFolder: "bin",
+				displaySegments: true,
+				saveGeneratedBmasm: true
+			},
+			sdCardFiles: []
+		}, null, 2),
+		'.vscode/launch.json': JSON.stringify({
+			version: "0.2.0",
+			configurations: [
+				{
+					type: "bmasm",
+					request: "launch",
+					name: "Debug Application",
+					program: "${workspaceFolder}/project.json",
+					stopOnEntry: false,
+					debugArgs: [],
+					cwd: "${workspaceRoot}"
+				}]
+		}, null, 2)
+	};
+
+	folders.forEach(folder => {
+		fs.mkdirSync(path.join(basePath, folder), { recursive: true });
+	});
+
+	for (const [filename, content] of Object.entries(files)) {
+		fs.writeFileSync(path.join(basePath, filename), content);
+	}
+
+	const uri = vscode.Uri.file(basePath);
+	await vscode.commands.executeCommand('vscode.openFolder', uri, true);
+}
+
 class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
 	private server?: Net.Server;
@@ -185,8 +238,8 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 	private readonly settingsDebugger = Constants.SettingsDebuggerPath;
 	private readonly settingsUseOwnDotnet = Constants.SettingsUseOwnDotnet;
 
-    private readonly settingsEmulatorLocation = Constants.SettingsEmulatorLocation;
-    private readonly settingsCustomEmulatorLocation = Constants.SettingsCustomEmulatorLocation;
+	private readonly settingsEmulatorLocation = Constants.SettingsEmulatorLocation;
+	private readonly settingsCustomEmulatorLocation = Constants.SettingsCustomEmulatorLocation;
 
 	createDebugAdapterDescriptor(session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
 		const config = vscode.workspace.getConfiguration();
@@ -233,37 +286,32 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 		return undefined;
 	}
 
-	private GetDebugAdaptor(debuggerLocation: string, config: vscode.WorkspaceConfiguration, dni: DotNetInstaller) : vscode.DebugAdapterExecutable
-	{
+	private GetDebugAdaptor(debuggerLocation: string, config: vscode.WorkspaceConfiguration, dni: DotNetInstaller): vscode.DebugAdapterExecutable {
 		const _useOwnDotnet = config.get(this.settingsUseOwnDotnet, false);
 		var emulatorLocation = config.get(this.settingsCustomEmulatorLocation, "");
 
-		if (!emulatorLocation)
-		{
+		if (!emulatorLocation) {
 			emulatorLocation = config.get(this.settingsEmulatorLocation, "");
 		}
 
 		let args: string[] = [];
 
-		if (_useOwnDotnet)
-		{
+		if (_useOwnDotnet) {
 			args.push(debuggerLocation.replace('.exe', '') + '.dll');
 		}
 
-		if (emulatorLocation)
-		{
+		if (emulatorLocation) {
 			args.push(`--officialEmulator`);
 			args.push(emulatorLocation)
 		}
 
-		if (_startOfficialEmulator)
-		{
+		if (_startOfficialEmulator) {
 			args.push("--runInOfficialEmulator");
 			_startOfficialEmulator = false;
 		}
 
 		const location = _useOwnDotnet ? dni.Location : debuggerLocation;
-		var options =  new DapOptions( path.dirname(location) );
+		var options = new DapOptions(path.dirname(location));
 
 		bmOutput.appendLine(`Running: ${location} ${args.join(' ')}`);
 
@@ -277,10 +325,8 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 	}
 }
 
-class DapOptions implements vscode.DebugAdapterExecutableOptions
-{
-	constructor(cwd:string)
-	{
+class DapOptions implements vscode.DebugAdapterExecutableOptions {
+	constructor(cwd: string) {
 		this.cwd = cwd;
 	}
 	cwd?: string;

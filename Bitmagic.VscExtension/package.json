@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.52",
+    "version": "0.1.53",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -11,7 +11,11 @@
         "vscode": "^1.86.0"
     },
     "pricing": "Free",
-    "keywords": [ "X16" , "CommanderX16" ],
+    "keywords": [
+        "X16",
+        "CommanderX16",
+        "65c02"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/Yazwh0/BitMagic.git"
@@ -30,7 +34,9 @@
         "watch": "node ./esbuild.js --watch",
         "lint": "eslint src --ext ts"
     },
-    "_unused" : { "watch": "tsc -watch -p ./src" },
+    "_unused": {
+        "watch": "tsc -watch -p ./src"
+    },
     "main": "./out/extension.js",
     "extensionDependencies": [
         "mindaro-dev.file-downloader",
@@ -39,7 +45,8 @@
     "activationEvents": [
         "onDebugResolve:bmasm",
         "workspaceContains:**/*.bmasm",
-        "onDebugInitialConfigurations"
+        "onDebugInitialConfigurations",
+        "onCommand:bitmagic.createBoilerplate"
     ],
     "contributes": {
         "configuration": {
@@ -167,6 +174,11 @@
                 "command": "spriteView.start",
                 "title": "Open The Sprite Viewer",
                 "category": "BitMagic"
+            },
+            {
+                "command": "boilerplate.createProject",
+                "title": "Create BitMagic Project",
+                "category": "BitMagic"
             }
         ],
         "debuggers": [
@@ -229,6 +241,18 @@
             {
                 "fileMatch": "project.json",
                 "url": "./debugProject.schema.json"
+            }
+        ],
+        "viewsWelcome": [
+            {
+                "view": "bitmagicWelcomeView",
+                "contents": "### Welcome to BitMagic!\n\n- [Get Started](https://bitmagic.org/getting-started/)\n- [Documentation](https://bitmagic.org/docs/)\n",
+                "actions": [
+                    {
+                        "title": "Create New Project",
+                        "command": "boilerplate.createProject"
+                    }
+                ]
             }
         ]
     },
