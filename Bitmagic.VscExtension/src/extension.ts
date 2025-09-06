@@ -193,7 +193,7 @@ async function createBoilerplate() {
 		'project.json': JSON.stringify({
 			files: [{ type: "bitmagic", filename: "src/main.bmasm" }],
 			outputFolder: "app",
-			memoryFillValue: 123,
+			memoryFillValue: 192,
 			windowScale: 2,
 			compileOptions: {
 				binFolder: "bin",
@@ -214,7 +214,8 @@ async function createBoilerplate() {
 					debugArgs: [],
 					cwd: "${workspaceRoot}"
 				}]
-		}, null, 2)
+		}, null, 2),
+		".gitignore" : "bin/\napp/\n"
 	};
 
 	folders.forEach(folder => {
