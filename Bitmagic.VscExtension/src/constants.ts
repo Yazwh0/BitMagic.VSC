@@ -9,6 +9,8 @@ export default class Constants
     public static readonly SettingsEmulatorLocation = 'bitMagic.officialEmulator.officialEmulatorLocation';
     public static readonly SettingsEmulatorVersion = 'bitMagic.officialEmulator.version';
     public static readonly SettingsCustomEmulatorLocation = 'bitMagic.officialEmulator.customOfficialEmulatorLocation';
-    public static readonly SettingsDebuggerPort = 'bitMagic.debugger.port';
+    public static readonly SettingsLocalDebugger = 'bitMagic.localDebug.enable';
+    public static readonly SettingsDebuggerDapPort = 'bitMagic.localDebug.dapPort';
+    public static readonly SettingsDebuggerLspPort = 'bitMagic.localDebug.lspPort';
     public static readonly SettingsDisablePlatformCheck = 'bitMagic.debugger.disablePlatformCheck'
 }

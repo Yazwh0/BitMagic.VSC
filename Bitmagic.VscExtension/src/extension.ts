@@ -15,11 +15,17 @@ import { MemoryView } from './memoryView/memoryView';
 import { HistoryView } from './historyView/historyView';
 import { SpriteView } from './spriteView/spriteView';
 import * as fs from 'fs';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
+import * as cp from 'child_process';
+import getPort from 'get-port';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
 var _dni: DotNetInstaller;
 var _startOfficialEmulator = false;
+
+let lspClient: LanguageClient;
+let serverProcess: cp.ChildProcess;
 
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
@@ -169,9 +175,80 @@ export function activate(context: vscode.ExtensionContext) {
 
 	_dni = new DotNetInstaller();
 	// first check that we have the framework installed
-	new AutoUpdater().CheckForUpdate(context, bmOutput, _dni).then(_ => {
+	new AutoUpdater().CheckForUpdate(context, bmOutput, _dni).then(async _ => {
 		new EmulatorDownloader().CheckEmulator(context, bmOutput);
+
+		// LSP
+		await startLsp();
 	});
+}
+
+async function startLsp() {
+
+	const settingsLocalDebugging = Constants.SettingsLocalDebugger;
+	const settingsLspPortNumber = Constants.SettingsDebuggerLspPort;
+
+	const clientOptions: LanguageClientOptions = {
+		documentSelector: [{ scheme: 'file', language: 'bmasm' }, { scheme: 'file', pattern: '**/project.json' }],
+		synchronize: {
+			fileEvents: [
+				vscode.workspace.createFileSystemWatcher('**/*.bmasm'),
+				vscode.workspace.createFileSystemWatcher('**/project.json')
+			]
+		}
+	};
+
+	const config = vscode.workspace.getConfiguration();
+	let localDebugging = config.get(settingsLocalDebugging, false);
+	let serverOptions: ServerOptions;
+
+	if (localDebugging) {
+		const portNumber = config.get(settingsLspPortNumber, 2564);
+		const connectionInfo = { port: portNumber, host: 'localhost' };
+
+		serverOptions = () => {
+			const socket = Net.connect(connectionInfo);
+			const result = {
+				reader: socket,
+				writer: socket
+			};
+			bmOutput.appendLine(`Starting debug LSP server.`);
+			return Promise.resolve(result);
+		};
+	}
+	else {
+		var lspPort = await getPort();
+		var dapPort = await getPort();
+
+		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, [ '--lspport', lspPort.toString(), '--dapport', dapPort.toString()]);
+
+		if (!debuggerLocation || !debuggerLocation.location || !fs.existsSync(debuggerLocation?.location)) {
+			bmOutput.appendLine(`File not found: '${debuggerLocation?.location}', LSP server not started.`);
+			bmOutput.show();
+			return;
+		}
+		else {
+			serverOptions = () => {
+				return new Promise((resolve, reject) => {
+						bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
+					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'] });
+					const connectionInfo = { port: lspPort, host: 'localhost' };
+					setTimeout(() => {
+						const socket = Net.connect(connectionInfo);
+						const result = {
+							reader: socket,
+							writer: socket
+						};
+						return resolve(result);
+					}, 1000);
+				});
+			};
+		}
+	}
+
+	lspClient = new LanguageClient('bmasm-lsp', 'BMASM Language Server', serverOptions, clientOptions);
+
+	lspClient.start();
 }
 
 async function createBoilerplate() {
@@ -215,7 +292,7 @@ async function createBoilerplate() {
 					cwd: "${workspaceRoot}"
 				}]
 		}, null, 2),
-		".gitignore" : "bin/\napp/\n"
+		".gitignore": "bin/\napp/\n"
 	};
 
 	folders.forEach(folder => {
@@ -230,10 +307,82 @@ async function createBoilerplate() {
 	await vscode.commands.executeCommand('vscode.openFolder', uri, true);
 }
 
+class BitmagicExecutableFinder {
+	private static readonly settingsAlternativeDebugger = Constants.SettingsAlternativeDebugger;
+	private static readonly settingsDebugger = Constants.SettingsDebuggerPath;
+	private static readonly settingsEmulatorLocation = Constants.SettingsEmulatorLocation;
+	private static readonly settingsCustomEmulatorLocation = Constants.SettingsCustomEmulatorLocation;
+	private static readonly settingsUseOwnDotnet = Constants.SettingsUseOwnDotnet;
+
+	public static GetExecutable(dni: DotNetInstaller, extraParameters: string[] | undefined): ExecutableLocation | undefined {
+		const config = vscode.workspace.getConfiguration();
+		const os = platform();
+
+		const exeExtension = os == 'win32' ? 'X16D.exe' : 'X16D';
+		var debuggerTarget = config.get(this.settingsAlternativeDebugger, '');
+
+		if (!debuggerTarget)
+			debuggerTarget = config.get(this.settingsDebugger, '');
+
+		if (!debuggerTarget.endsWith(path.sep))
+			debuggerTarget += path.sep;
+
+		if (debuggerTarget)
+			return this.GetExecutableLocation(debuggerTarget + exeExtension, dni, extraParameters);
+
+		debuggerTarget = config.get(this.settingsDebugger, '');
+
+		if (debuggerTarget)
+			return this.GetExecutableLocation(debuggerTarget + exeExtension, dni, extraParameters);
+
+		return undefined;
+	}
+
+	private static GetExecutableLocation(debuggerLocation: string, dni: DotNetInstaller, extraParameters: string[] | undefined): ExecutableLocation {
+		const config = vscode.workspace.getConfiguration();
+		const _useOwnDotnet = config.get(this.settingsUseOwnDotnet, false);
+		var emulatorLocation = config.get(this.settingsCustomEmulatorLocation, "");
+
+		if (!emulatorLocation) {
+			emulatorLocation = config.get(this.settingsEmulatorLocation, "");
+		}
+
+		let args: string[] = [];
+
+		if (_useOwnDotnet) {
+			args.push(debuggerLocation.replace('.exe', '') + '.dll');
+		}
+
+		if (emulatorLocation) {
+			args.push(`--officialEmulator`);
+			args.push(emulatorLocation)
+		}
+
+		if (_startOfficialEmulator) {
+			args.push("--runInOfficialEmulator");
+			_startOfficialEmulator = false;
+		}
+
+		if (extraParameters) {
+			args.push(...extraParameters);
+		}
+
+		const location = _useOwnDotnet ? dni.Location : debuggerLocation;
+
+		return new ExecutableLocation(location, args);
+	}
+}
+
+class ExecutableLocation {
+	constructor(public readonly location: string, public readonly args: string[]) {
+	}
+}
+
 class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
 	private server?: Net.Server;
-	private readonly settingsPortNumber = Constants.SettingsDebuggerPort;
+	private readonly settingsLocalDebugging = Constants.SettingsLocalDebugger;
+	private readonly settingsPortNumber = Constants.SettingsDebuggerDapPort;
 	private readonly settingsDisablePlatformCheck = Constants.SettingsDisablePlatformCheck;
 	private readonly settingsAlternativeDebugger = Constants.SettingsAlternativeDebugger;
 	private readonly settingsDebugger = Constants.SettingsDebuggerPath;
@@ -255,11 +404,13 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 			}
 		}
 
-		var portNumber = config.get(this.settingsPortNumber, undefined);
+		let localDebugging = config.get(this.settingsLocalDebugging, false);
 
-		if (portNumber) {
+		if (localDebugging) {
+			var portNumber = config.get(this.settingsPortNumber, undefined);
 			// make VS Code connect to debug server
-			return new vscode.DebugAdapterServer(portNumber);
+			if (portNumber)
+				return new vscode.DebugAdapterServer(portNumber);
 		}
 
 		if (executable)  // overridden somewhere?
@@ -335,5 +486,8 @@ class DapOptions implements vscode.DebugAdapterExecutableOptions {
 
 export function deactivate() {
 	bmOutput.appendLine("Deactivate");
+
+	if (lspClient)
+		lspClient.stop();
 	// do nothing.
 }

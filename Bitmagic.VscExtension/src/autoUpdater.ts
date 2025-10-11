@@ -32,14 +32,14 @@ export default class AutoUpdater {
             var autoUpdate = config.get(Constants.SettingsAutoUpdate, true);
 
             if (!autoUpdate) {
-                output.append('Skipping update check as not enabled.');
+                output.appendLine('Skipping update check as not enabled.');
                 return;
             }
 
             var debuggerTarget = config.get(Constants.SettingsAlternativeDebugger, '');
 
             if (debuggerTarget) {
-                output.append('Skipping update check as a custom location for the debugger is used.');
+                output.appendLine('Skipping update check as a custom location for the debugger is used.');
                 return;
             }
 
@@ -119,7 +119,7 @@ export default class AutoUpdater {
                 output.appendLine("Error.");
                 output.show();
                 return;
-            }    
+            }
             output.appendLine('Done.');
 
             fsPath = file.fsPath;
@@ -132,7 +132,7 @@ export default class AutoUpdater {
                 output.appendLine("Error.");
                 output.show();
                 return;
-            }    
+            }
             output.appendLine('Done.');
 
             fsPath = path.dirname(file.fsPath);

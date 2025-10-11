@@ -11,6 +11,8 @@
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
+                "--new-window",
+                "--disable-restore-session",
                 "C:\\Documents\\Source\\BitMagic\\BitMagic.X16Debugger\\TestProject"
             ],
             "preLaunchTask": "buildExtension"

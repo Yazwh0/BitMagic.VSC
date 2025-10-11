@@ -2,8 +2,8 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.54",
-    "preview": false,
+    "version": "0.1.55",
+    "preview": true,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
     "homepage": "https://bitmagic.org/",
@@ -55,60 +55,80 @@
                 "bitMagic.debugger.autoUpdateDebugger": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Automatically update the local copy of the debugger."
+                    "description": "Automatically update the local copy of the debugger.",
+                    "order": 0
                 },
                 "bitMagic.officialEmulator.downloadOfficialEmulator": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Automatically download the official emulator for the ROM.BIN and symbol files."
+                    "description": "Automatically download the official emulator for the ROM.BIN and symbol files.",
+                    "order": 1
                 },
                 "bitMagic.officialEmulator.officialEmulatorLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "Path to the official emulator that is automatically downloaded."
+                    "description": "Path to the official emulator that is automatically downloaded.",
+                    "order": 2
                 },
                 "bitMagic.officialEmulator.customOfficialEmulatorLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "Custom Location of the official emulator for the ROM.BIN and symbol files. This can be overridden in the project.json file."
+                    "description": "Custom Location of the official emulator for the ROM.BIN and symbol files. This can be overridden in the project.json file.",
+                    "order": 3
                 },
                 "bitMagic.officialEmulator.version": {
                     "type": "string",
                     "default": "r48",
-                    "description": "Version of the official emulator to download."
+                    "description": "Version of the official emulator to download.",
+                    "order": 4
                 },
                 "bitMagic.debugger.useBundledDotnet": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Automatically download a copy of the dotnet runtime for the extension."
+                    "description": "Automatically download a copy of the dotnet runtime for the extension.",
+                    "order": 5
                 },
                 "bitMagic.debugger.path": {
                     "type": "string",
                     "default": "",
-                    "description": "Path to the debugger that is automatically downloaded."
-                },
-                "bitMagic.debugger.alternativePath": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Path to an alternative copy of the debugger."
-                },
-                "bitMagic.debugger.port": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "Port to use to communicate with the debugger. Will use std in\\out if not set. (Only really used for debugging the debugger.)"
+                    "description": "Path to the debugger that is automatically downloaded.",
+                    "order": 6
                 },
                 "bitMagic.debugger.developRelease": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Use the develop release channel. This is for pre-release and experimental features. Use with caution!"
+                    "description": "Use the develop release channel. This is for pre-release and experimental features. Use with caution!",
+                    "order": 7
                 },
                 "bitMagic.debugger.disablePlatformCheck": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Disable the platform check, to let you experiment on non-supported platforms."
+                    "description": "Disable the platform check, to let you experiment on non-supported platforms.",
+                    "order": 8
+                },
+                "bitMagic.debugger.alternativePath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to an alternative copy of the debugger.",
+                    "order": 9
+                },
+                "bitMagic.localDebug.enable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a running version of BitMagic for debugging BitMagic itself. (Will require a restart)",
+                    "order": 10
+                },
+                "bitMagic.localDebug.dapPort": {
+                    "type": "integer",
+                    "default": "2563",
+                    "description": "Port to use to communicate with the locally running debugger for DAP. (Only used when debugging the debugger.)",
+                    "order": 11
+                },
+                "bitMagic.localDebug.lspPort": {
+                    "type": "integer",
+                    "default": "2564",
+                    "description": "Port to use to communicate with the locally running debugger for LSP. (Only used when debugging the debugger.)",
+                    "order": 12
                 }
             }
         },
@@ -261,7 +281,9 @@
         "@vscode/webview-ui-toolkit": "^1.4.0",
         "decompress": "^4.2.1",
         "decompress-targz": "^4.1.1",
+        "get-port": "^7.1.0",
         "vsce": "^2.15.0",
+        "vscode-languageclient": "^9.0.1",
         "vscode-nls": "^5.2.0"
     },
     "devDependencies": {
