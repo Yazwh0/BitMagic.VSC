@@ -18,6 +18,8 @@ import * as fs from 'fs';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import * as cp from 'child_process';
 import getPort from 'get-port';
+import { Console } from 'console';
+import { GeneratedFileDocumentProvider } from './generatedFiles';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -180,6 +182,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// LSP
 		await startLsp();
+
+		vscode.workspace.registerTextDocumentContentProvider('bitmagic', new GeneratedFileDocumentProvider(lspClient));
+
+		vscode.commands.registerCommand('bitmagic.openpreview', async (i) => {
+			const filename = path.basename(i.path).replace(".bmasm", ".generated.bmasm");
+
+			const uri = vscode.Uri.parse(`bitmagic:/generated/${filename}`);
+			const doc = await vscode.workspace.openTextDocument(uri);
+			const editor = await vscode.window.showTextDocument(doc);
+
+			// lspClient.sendRequest("bitmagic/preview", { Filename: i.path}).then(i => {
+			// 	console.log(i);
+			// });
+		})
 	});
 }
 
@@ -220,7 +236,7 @@ async function startLsp() {
 		var lspPort = await getPort();
 		var dapPort = await getPort();
 
-		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, [ '--lspport', lspPort.toString(), '--dapport', dapPort.toString()]);
+		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, ['--lspport', lspPort.toString(), '--dapport', dapPort.toString()]);
 
 		if (!debuggerLocation || !debuggerLocation.location || !fs.existsSync(debuggerLocation?.location)) {
 			bmOutput.appendLine(`File not found: '${debuggerLocation?.location}', LSP server not started.`);
@@ -230,7 +246,7 @@ async function startLsp() {
 		else {
 			serverOptions = () => {
 				return new Promise((resolve, reject) => {
-						bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
+					bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
 					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'] });
 					const connectionInfo = { port: lspPort, host: 'localhost' };
 					setTimeout(() => {
@@ -249,6 +265,10 @@ async function startLsp() {
 	lspClient = new LanguageClient('bmasm-lsp', 'BMASM Language Server', serverOptions, clientOptions);
 
 	lspClient.start();
+
+	// lspClient.onNotification('bitmagic/generatedchange', (params: GeneratedFileChangesParameters) => {
+	// 	console.log(params);
+	// });
 }
 
 async function createBoilerplate() {

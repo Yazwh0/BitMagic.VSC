@@ -18,6 +18,14 @@ export default class AutoUpdater {
     public async CheckForUpdate(context: vscode.ExtensionContext, output: vscode.OutputChannel, dni: DotNetInstaller) {
         try {
             var config = vscode.workspace.getConfiguration();
+            const localDebugger = config.get(Constants.SettingsLocalDebugger, false);
+
+            if (localDebugger)
+            {
+                output.appendLine('Skipping update check as the local debugger is set.');
+                output.show();
+                return;
+            }
 
             const _useOwnDotnet = config.get(Constants.SettingsUseOwnDotnet, false);
 
