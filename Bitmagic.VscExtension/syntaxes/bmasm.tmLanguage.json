@@ -148,7 +148,7 @@
 			"patterns": [
 				{
 					"name": "entity.name.label.bmasm",
-					"match": "^\\.\\w+;"
+					"match": "^\\.\\w+:"
 				}
 			]
 		},
