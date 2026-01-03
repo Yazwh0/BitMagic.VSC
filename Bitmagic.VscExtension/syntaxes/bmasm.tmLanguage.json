@@ -2,6 +2,8 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "BitMagic X16 Asm",
 	"patterns": [
+		{ "include" : "#asm-blockstarts" },
+		{ "include" : "#asm-blockends" },
 		{ "include" : "#asm-strings" },
 		{ "include" : "#asm-literals" },
 		{ "include" : "#asm-comments" },
@@ -10,8 +12,6 @@
 		{ "include" : "#asm-labels" },
 		{ "include" : "#asm-pseudofunctions" },
 		{ "include" : "#asm-variabledefinition" },
-		{ "include" : "#asm-blockstarts" },
-		{ "include" : "#asm-blockends" },
 		{ "include" : "#magic-import" },
 		{ "include" : "#magic-include" },
 		{ "include" : "#magic-library"},
@@ -115,7 +115,7 @@
 		"asm-variabledefinition": {
 			"patterns": [
 				{
-					"match": "(\\.var|\\.padvar|\\.constvar|\\.debugalias)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string|proc))\\s+(?i:(ptr))?",
+					"match": "(\\.var|\\.padvar|\\.constvar|\\.debugalias)\\s+(?i:(byte|sbyte|short|ushort|int|uint|long|ulong|string|proc))(?:\\[\\d+\\])?\\s+(?i:(ptr))?",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.pseudofunction.bmasm"
@@ -135,7 +135,7 @@
 				{
 					"name": "keyword.control.block.bmasm",
 					"contentName": "entity.name.function.bmasm",
-					"match": "\\.(?i:proc|scope|segment)\\b"
+					"match": "[\\.\\!](?i:proc|scope|segment)\\b"
 				}
 			]
 		},
