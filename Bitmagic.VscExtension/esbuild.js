@@ -70,6 +70,28 @@ const historyViewWebviewConfig = {
     ],
 };
 
+const cpuProfilerViewWebviewConfig = {
+    ...baseConfig,
+    target: "es2020",
+    format: "esm",
+    entryPoints: [
+        "./src/cpuProfilerView/cpuProfilerView.webview.ts"
+    ],
+    outdir: "./out/",
+    plugins: [
+        // Copy webview css files to `out` directory unaltered
+        copy({
+            resolveFrom: "cwd",
+            assets: {
+                from: [
+                    "./src/cpuProfilerView/cpuProfilerView.css",
+                ],
+                to: ["./out"],
+            },
+        }),
+    ],
+};
+
 const memoryViewWebviewConfig = {
     ...baseConfig,
     target: "es2020",
@@ -140,6 +162,7 @@ const watchConfig = {
     try {
         if (args.includes("--watch")) {
             // Build and watch extension and webview code
+            // not sure this works as is
             console.log("[watch] build started");
             await build({
                 ...extensionConfig,
@@ -161,6 +184,10 @@ const watchConfig = {
                 ...spriteViewWebviewConfig,
                 ...watchConfig,
             });
+            await build({
+                ...cpuProfilerViewWebviewConfig,
+                ...watchConfig,
+            });
             console.log("[watch] build finished");
         } else {
             // Build extension and webview code
@@ -169,6 +196,7 @@ const watchConfig = {
             await build(memoryViewWebviewConfig);
             await build(historyViewWebviewConfig);
             await build(spriteViewWebviewConfig);
+            await build(cpuProfilerViewWebviewConfig);
             console.log("build complete");
         }
     } catch (err) {

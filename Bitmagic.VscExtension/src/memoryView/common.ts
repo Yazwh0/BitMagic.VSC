@@ -20,4 +20,9 @@ export class messages
     public static getSprites = "getSprites";                    // DEBUGGER
     public static setSpriteHighlight = "setDebugColours";
     public static resetSpriteHighlight = "resetDebugColours";
+
+    public static getCpuProfile = "getCpuProfile";
+    public static getCpuProfileImage = "getCpuProfileImage";
+    public static updateCpuProfileImage = "updateCpuProfileImage";
+    public static updateCpuProfiler = "updateCpuProfiler";
 }

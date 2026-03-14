@@ -20,6 +20,7 @@ import * as cp from 'child_process';
 import getPort from 'get-port';
 import { Console } from 'console';
 import { GeneratedFileDocumentProvider } from './generatedFiles';
+import { CpuProfilerView } from './cpuProfilerView/cpuProfilerView';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -145,6 +146,7 @@ export function activate(context: vscode.ExtensionContext) {
 	MemoryView.activate(context);
 	HistoryView.activate(context);
 	SpriteView.activate(context);
+	CpuProfilerView.activate(context);
 
 	// boilerplate
 

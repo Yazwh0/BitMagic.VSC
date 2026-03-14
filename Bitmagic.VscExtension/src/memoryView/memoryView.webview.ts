@@ -144,16 +144,16 @@ function updateSearchResults(messageData: MemoryValueTrackerResponse) {
 
     switch (messageData.SearchType) {
         case "Equal":
-            header = "= $" + messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??";
+            header = "= $" + (messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??");
             break;
         case "Not Equal":
-            header = "!= $" + messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??";
+            header = "!= $" + (messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??");
             break;
         case "Less Than":
-            header = "< $" + messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??";
+            header = "< $" + (messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??");
             break;
         case "Greater Than":
-            header = "> $" + messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??";
+            header = "> $" + (messageData.ToFind?.toString(16).padStart(padding, "0") ?? "??");
             break;
         case "Changed":
             header = "Changed"
