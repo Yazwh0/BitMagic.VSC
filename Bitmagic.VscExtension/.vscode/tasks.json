@@ -2,9 +2,14 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type" : "shell",
+            // "process" runs `node` directly on the host OS with no shell involved, so it
+            // can't be routed through `wsl.exe -e node` by the terminal profile settings.
+            "type": "process",
             "label": "buildExtension",
-            "command" : "node ./esbuild.js"
+            "command": "node",
+            "args": ["./esbuild.js"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
         }
     ]
 }

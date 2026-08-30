@@ -15,7 +15,7 @@ import { MemoryView } from './memoryView/memoryView';
 import { HistoryView } from './historyView/historyView';
 import { SpriteView } from './spriteView/spriteView';
 import * as fs from 'fs';
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind, RevealOutputChannelOn } from 'vscode-languageclient/node';
 import * as cp from 'child_process';
 import getPort from 'get-port';
 import { Console } from 'console';
@@ -208,6 +208,7 @@ async function startLsp() {
 
 	const clientOptions: LanguageClientOptions = {
 		documentSelector: [{ scheme: 'file', language: 'bmasm' }, { scheme: 'file', pattern: '**/project.json' }],
+		revealOutputChannelOn: RevealOutputChannelOn.Error,
 		synchronize: {
 			fileEvents: [
 				vscode.workspace.createFileSystemWatcher('**/*.bmasm'),
@@ -250,6 +251,11 @@ async function startLsp() {
 				return new Promise((resolve, reject) => {
 					bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
 					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'] });
+					// Drain the child's console output; otherwise it's invisible and the
+					// pipe buffer can eventually stall X16D.
+					serverProcess.stdout?.on('data', d => bmOutput.append(d.toString()));
+					serverProcess.stderr?.on('data', d => bmOutput.append(d.toString()));
+					serverProcess.on('exit', code => bmOutput.appendLine(`LSP server exited (${code}).`));
 					const connectionInfo = { port: lspPort, host: 'localhost' };
 					setTimeout(() => {
 						const socket = Net.connect(connectionInfo);
