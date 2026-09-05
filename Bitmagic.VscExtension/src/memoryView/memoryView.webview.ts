@@ -164,8 +164,8 @@ function updateSearchResults(messageData: MemoryValueTrackerResponse) {
         case "Gone Up":
             header = "Gone Up"
             break;
-        case "Down Down":
-            header = "Done Down"
+        case "Gone Down":
+            header = "Gone Down"
             break;
     }
 
