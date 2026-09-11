@@ -5,6 +5,7 @@
 		{ "include" : "#asm-blockstarts" },
 		{ "include" : "#asm-blockends" },
 		{ "include" : "#asm-strings" },
+		{ "include" : "#asm-charliteral" },
 		{ "include" : "#asm-literals" },
 		{ "include" : "#asm-comments" },
 		{ "include" : "#asm-operators" },
@@ -27,6 +28,11 @@
 					"match": ";.*$"
 				},
 				{
+					"comment": "// is also accepted as a line comment on a directive line",
+					"name": "comment.line.bmasm",
+					"match": "//.*$"
+				},
+				{
 					"name": "comment.block.bmasm",
 					"begin": "/\\*",
 					"beginCaptures": {
@@ -47,15 +53,15 @@
 			"patterns": [
 				{
 					"name": "constant.numeric.binary.bmasm",
-					"match": "(%[01]+\\b)|(0b[01]+\\b)"
+					"match": "(%[01_]+\\b)|(0b[01_]+\\b)"
 				},
 				{
 					"name": "constant.numeric.hex.bmasm",
-					"match": "(\\$[0-9A-Fa-f]+\\b)|(0x[0-9A-Fa-f]+\\b)"
+					"match": "(\\$[0-9A-Fa-f_]+\\b)|(0x[0-9A-Fa-f_]+\\b)"
 				},
 				{
 					"name": "constant.numeric.decimal.bmasm",
-					"match": "\\b[0-9]+\\b"
+					"match": "\\b[0-9_]+\\b"
 				},
 				{
 					"name": "constant.language.unnamed-label.bmasm",
@@ -71,6 +77,15 @@
 				{
 					"name": "constant.character.escape.bmasm",
 					"match": "\\\\."
+				}
+			]
+		},
+		"asm-charliteral": {
+			"patterns": [
+				{
+					"comment": "'A' as an expression evaluates to its character code, see Compiler/Expressions.md",
+					"name": "string.quoted.single.bmasm",
+					"match": "'\\\\?.'"
 				}
 			]
 		},
