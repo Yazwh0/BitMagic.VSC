@@ -13,7 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                 submodules: recursive
 
@@ -35,7 +35,7 @@ jobs:
             #     echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
 
             - name: Install Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v7
               with:
                 node-version: '24'
 
@@ -64,7 +64,7 @@ jobs:
               run: vsce package
 
             - name: Upload VSIX
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                 name: vsix
                 path: Bitmagic.VscExtension/*.vsix
@@ -76,13 +76,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Download VSIX
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                 name: vsix
                 path: Bitmagic.VscExtension
 
             - name: Install Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v7
               with:
                 node-version: '24'
 
@@ -99,13 +99,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Download VSIX
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                 name: vsix
                 path: Bitmagic.VscExtension
 
             - name: Install Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v7
               with:
                 node-version: '24'
 

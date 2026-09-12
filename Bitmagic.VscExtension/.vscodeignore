@@ -2,3 +2,10 @@
 .vscode-test/**
 .gitignore
 vsc-extension-quickstart.md
+node_modules/**
+src/**
+esbuild.js
+package-lock.json
+*.vsix
+create_extension.bat
+*.code-workspace
