@@ -250,7 +250,7 @@ async function startLsp() {
 			serverOptions = () => {
 				return new Promise((resolve, reject) => {
 					bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
-					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'] });
+					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'], cwd: path.dirname(debuggerLocation?.location) });
 					// Drain the child's console output; otherwise it's invisible and the
 					// pipe buffer can eventually stall X16D.
 					serverProcess.stdout?.on('data', d => bmOutput.append(d.toString()));
