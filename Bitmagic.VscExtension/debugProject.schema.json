@@ -316,6 +316,10 @@
           "description": "Display segments.",
           "type": "boolean"
         },
+        "displaySymbols": {
+          "description": "Display symbol loading.",
+          "type": "boolean"
+        },
         "displayCode": {
           "description": "Display generated code.",
           "type": "boolean"
@@ -345,6 +349,10 @@
         },
         "savePreGeneratedTemplate": {
           "description": "Save Generated Pre-Template BMASM \\ C# files in the bin folder.",
+          "type": "boolean"
+        },
+        "warnOnBranchOverPage": {
+          "description": "Warns when a branch jumps to a different page.",
           "type": "boolean"
         }
       }
@@ -436,6 +444,10 @@
           "address"
         ]
       }
+    },
+    "wifi": {
+      "description": "Enable the wifi card at $9fe0",
+      "type": "boolean"
     }
   }
 }
