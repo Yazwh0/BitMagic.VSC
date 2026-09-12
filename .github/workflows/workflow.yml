@@ -51,10 +51,6 @@ jobs:
               working-directory: Bitmagic.VscExtension
               run: npm install -g @vscode/vsce
 
-            - name: Install OVSX
-              working-directory: Bitmagic.VscExtension
-              run: npm install -g ovsx
-
             # - name: Install Win-Node-Env
             #   working-directory: Bitmagic.VscExtension
             #   run: npm install -g win-node-env
@@ -67,10 +63,55 @@ jobs:
               working-directory: Bitmagic.VscExtension
               run: vsce package
 
+            - name: Upload VSIX
+              uses: actions/upload-artifact@v4
+              with:
+                name: vsix
+                path: Bitmagic.VscExtension/*.vsix
+                retention-days: 5
+
+    publish-vscode:
+        name: Publish to VSCode Marketplace
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Download VSIX
+              uses: actions/download-artifact@v4
+              with:
+                name: vsix
+                path: Bitmagic.VscExtension
+
+            - name: Install Node
+              uses: actions/setup-node@v3
+              with:
+                node-version: '24'
+
+            - name: Install VSCE
+              run: npm install -g @vscode/vsce
+
             - name: Publish
               working-directory: Bitmagic.VscExtension
-              run: vsce publish -p ${{ secrets.VSCODEDEPLOY }}
+              run: vsce publish -p ${{ secrets.VSCODEDEPLOY }} --packagePath *.vsix
+
+    publish-vscodium:
+        name: Publish to Open VSX (VSCodium)
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Download VSIX
+              uses: actions/download-artifact@v4
+              with:
+                name: vsix
+                path: Bitmagic.VscExtension
+
+            - name: Install Node
+              uses: actions/setup-node@v3
+              with:
+                node-version: '24'
+
+            - name: Install OVSX
+              run: npm install -g ovsx
 
             - name: Publish VSCodium
               working-directory: Bitmagic.VscExtension
-              run: npx ovsx publish -p ${{ secrets.VSCODIUM }}
+              run: npx ovsx publish -p ${{ secrets.VSCODIUM }} --packagePath *.vsix
