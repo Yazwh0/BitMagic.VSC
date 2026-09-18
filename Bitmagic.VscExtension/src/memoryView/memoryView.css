@@ -1,29 +1,31 @@
-img.memory_display
+body
 {
-    height : 512px;
-    width : 512px;
-    border : 1px white solid;
-    image-rendering: pixelated;
+    /* The browser's default body margin leaves a gap above .sticky_header at rest that
+       vanishes the instant sticky positioning engages on the first scroll pixel, reading as a
+       small jump at the top of the page. */
+    margin: 0;
+    padding: 0;
 }
 
-div.memory_container
+div.sticky_header
 {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-start;
-}
-
-div.memory
-{
-    margin: 0 5px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--vscode-editor-background);
+    /* padding, not the child's margin-top below - a child's margin can collapse through a
+       plain block parent (position: sticky doesn't establish a new block formatting context,
+       so it doesn't stop that), which left the sticky box itself sitting 10px lower than the
+       true viewport top at rest. Sticky positioning then measures against the viewport, so the
+       instant scrolling engaged it, that 10px gap visibly vanished - the reported "jump". */
+    padding-top: 10px;
 }
 
 div.display_control
 {
-    margin-top: 10px;
+    padding-bottom: 5px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
@@ -32,30 +34,210 @@ div.display_control
 div.control_holder
 {
     margin: 0 5px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-#search_results
+div.inline_field
 {
-    min-width: 200px;
-    min-height: 200px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
-div.search_control_box
+div.inline_field label
+{
+    color: var(--vscode-foreground);
+    flex-shrink: 0;
+}
+
+#bank
+{
+    box-sizing: border-box;
+    width: 4.5em;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.find_bar
+{
+    /* Overlays the content instead of taking up flow space - .sticky_header (positioned via
+       `sticky`) is its containing block, so this never pushes the memory dump down. */
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    background-color: var(--vscode-editorWidget-background);
+    color: var(--vscode-editorWidget-foreground);
+    border: 1px solid var(--vscode-editorWidget-border, var(--vscode-contrastBorder));
+    box-shadow: 0 2px 8px var(--vscode-widget-shadow);
+    border-radius: 3px;
+    width: fit-content;
+}
+
+.find_bar.hidden
+{
+    display: none;
+}
+
+.find_input
+{
+    width: 220px;
+    font-family: inherit;
+    font-size: inherit;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    padding: 2px 4px;
+}
+
+.find_count
+{
+    color: var(--vscode-descriptionForeground);
+    font-size: 0.9em;
+    white-space: nowrap;
+    padding: 0 4px;
+    min-width: 6em;
+    text-align: center;
+}
+
+.find_nav
+{
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--vscode-icon-foreground, var(--vscode-foreground));
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.find_nav:hover
+{
+    background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.memory_dump_container
 {
     margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-end;
+    overflow-x: auto;
 }
 
-.search_control
+.memory_message
 {
-    margin-right:10px;
+    color: var(--vscode-descriptionForeground);
+    font-style: italic;
 }
 
-.search_results_container
+table.memory_table
 {
-    width: auto;
+    border-collapse: collapse;
+    font-family: var(--vscode-editor-font-family);
+    font-weight: var(--vscode-editor-font-weight);
+    font-size: var(--vscode-editor-font-size);
+    white-space: pre;
+}
+
+table.memory_table td
+{
+    padding: 1px 4px;
+}
+
+td.address
+{
+    color: var(--vscode-debugTokenExpression-name);
+    padding-right: 10px;
+}
+
+td.byte
+{
+    text-align: center;
+    min-width: 2ch;
+}
+
+td.byte.editable
+{
+    cursor: pointer;
+}
+
+td.byte.editable:hover
+{
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+td.byte.zero
+{
+    opacity: 0.4;
+}
+
+td.ascii
+{
+    padding-left: 10px;
+    color: var(--vscode-debugTokenExpression-string);
+}
+
+td.ascii span.nonprintable
+{
+    opacity: 0.45;
+}
+
+td.ascii span.nonprintable.zero
+{
+    opacity: 0.18;
+}
+
+td.ascii span.editable
+{
+    cursor: pointer;
+}
+
+td.ascii span.editable:hover
+{
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+td.byte.match,
+span.match
+{
+    background-color: var(--vscode-editor-findMatchHighlightBackground);
+}
+
+td.byte.match_current,
+span.match_current
+{
+    background-color: var(--vscode-editor-findMatchBackground);
+}
+
+input.byte_input,
+input.ascii_input
+{
+    /* border-box + no padding keeps this the same rendered width as the text it replaces
+       (border-box folds the border into the width instead of adding to it) - otherwise the
+       column widens and the whole grid shifts sideways while editing. */
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    text-align: center;
+}
+
+input.byte_input
+{
+    width: 2ch;
+}
+
+input.ascii_input
+{
+    width: 1ch;
 }

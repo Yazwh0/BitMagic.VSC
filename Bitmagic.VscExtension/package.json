@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.67",
+    "version": "0.1.68",
     "preview": true,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -36,7 +36,8 @@
         "compile": "node ./esbuild.js",
         "package": "NODE_ENV=production node ./esbuild.js",
         "watch": "node ./esbuild.js --watch",
-        "lint": "eslint src --ext ts"
+        "lint": "eslint src --ext ts",
+        "test": "vitest run"
     },
     "_unused": {
         "watch": "tsc -watch -p ./src"
@@ -185,6 +186,11 @@
                 "category": "BitMagic"
             },
             {
+                "command": "memoryAccessView.start",
+                "title": "Open The Memory Access View",
+                "category": "BitMagic"
+            },
+            {
                 "command": "memoryView.start",
                 "title": "Open The Memory View",
                 "category": "BitMagic"
@@ -327,6 +333,8 @@
         "@vscode/vsce": "^2.32.0",
         "esbuild": "^0.16.17",
         "esbuild-plugin-copy": "^2.0.1",
-        "eslint": "^8.26.0"
+        "eslint": "^8.26.0",
+        "vite": "^8.3.0",
+        "vitest": "^5.0.1"
     }
 }

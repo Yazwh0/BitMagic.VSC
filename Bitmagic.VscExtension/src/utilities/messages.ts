@@ -25,4 +25,14 @@ export class messages
     public static getCpuProfileImage = "getCpuProfileImage";
     public static updateCpuProfileImage = "updateCpuProfileImage";
     public static updateCpuProfiler = "updateCpuProfiler";
+
+    public static readMemory = "readMemory";                    // DEBUGGER (standard DAP)
+    public static writeMemory = "writeMemory";                  // DEBUGGER (standard DAP)
+    public static readMemoryPage = "readMemoryPage";
+    public static memoryPageUpdate = "memoryPageUpdate";
+    public static writeMemoryByte = "writeMemoryByte";
+
+    public static searchMemory = "searchMemory";                 // DEBUGGER (custom)
+    public static openSearch = "openSearch";
+    public static searchResults = "searchResults";
 }

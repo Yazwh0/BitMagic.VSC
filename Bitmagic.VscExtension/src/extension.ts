@@ -11,6 +11,7 @@ import path = require('path');
 import Constants from './constants';
 import { LayerView } from './layerView/layerView';
 import { provideVSCodeDesignSystem, vsCodeButton } from "@vscode/webview-ui-toolkit";
+import { MemoryAccessView } from './memoryAccessView/memoryAccessView';
 import { MemoryView } from './memoryView/memoryView';
 import { HistoryView } from './historyView/historyView';
 import { SpriteView } from './spriteView/spriteView';
@@ -143,6 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Action Replay
 	LayerView.activate(context);
+	MemoryAccessView.activate(context);
 	MemoryView.activate(context);
 	HistoryView.activate(context);
 	SpriteView.activate(context);

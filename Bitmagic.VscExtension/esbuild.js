@@ -92,6 +92,28 @@ const cpuProfilerViewWebviewConfig = {
     ],
 };
 
+const memoryAccessViewWebviewConfig = {
+    ...baseConfig,
+    target: "es2020",
+    format: "esm",
+    entryPoints: [
+        "./src/memoryAccessView/memoryAccessView.webview.ts"
+    ],
+    outdir: "./out/",
+    plugins: [
+        // Copy webview css files to `out` directory unaltered
+        copy({
+            resolveFrom: "cwd",
+            assets: {
+                from: [
+                    "./src/memoryAccessView/memoryAccessView.css",
+                ],
+                to: ["./out"],
+            },
+        }),
+    ],
+};
+
 const memoryViewWebviewConfig = {
     ...baseConfig,
     target: "es2020",
@@ -173,6 +195,10 @@ const watchConfig = {
                 ...watchConfig,
             });
             await build({
+                ...memoryAccessViewWebviewConfig,
+                ...watchConfig,
+            });
+            await build({
                 ...memoryViewWebviewConfig,
                 ...watchConfig,
             });
@@ -193,6 +219,7 @@ const watchConfig = {
             // Build extension and webview code
             await build(extensionConfig);
             await build(layerViewWebviewConfig);
+            await build(memoryAccessViewWebviewConfig);
             await build(memoryViewWebviewConfig);
             await build(historyViewWebviewConfig);
             await build(spriteViewWebviewConfig);

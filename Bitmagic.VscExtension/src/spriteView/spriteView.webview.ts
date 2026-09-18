@@ -1,5 +1,5 @@
 import { provideVSCodeDesignSystem, vsCodeButton, Button, vsCodeCheckbox, Checkbox, vsCodeTextField, TextField, vsCodeDataGrid, DataGridCell, vsCodeDataGridRow, vsCodeDataGridCell } from "@vscode/webview-ui-toolkit";
-import { messages } from "../memoryView/common";
+import { messages } from "../utilities/messages";
 
 provideVSCodeDesignSystem().register(
     vsCodeButton(),

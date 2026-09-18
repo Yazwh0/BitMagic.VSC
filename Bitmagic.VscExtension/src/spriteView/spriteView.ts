@@ -1,7 +1,7 @@
 import { Disposable, commands, ExtensionContext, window, WebviewPanel, ViewColumn, Webview, Uri, debug } from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
-import { messages } from "../memoryView/common";
+import { messages } from "../utilities/messages";
 
 export class SpriteView {
     public static currentPanel: SpriteView | undefined;

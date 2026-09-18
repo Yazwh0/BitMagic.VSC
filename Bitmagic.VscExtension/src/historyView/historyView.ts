@@ -1,7 +1,7 @@
 import { Disposable, ExtensionContext, Uri, window, ViewColumn, Webview, WebviewPanel, commands, debug, StatusBarAlignment, workspace, Position, Selection, Range, TextDocumentShowOptions } from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
-import { messages } from "../memoryView/common";
+import { messages } from "../utilities/messages";
 
 export class HistoryView {
     public static currentPanel: HistoryView | undefined;
