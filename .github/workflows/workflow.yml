@@ -41,7 +41,9 @@ jobs:
 
             - name: Install Packages
               working-directory: Bitmagic.VscExtension
-              run: npm install
+              # --legacy-peer-deps: vite/vitest (added for unit tests) peer-want a newer esbuild,
+              # but esbuild is deliberately pinned at 0.16.17 for the extension's own esbuild.js build.
+              run: npm install --legacy-peer-deps
 
             - name: Install TypeScript
               working-directory: Bitmagic.VscExtension
