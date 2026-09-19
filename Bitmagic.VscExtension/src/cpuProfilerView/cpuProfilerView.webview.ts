@@ -1,18 +1,5 @@
 import { provideVSCodeDesignSystem, vsCodeButton, Button, vsCodeCheckbox, Checkbox, vsCodeDataGrid, vsCodeDataGridCell, vsCodeDataGridRow, vsCodeDropdown, Dropdown, vsCodeOption, vsCodeTextField, TextField } from "@vscode/webview-ui-toolkit";
 import { messages } from "../utilities/messages";
-import { useDraggable } from '@dnd-kit/react';
-import {
-    DndContext,
-    closestCenter,
-    PointerSensor,
-    useSensor,
-    useSensors,
-} from "@dnd-kit/core";
-import {
-    SortableContext,
-    verticalListSortingStrategy,
-    arrayMove,
-} from "@dnd-kit/sortable";
 import { LineItem, LineType } from "./cpuProfilerLineItem";
 
 // ============================================================================
