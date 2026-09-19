@@ -32,6 +32,44 @@ var _startOfficialEmulator = false;
 let lspClient: LanguageClient;
 let serverProcess: cp.ChildProcess;
 let lspDapPort: number | undefined;
+let lspQueryPort: number | undefined;
+
+const connectionInfoFileName = 'bitmagic-debug-session.json';
+
+// Lets X16M (or anything else outside the extension host) find the shared process's
+// --queryport without a VS Code API - see BitMagic.X16MCP's SessionTools.attach_to_session.
+function writeConnectionInfoFile(queryPort: number, pid: number | undefined) {
+	const folder = vscode.workspace.workspaceFolders?.[0];
+	if (!folder)
+		return;
+
+	try {
+		const dotVscode = path.join(folder.uri.fsPath, '.vscode');
+		if (!fs.existsSync(dotVscode))
+			fs.mkdirSync(dotVscode);
+
+		fs.writeFileSync(path.join(dotVscode, connectionInfoFileName), JSON.stringify({
+			host: 'localhost',
+			queryPort,
+			pid,
+			updatedAt: new Date().toISOString()
+		}, null, 2));
+	} catch (e: any) {
+		bmOutput.appendLine(`Could not write connection info file: ${e.message ?? e}`);
+	}
+}
+
+function deleteConnectionInfoFile() {
+	const folder = vscode.workspace.workspaceFolders?.[0];
+	if (!folder)
+		return;
+
+	try {
+		const filePath = path.join(folder.uri.fsPath, '.vscode', connectionInfoFileName);
+		if (fs.existsSync(filePath))
+			fs.unlinkSync(filePath);
+	} catch { /* best-effort */ }
+}
 
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
@@ -250,8 +288,9 @@ async function startLsp() {
 	else {
 		var lspPort = await getPort();
 		var dapPort = await getPort();
+		var queryPort = await getPort();
 
-		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, ['--lspport', lspPort.toString(), '--dapport', dapPort.toString()]);
+		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, ['--lspport', lspPort.toString(), '--dapport', dapPort.toString(), '--queryport', queryPort.toString()]);
 
 		if (!debuggerLocation || !debuggerLocation.location || !fs.existsSync(debuggerLocation?.location)) {
 			bmOutput.appendLine(`File not found: '${debuggerLocation?.location}', LSP server not started.`);
@@ -267,12 +306,16 @@ async function startLsp() {
 					// debug sessions can attach to instead of spawning their own process. Re-set on
 					// every (re)start, including the LanguageClient's own automatic restarts.
 					lspDapPort = dapPort;
+					lspQueryPort = queryPort;
+					writeConnectionInfoFile(queryPort, serverProcess.pid);
 					// Drain the child's console output; otherwise it's invisible and the
 					// pipe buffer can eventually stall X16D.
 					serverProcess.stdout?.on('data', d => bmOutput.append(d.toString()));
 					serverProcess.stderr?.on('data', d => bmOutput.append(d.toString()));
 					serverProcess.on('exit', code => {
 						lspDapPort = undefined;
+						lspQueryPort = undefined;
+						deleteConnectionInfoFile();
 						bmOutput.appendLine(`LSP server exited (${code}).`);
 					});
 					const connectionInfo = { port: lspPort, host: 'localhost' };
@@ -545,5 +588,5 @@ export function deactivate() {
 
 	if (lspClient)
 		lspClient.stop();
-	// do nothing.
+	deleteConnectionInfoFile();
 }
