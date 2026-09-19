@@ -13,4 +13,5 @@ export default class Constants
     public static readonly SettingsDebuggerDapPort = 'bitMagic.localDebug.dapPort';
     public static readonly SettingsDebuggerLspPort = 'bitMagic.localDebug.lspPort';
     public static readonly SettingsDisablePlatformCheck = 'bitMagic.debugger.disablePlatformCheck'
+    public static readonly SettingsUseLspProcessForDebugging = 'bitMagic.debugger.useLspProcessForDebugging';
 }

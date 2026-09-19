@@ -22,6 +22,7 @@ import getPort from 'get-port';
 import { Console } from 'console';
 import { GeneratedFileDocumentProvider } from './generatedFiles';
 import { CpuProfilerView } from './cpuProfilerView/cpuProfilerView';
+import { registerLmTools } from './lmTools';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -30,6 +31,7 @@ var _startOfficialEmulator = false;
 
 let lspClient: LanguageClient;
 let serverProcess: cp.ChildProcess;
+let lspDapPort: number | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
 	bmOutput.appendLine("BitMagic Activated!");
@@ -37,6 +39,8 @@ export function activate(context: vscode.ExtensionContext) {
 	//provideVSCodeDesignSystem().register(vsCodeButton());
 
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new BitMagicDebugAdapterServerDescriptorFactory()));
+
+	registerLmTools(context);
 
 	context.subscriptions.push(vscode.commands.registerCommand('extension.bmasm-debug.getProgramName', config => {
 		return vscode.window.showInputBox({
@@ -216,6 +220,12 @@ async function startLsp() {
 				vscode.workspace.createFileSystemWatcher('**/*.bmasm'),
 				vscode.workspace.createFileSystemWatcher('**/project.json')
 			]
+		},
+		// Debug sessions can crash the shared process far more often than editing does
+		// (see bitMagic.debugger.useLspProcessForDebugging), so be more forgiving than the
+		// client's default of 4 restarts within a rolling 3-minute window.
+		connectionOptions: {
+			maxRestartCount: 10
 		}
 	};
 
@@ -253,11 +263,18 @@ async function startLsp() {
 				return new Promise((resolve, reject) => {
 					bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
 					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'], cwd: path.dirname(debuggerLocation?.location) });
+					// Shared with BitMagicDebugAdapterServerDescriptorFactory: this is the DAP port
+					// debug sessions can attach to instead of spawning their own process. Re-set on
+					// every (re)start, including the LanguageClient's own automatic restarts.
+					lspDapPort = dapPort;
 					// Drain the child's console output; otherwise it's invisible and the
 					// pipe buffer can eventually stall X16D.
 					serverProcess.stdout?.on('data', d => bmOutput.append(d.toString()));
 					serverProcess.stderr?.on('data', d => bmOutput.append(d.toString()));
-					serverProcess.on('exit', code => bmOutput.appendLine(`LSP server exited (${code}).`));
+					serverProcess.on('exit', code => {
+						lspDapPort = undefined;
+						bmOutput.appendLine(`LSP server exited (${code}).`);
+					});
 					const connectionInfo = { port: lspPort, host: 'localhost' };
 					setTimeout(() => {
 						const socket = Net.connect(connectionInfo);
@@ -413,6 +430,7 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 	private server?: Net.Server;
 	private readonly settingsLocalDebugging = Constants.SettingsLocalDebugger;
 	private readonly settingsPortNumber = Constants.SettingsDebuggerDapPort;
+	private readonly settingsUseLspProcessForDebugging = Constants.SettingsUseLspProcessForDebugging;
 	private readonly settingsDisablePlatformCheck = Constants.SettingsDisablePlatformCheck;
 	private readonly settingsAlternativeDebugger = Constants.SettingsAlternativeDebugger;
 	private readonly settingsDebugger = Constants.SettingsDebuggerPath;
@@ -441,6 +459,14 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 			// make VS Code connect to debug server
 			if (portNumber)
 				return new vscode.DebugAdapterServer(portNumber);
+		}
+
+		if (config.get(this.settingsUseLspProcessForDebugging, false)) {
+			if (lspDapPort !== undefined) {
+				bmOutput.appendLine(`Debugging via the shared language-server process (port ${lspDapPort}).`);
+				return new vscode.DebugAdapterServer(lspDapPort);
+			}
+			bmOutput.appendLine('Shared debug process unavailable (starting up or recovering from a crash), starting a private debug session instead.');
 		}
 
 		if (executable)  // overridden somewhere?
