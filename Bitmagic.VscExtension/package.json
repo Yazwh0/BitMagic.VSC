@@ -151,7 +151,11 @@
                 "modelDescription": "Returns the current state of every VERA sprite in the active BitMagic X16 debug session. For call stack, variables, or evaluating expressions, use the standard debug tools instead - this is only for VERA sprite state. Returns JSON: { \"Sprites\": array of exactly 128 entries, one per hardware sprite slot (index 0-127) - most slots are unused, look at Width/Height/Address to tell which are actually active. Each entry: { \"Index\": slot number, \"Address\": VRAM address of the sprite image data, \"PalletteOffset\", \"CollisionMask\", \"Width\", \"Height\", \"X\", \"Y\", \"Depth\", \"HFlip\", \"VFlip\", \"Mode\" (4 or 8 bits-per-pixel) - all numeric/boolean and useful for analysis; \"Display\" is a base64-encoded PNG image of the sprite's rendered pixels - it exists for reference but isn't something you can interpret as text, use the numeric fields instead. } }",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(circuit-board)",
-                "tags": ["bitmagic", "x16", "debug"]
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
             },
             {
                 "name": "bitmagic_getLayers",
@@ -160,7 +164,11 @@
                 "modelDescription": "Renders the 6 VERA compositing layers of the active BitMagic X16 debug session as images. Returns JSON: { \"Display\": array of exactly 6 base64-encoded PNG screenshots (640x480), one per layer, in compositing order }. This is visual/rendered output, not structured layer configuration (mode, map/tile base addresses, scroll) - there is no numeric layer state to inspect via this tool.",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(layers)",
-                "tags": ["bitmagic", "x16", "debug"]
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
             },
             {
                 "name": "bitmagic_getPalette",
@@ -169,7 +177,11 @@
                 "modelDescription": "Returns the current VERA palette (256 entries) in the active BitMagic X16 debug session. For call stack, variables, or evaluating expressions, use the standard debug tools instead - this is only for VERA palette state. Returns JSON: { \"Palette\": array of 256 { \"R\", \"G\", \"B\" } (0-255 each) - the raw VERA palette values; \"DisplayPalette\": array of 256 { \"R\", \"G\", \"B\", \"A\" } - the same colours converted to display-space RGBA. Index into either array with a palette index (0-255) to get a specific colour. }",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(symbol-color)",
-                "tags": ["bitmagic", "x16", "debug"]
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
             },
             {
                 "name": "bitmagic_getCpuHistory",
@@ -178,7 +190,11 @@
                 "modelDescription": "Returns the entire recorded 65C02 instruction history (most-recent-first) in the active BitMagic X16 debug session, since the last reset or session start. Useful for understanding how execution reached the current point. For the current call stack, use the standard debug tools instead - this is raw instruction-level trace history. WARNING: this can be a very large response on a session that has been running for a while (the history buffer holds up to several hundred thousand instructions by default) - expect a large result, and consider that before calling this on a long-running session. Returns JSON: { \"HistoryItems\": array of { \"Proc\" (containing symbol name if known), \"OpCode\" (disassembled instruction text), \"RawParameter\", \"RamBank\", \"RomBank\", \"Pc\", \"A\", \"X\", \"Y\", \"Sp\", \"Flags\" (e.g. \"[N V  B D I Z C]\" with set flags as their letter), \"SourceFile\", \"LineNumber\", \"Clock\" (cycle count) }, \"More\": boolean (whether there are older entries beyond what's returned) }",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(history)",
-                "tags": ["bitmagic", "x16", "debug"]
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
             },
             {
                 "name": "bitmagic_getMemoryUse",
@@ -187,7 +203,11 @@
                 "modelDescription": "Renders a heatmap image of which addresses have recently been executed/changed/read in the active BitMagic X16 debug session. Returns JSON: { \"Display\": a single base64-encoded PNG image (256x256, one pixel per address) - not structured/numeric data, this is a visual overview only. Colour meaning: red channel = executed, blue channel = read, green channel = changed (dim if only changed previously, bright if changed since the last call). } Side effect: calling this clears the tracked changed/executed/read flags it just reported, so calling it again immediately after will show a different (mostly blank) picture, not the same state repeated.",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(graph)",
-                "tags": ["bitmagic", "x16", "debug"]
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
             },
             {
                 "name": "bitmagic_readMemory",
@@ -196,7 +216,11 @@
                 "modelDescription": "Reads raw bytes from X16 memory/VRAM at a given address in the active BitMagic X16 debug session. For call stack, local/global variables, or evaluating expressions, use the standard debug tools instead - this is only for VERA/RAM/ROM byte-level access. Returns JSON: { \"Address\": the requested offset as a \"0xXXXX\" hex string, \"UnreadableBytes\": count of requested bytes past the end of the memory space (0 if the whole read was in range), \"Data\": the bytes as base64 (not directly readable), \"bytes\": the same bytes decoded as a plain number[] (0-255 each) - use this one, \"bytesHex\": the same bytes as a hex string, e.g. \"a9002000\". }",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(database)",
-                "tags": ["bitmagic", "x16", "debug"],
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -213,7 +237,11 @@
                             "description": "Number of bytes to read."
                         }
                     },
-                    "required": ["memoryReference", "offset", "count"]
+                    "required": [
+                        "memoryReference",
+                        "offset",
+                        "count"
+                    ]
                 }
             },
             {
@@ -223,7 +251,11 @@
                 "modelDescription": "Writes raw bytes to X16 memory/VRAM at a given address in the active BitMagic X16 debug session, to amend live state (e.g. poke a value to test a theory). For call stack, local/global variables, or evaluating expressions, use the standard debug tools instead - this is only for VERA/RAM/ROM byte-level access. Only \"main\", \"vram\", \"sdcard\" and \"nvram\" are writable (unlike reading/searching, \"sdcardblock\"/\"rambank<N>\"/\"rombank<N>\" are not supported here - a write with one of those silently writes 0 bytes rather than erroring, check the returned BytesWritten). Returns JSON: { \"written\": number of bytes you asked to write, \"BytesWritten\": number of bytes actually written by the debugger (compare to \"written\" - if lower or 0, the write didn't fully succeed, e.g. an unsupported memoryReference or an out-of-range offset), \"Offset\": the offset that was written to. }",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(edit)",
-                "tags": ["bitmagic", "x16", "debug"],
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -237,11 +269,17 @@
                         },
                         "bytes": {
                             "type": "array",
-                            "items": { "type": "number" },
+                            "items": {
+                                "type": "number"
+                            },
                             "description": "Bytes to write (each 0-255), starting at offset."
                         }
                     },
-                    "required": ["memoryReference", "offset", "bytes"]
+                    "required": [
+                        "memoryReference",
+                        "offset",
+                        "bytes"
+                    ]
                 }
             },
             {
@@ -251,7 +289,11 @@
                 "modelDescription": "Searches X16 memory/VRAM for a byte pattern in the active BitMagic X16 debug session. Useful for locating where a known value (e.g. a sprite's X position, or a string like a filename) lives before reading or writing it directly. Returns JSON with exactly these fields - read Matches first, it is the only field that indicates whether anything was found: { \"Matches\": number[] - a list of byte offsets (relative to the start of the searched memory space) where the pattern was found; an EMPTY array [] means no matches, NOT an error or missing data. \"Truncated\": boolean - true only if there were more matches than maxResults and the list was cut short. \"SpaceLength\": number - the total size in bytes of the memory space that was searched, for context only. } Example: {\"Matches\":[512],\"Truncated\":false,\"SpaceLength\":65536} means exactly one match, at offset 512 (0x0200).",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(search)",
-                "tags": ["bitmagic", "x16", "debug"],
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -261,7 +303,9 @@
                         },
                         "pattern": {
                             "type": "array",
-                            "items": { "type": "number" },
+                            "items": {
+                                "type": "number"
+                            },
                             "description": "Byte pattern to search for (each 0-255)."
                         },
                         "caseInsensitive": {
@@ -273,7 +317,10 @@
                             "description": "Maximum number of matches to return. Defaults to 500."
                         }
                     },
-                    "required": ["memoryReference", "pattern"]
+                    "required": [
+                        "memoryReference",
+                        "pattern"
+                    ]
                 }
             }
         ],
@@ -467,7 +514,7 @@
     },
     "devDependencies": {
         "@types/node": "^20.11.19",
-        "@types/vscode": "^1.138.0",
+        "@types/vscode": "1.95.0",
         "@types/vscode-webview": "^1.57.5",
         "@vscode/debugprotocol": "^1.65.0",
         "@vscode/vsce": "^2.32.0",
