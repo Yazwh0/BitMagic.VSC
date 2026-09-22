@@ -2,8 +2,8 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.71",
-    "preview": true,
+    "version": "0.1.72",
+    "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
     "homepage": "https://bitmagic.org/",
@@ -321,6 +321,134 @@
                         "memoryReference",
                         "pattern"
                     ]
+                }
+            },
+            {
+                "name": "bitmagic_getExceptionInfo",
+                "displayName": "Get X16 Exception Info",
+                "toolReferenceName": "x16ExceptionInfo",
+                "modelDescription": "Reports why the active BitMagic X16 debug session is currently stopped, when the stop was caused by an exception breakpoint (BRK/EXP/FIO) rather than a line breakpoint or a step. For the call stack or variables at the stop, use the standard debug tools instead. Returns JSON: { \"exceptionId\": \"BRK\", \"EXP\", \"FIO\" or \"UNK\" (no exception is why it's stopped), \"description\": human-readable explanation }.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(bug)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
+            },
+            {
+                "name": "bitmagic_findMemoryValue",
+                "displayName": "Find X16 Memory Value",
+                "toolReferenceName": "x16FindMemoryValue",
+                "modelDescription": "Scans every RAM bank of the active BitMagic X16 debug session for a value, \"Cheat Engine\" style - the way to find where an unknown game variable (health, score, a counter) lives without knowing its address. Call with no locations to scan fresh: this walks all RAM banks and takes roughly 30-60 seconds regardless of which value or searchType you pick, so only call it once per hunt, not repeatedly. To narrow down, take the locations array this call returned, let the target run a bit (or change something in-game), then call again passing that same locations array back with a new searchType comparing each one's current value to what it held last time - repeat until only the address you want is left. Returns JSON: { \"ToFind\": the value that was searched for, \"SearchType\": the comparison used, \"Locations\": array of { \"Location\": an opaque id, not a plain CPU address, encodes which RAM bank a match came from - round-trip it into a follow-up call, don't use it with the memory read/write tools, \"Value\": the value at that location }, \"Stepping\": whether the target is currently single-stepping }.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(target)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "toFind": {
+                            "type": "number",
+                            "description": "Value to search for (searchType \"Equal\"/\"Not Equal\"/\"Less Than\"/\"Greater Than\") - ignored when searchType is \"Changed\"/\"Not Changed\"/\"Gone Up\"/\"Gone Down\", which compare against each location's previous value instead."
+                        },
+                        "searchType": {
+                            "type": "string",
+                            "description": "\"Equal\", \"Not Equal\", \"Less Than\", \"Greater Than\" (all compare against toFind), or - only valid on a narrowing call that passes locations back - \"Changed\", \"Not Changed\", \"Gone Up\", \"Gone Down\" (compare against each location's previous value)."
+                        },
+                        "searchWidth": {
+                            "type": "string",
+                            "description": "\"Byte\" (0-255) or \"Word\" (0-65535, little-endian)."
+                        },
+                        "locations": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "Location": { "type": "number" },
+                                    "Value": { "type": "number" }
+                                }
+                            },
+                            "description": "Omit for a fresh scan. On a narrowing call, pass back exactly the locations array the previous call returned."
+                        }
+                    },
+                    "required": [
+                        "toFind",
+                        "searchType",
+                        "searchWidth"
+                    ]
+                }
+            },
+            {
+                "name": "bitmagic_sendKey",
+                "displayName": "Send X16 Key",
+                "toolReferenceName": "x16SendKey",
+                "modelDescription": "Sends a single keyboard event to the active BitMagic X16 debug session, exactly as a real key press/release would arrive - one event per call, not a batch. To type a character, send it down then up (call twice); hold a modifier across other keys by sending it down, sending the other keys, then sending it up. Returns JSON: { \"Success\": boolean, \"Error\": string or null }.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(keyboard)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "Key name, matching Silk.NET.Input.Key, e.g. \"A\", \"Number1\", \"Enter\", \"Space\", \"ShiftLeft\", \"ControlLeft\", \"AltLeft\", \"Up\"/\"Down\"/\"Left\"/\"Right\", \"F1\"-\"F12\", \"Backspace\", \"Escape\", \"Tab\", \"CapsLock\", \"Keypad0\"-\"Keypad9\"."
+                        },
+                        "down": {
+                            "type": "boolean",
+                            "description": "true for key down (press), false for key up (release)."
+                        }
+                    },
+                    "required": [
+                        "key",
+                        "down"
+                    ]
+                }
+            },
+            {
+                "name": "bitmagic_sendMouse",
+                "displayName": "Send X16 Mouse",
+                "toolReferenceName": "x16SendMouse",
+                "modelDescription": "Sends a single mouse sample to the active BitMagic X16 debug session: a movement delta plus the mouse's current button state, exactly as a real mouse would report one - one sample per call, not a batch. The X16's mouse is relative (PS/2-style), not absolute, so there's no \"move to X,Y\", only \"move by this much from wherever the cursor already is\". To click, send the button held (deltaX/deltaY 0 is fine) then send it released. Returns JSON: { \"Success\": boolean, \"Error\": string or null }.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(inspect)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "deltaX": {
+                            "type": "number",
+                            "description": "Horizontal movement since the last sample, in pixels. Positive is right. Defaults to 0."
+                        },
+                        "deltaY": {
+                            "type": "number",
+                            "description": "Vertical movement since the last sample, in pixels. Positive is down. Defaults to 0."
+                        },
+                        "left": {
+                            "type": "boolean",
+                            "description": "Whether the left button is currently held down."
+                        },
+                        "right": {
+                            "type": "boolean",
+                            "description": "Whether the right button is currently held down."
+                        },
+                        "middle": {
+                            "type": "boolean",
+                            "description": "Whether the middle button is currently held down."
+                        }
+                    },
+                    "required": []
                 }
             }
         ],

@@ -174,6 +174,101 @@ class SearchMemoryTool implements vscode.LanguageModelTool<SearchMemoryParams> {
     }
 }
 
+class GetExceptionInfoTool implements vscode.LanguageModelTool<object> {
+    async invoke(): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        try {
+            const reply = await withTimeout(session.customRequest(messages.exceptionInfo, { threadId: 1 }), 3000);
+            return jsonResult(reply);
+        } catch (err) {
+            return errorResult("Failed to read exception info", err);
+        }
+    }
+}
+
+interface FindMemoryValueParams {
+    toFind: number;
+    searchType: string;
+    searchWidth: string;
+    locations?: { Location: number; Value: number }[];
+}
+
+class FindMemoryValueTool implements vscode.LanguageModelTool<FindMemoryValueParams> {
+    async invoke(options: vscode.LanguageModelToolInvocationOptions<FindMemoryValueParams>): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        const { toFind, searchType, searchWidth, locations } = options.input;
+
+        try {
+            // A fresh scan (no locations passed) walks every RAM bank and can take up to a
+            // minute regardless of value/searchType - see this tool's modelDescription.
+            const reply = await withTimeout(session.customRequest(messages.debuggerSearch, {
+                SearchWidth: searchWidth,
+                ToFind: toFind,
+                SearchType: searchType,
+                Locations: locations ?? []
+            }), 90000);
+            return jsonResult(reply);
+        } catch (err) {
+            return errorResult("Memory value scan failed", err);
+        }
+    }
+}
+
+interface SendKeyParams {
+    key: string;
+    down: boolean;
+}
+
+class SendKeyTool implements vscode.LanguageModelTool<SendKeyParams> {
+    async invoke(options: vscode.LanguageModelToolInvocationOptions<SendKeyParams>): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        const { key, down } = options.input;
+
+        try {
+            const reply = await withTimeout(session.customRequest(messages.keyboardInput, { Key: key, Down: down }), 3000);
+            return jsonResult(reply);
+        } catch (err) {
+            return errorResult(`Failed to send key "${key}"`, err);
+        }
+    }
+}
+
+interface SendMouseParams {
+    deltaX?: number;
+    deltaY?: number;
+    left?: boolean;
+    right?: boolean;
+    middle?: boolean;
+}
+
+class SendMouseTool implements vscode.LanguageModelTool<SendMouseParams> {
+    async invoke(options: vscode.LanguageModelToolInvocationOptions<SendMouseParams>): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        const { deltaX, deltaY, left, right, middle } = options.input;
+
+        try {
+            const reply = await withTimeout(session.customRequest(messages.mouseInput, {
+                DeltaX: deltaX ?? 0,
+                DeltaY: deltaY ?? 0,
+                Left: !!left,
+                Right: !!right,
+                Middle: !!middle
+            }), 3000);
+            return jsonResult(reply);
+        } catch (err) {
+            return errorResult("Failed to send mouse input", err);
+        }
+    }
+}
+
 export function registerLmTools(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.lm.registerTool("bitmagic_getSprites", new GetSpritesTool()),
@@ -183,6 +278,10 @@ export function registerLmTools(context: vscode.ExtensionContext) {
         vscode.lm.registerTool("bitmagic_getMemoryUse", new GetMemoryUseTool()),
         vscode.lm.registerTool("bitmagic_readMemory", new ReadMemoryTool()),
         vscode.lm.registerTool("bitmagic_writeMemory", new WriteMemoryTool()),
-        vscode.lm.registerTool("bitmagic_searchMemory", new SearchMemoryTool())
+        vscode.lm.registerTool("bitmagic_searchMemory", new SearchMemoryTool()),
+        vscode.lm.registerTool("bitmagic_getExceptionInfo", new GetExceptionInfoTool()),
+        vscode.lm.registerTool("bitmagic_findMemoryValue", new FindMemoryValueTool()),
+        vscode.lm.registerTool("bitmagic_sendKey", new SendKeyTool()),
+        vscode.lm.registerTool("bitmagic_sendMouse", new SendMouseTool())
     );
 }

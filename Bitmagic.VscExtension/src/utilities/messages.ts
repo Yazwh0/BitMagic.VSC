@@ -35,4 +35,8 @@ export class messages
     public static searchMemory = "searchMemory";                 // DEBUGGER (custom)
     public static openSearch = "openSearch";
     public static searchResults = "searchResults";
+
+    public static keyboardInput = "keyboardInput";               // DEBUGGER (custom)
+    public static mouseInput = "mouseInput";                     // DEBUGGER (custom)
+    public static exceptionInfo = "exceptionInfo";                // DEBUGGER (standard DAP)
 }
