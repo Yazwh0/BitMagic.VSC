@@ -270,9 +270,11 @@
                         "bytes": {
                             "type": "array",
                             "items": {
-                                "type": "number"
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 255
                             },
-                            "description": "Bytes to write (each 0-255), starting at offset."
+                            "description": "Bytes to write, as a plain JSON array of numbers each 0-255 (e.g. [169, 1, 141, 0, 159]), starting at offset. Not base64 - the tool encodes them for the debugger itself."
                         }
                     },
                     "required": [
@@ -446,6 +448,37 @@
                         "middle": {
                             "type": "boolean",
                             "description": "Whether the middle button is currently held down."
+                        }
+                    },
+                    "required": []
+                }
+            },
+            {
+                "name": "bitmagic_getVariables",
+                "displayName": "Get X16 Variables",
+                "toolReferenceName": "x16Variables",
+                "modelDescription": "Lists every variable in a debug scope of the active BitMagic X16 debug session as an indented tree of 'name: type = value' lines, the same as VSCode's Variables pane. For program symbols the type carries the variable's memory location, e.g. 'counter: byte ($0810) = 5' lives at $0810 - use that address as the offset for x16ReadMemory/x16WriteMemory with memoryReference \"main\". Nesting matches how you'd type a symbol into an expression, e.g. a line \"NestedProc\" under \"MyProc\" under \"Main\" means Main:MyProc:NestedProc:someVar. Lines with a [memoryReference: X] suffix are backed by a whole memory space usable as x16ReadMemory's memoryReference. Call with no scopeName first to list the available scopes ('Globals' for every program symbol, 'Locals' for the current stack frame, plus hardware scopes such as CPU, VERA, VIA, SD Card). Some hardware scopes (e.g. VERA) are large: the default depth is shallow and the result is capped at 300 lines.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(symbol-variable)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "scopeName": {
+                            "type": "string",
+                            "description": "Scope name, e.g. \"Globals\" or \"Locals\" (case-insensitive). Omit to just list the available scope names."
+                        },
+                        "frameId": {
+                            "type": "number",
+                            "description": "Stack frame id. Only affects the \"Locals\" scope; every other scope ignores it. Defaults to 0 (the top frame)."
+                        },
+                        "maxDepth": {
+                            "type": "number",
+                            "description": "How many levels deep to expand nested variables. Defaults to 3."
                         }
                     },
                     "required": []

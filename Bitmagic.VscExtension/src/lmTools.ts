@@ -19,6 +19,10 @@ function jsonResult(value: unknown): vscode.LanguageModelToolResult {
     return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(JSON.stringify(value))]);
 }
 
+function textResult(text: string): vscode.LanguageModelToolResult {
+    return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(text)]);
+}
+
 function errorResult(prefix: string, err: any): vscode.LanguageModelToolResult {
     return new vscode.LanguageModelToolResult([
         new vscode.LanguageModelTextPart(`${prefix}: ${err?.message ?? err}`)
@@ -134,7 +138,16 @@ class WriteMemoryTool implements vscode.LanguageModelTool<WriteMemoryParams> {
         if (session instanceof vscode.LanguageModelToolResult) return session;
 
         const { memoryReference, offset, bytes } = options.input;
-        const data = Buffer.from(bytes.map(b => b & 0xff)).toString("base64");
+
+        // Reject rather than mask out-of-range values, so a bad value isn't silently written as something else.
+        const badIndex = bytes.findIndex(b => !Number.isInteger(b) || b < 0 || b > 255);
+        if (badIndex >= 0)
+            return new vscode.LanguageModelToolResult([
+                new vscode.LanguageModelTextPart(`bytes[${badIndex}] is ${bytes[badIndex]}, but every value must be a byte (0-255).`)
+            ]);
+
+        // DAP writeMemory takes base64; callers pass a plain number[].
+        const data = Buffer.from(bytes).toString("base64");
 
         try {
             const reply = await withTimeout(session.customRequest(messages.writeMemory, { memoryReference, offset, data }), 3000);
@@ -269,6 +282,78 @@ class SendMouseTool implements vscode.LanguageModelTool<SendMouseParams> {
     }
 }
 
+interface GetVariablesParams {
+    scopeName?: string;
+    frameId?: number;
+    maxDepth?: number;
+}
+
+// Same defaults as X16M's get_variables: hardware scopes like VERA are wide as well as deep,
+// so a shallow default depth plus a hard line cap keeps one call from being enormous.
+const defaultVariablesDepth = 3;
+const maxVariableLines = 300;
+
+class GetVariablesTool implements vscode.LanguageModelTool<GetVariablesParams> {
+    async invoke(options: vscode.LanguageModelToolInvocationOptions<GetVariablesParams>): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        const { scopeName, frameId, maxDepth } = options.input;
+
+        try {
+            const scopesReply: any = await withTimeout(session.customRequest("scopes", { frameId: frameId ?? 0 }), 3000);
+            const scopes: any[] = scopesReply?.scopes ?? [];
+            const names = scopes.map(s => s.name).join(", ");
+
+            if (!scopeName)
+                return textResult(`Available scopes: ${names}`);
+
+            const scope = scopes.find(s => s.name?.toLowerCase() === scopeName.toLowerCase());
+            if (!scope)
+                return textResult(`No scope named '${scopeName}'. Available scopes: ${names}`);
+
+            const lines: string[] = [];
+            const complete = scope.variablesReference
+                ? await appendVariableTree(session, scope.variablesReference, 0, maxDepth ?? defaultVariablesDepth, lines)
+                : true;
+
+            if (lines.length === 0)
+                return textResult(`${scope.name}: (empty)`);
+
+            if (!complete)
+                lines.push(`... truncated at ${maxVariableLines} lines. Narrow down with a smaller maxDepth.`);
+
+            return textResult(lines.join("\n"));
+        } catch (err) {
+            return errorResult(`Failed to read variables${scopeName ? ` in "${scopeName}"` : ""}`, err);
+        }
+    }
+}
+
+// Returns false if it stopped early because maxVariableLines was hit.
+async function appendVariableTree(session: vscode.DebugSession, variablesReference: number, depth: number, maxDepth: number, lines: string[]): Promise<boolean> {
+    const reply: any = await withTimeout(session.customRequest("variables", { variablesReference }), 3000);
+    const indent = "  ".repeat(depth);
+
+    for (const v of reply?.variables ?? []) {
+        if (lines.length >= maxVariableLines)
+            return false;
+
+        // X16D puts a symbol's address in type, e.g. "byte ($0810)" - the same text the
+        // Variables pane shows - so keep it rather than just the value.
+        const type = v.type ? `: ${v.type}` : "";
+        const memory = v.memoryReference ? ` [memoryReference: ${v.memoryReference}]` : "";
+        lines.push(`${indent}${v.name}${type} = ${v.value}${memory}`);
+
+        if (v.variablesReference && depth < maxDepth) {
+            if (!await appendVariableTree(session, v.variablesReference, depth + 1, maxDepth, lines))
+                return false;
+        }
+    }
+
+    return true;
+}
+
 export function registerLmTools(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.lm.registerTool("bitmagic_getSprites", new GetSpritesTool()),
@@ -282,6 +367,7 @@ export function registerLmTools(context: vscode.ExtensionContext) {
         vscode.lm.registerTool("bitmagic_getExceptionInfo", new GetExceptionInfoTool()),
         vscode.lm.registerTool("bitmagic_findMemoryValue", new FindMemoryValueTool()),
         vscode.lm.registerTool("bitmagic_sendKey", new SendKeyTool()),
-        vscode.lm.registerTool("bitmagic_sendMouse", new SendMouseTool())
+        vscode.lm.registerTool("bitmagic_sendMouse", new SendMouseTool()),
+        vscode.lm.registerTool("bitmagic_getVariables", new GetVariablesTool())
     );
 }
