@@ -354,6 +354,22 @@ async function appendVariableTree(session: vscode.DebugSession, variablesReferen
     return true;
 }
 
+// How symbols from other compilers (eg ca65) are named in the debugger. Kept in a separate document so the tool
+// descriptions don't grow with each compiler. lmDocs/otherCompilers.md is a copy of X16M's
+// Resources/OtherCompilers.md (the MCP's docs://other-compilers resource) - keep the two in step.
+class GetOtherCompilersTool implements vscode.LanguageModelTool<object> {
+    constructor(private readonly extensionUri: vscode.Uri) { }
+
+    async invoke(): Promise<vscode.LanguageModelToolResult> {
+        try {
+            const bytes = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(this.extensionUri, "lmDocs", "otherCompilers.md"));
+            return textResult(new TextDecoder().decode(bytes));
+        } catch (err) {
+            return errorResult("Failed to read the other compilers reference", err);
+        }
+    }
+}
+
 export function registerLmTools(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.lm.registerTool("bitmagic_getSprites", new GetSpritesTool()),
@@ -368,6 +384,7 @@ export function registerLmTools(context: vscode.ExtensionContext) {
         vscode.lm.registerTool("bitmagic_findMemoryValue", new FindMemoryValueTool()),
         vscode.lm.registerTool("bitmagic_sendKey", new SendKeyTool()),
         vscode.lm.registerTool("bitmagic_sendMouse", new SendMouseTool()),
-        vscode.lm.registerTool("bitmagic_getVariables", new GetVariablesTool())
+        vscode.lm.registerTool("bitmagic_getVariables", new GetVariablesTool()),
+        vscode.lm.registerTool("bitmagic_getOtherCompilers", new GetOtherCompilersTool(context.extensionUri))
     );
 }

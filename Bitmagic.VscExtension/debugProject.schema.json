@@ -413,6 +413,10 @@
       "description": "Multiplier to scale the display window.",
       "type": "number"
     },
+    "muteAudio": {
+      "description": "Don't play audio. Emulation is unaffected.",
+      "type": "boolean"
+    },
     "romSource": {
       "$id": "RomSource[]",
       "description": "Files to be loaded into ROM.",

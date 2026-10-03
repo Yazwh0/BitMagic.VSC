@@ -2,7 +2,7 @@
     "name": "bitmagic",
     "displayName": "BitMagic X16 Debugger",
     "description": "BitMagic Commander X16 Debugger and Development Solution",
-    "version": "0.1.73",
+    "version": "0.1.74",
     "preview": false,
     "publisher": "yazwh0",
     "icon": "package/butterfly.png",
@@ -457,7 +457,7 @@
                 "name": "bitmagic_getVariables",
                 "displayName": "Get X16 Variables",
                 "toolReferenceName": "x16Variables",
-                "modelDescription": "Lists every variable in a debug scope of the active BitMagic X16 debug session as an indented tree of 'name: type = value' lines, the same as VSCode's Variables pane. For program symbols the type carries the variable's memory location, e.g. 'counter: byte ($0810) = 5' lives at $0810 - use that address as the offset for x16ReadMemory/x16WriteMemory with memoryReference \"main\". Nesting matches how you'd type a symbol into an expression, e.g. a line \"NestedProc\" under \"MyProc\" under \"Main\" means Main:MyProc:NestedProc:someVar. Lines with a [memoryReference: X] suffix are backed by a whole memory space usable as x16ReadMemory's memoryReference. Call with no scopeName first to list the available scopes ('Globals' for every program symbol, 'Locals' for the current stack frame, plus hardware scopes such as CPU, VERA, VIA, SD Card). Some hardware scopes (e.g. VERA) are large: the default depth is shallow and the result is capped at 300 lines.",
+                "modelDescription": "Lists every variable in a debug scope of the active BitMagic X16 debug session as an indented tree of 'name: type = value' lines, the same as VSCode's Variables pane. For program symbols the type carries the variable's memory location, e.g. 'counter: byte ($0810) = 5' lives at $0810 - use that address as the offset for x16ReadMemory/x16WriteMemory with memoryReference \"main\". Nesting matches how you'd type a symbol into an expression, e.g. a line \"NestedProc\" under \"MyProc\" under \"Main\" means Main:MyProc:NestedProc:someVar. Lines with a [memoryReference: X] suffix are backed by a whole memory space usable as x16ReadMemory's memoryReference. Call with no scopeName first to list the available scopes ('Globals' for every program symbol, 'Locals' for the current stack frame, plus hardware scopes such as CPU, VERA, VIA, SD Card). Some hardware scopes (e.g. VERA) are large: the default depth is shallow and the result is capped at 300 lines. For a program built by another compiler (eg ca65), call x16OtherCompilers for how its symbols are named and typed, including how to write them in expressions.",
                 "canBeReferencedInPrompt": true,
                 "icon": "$(symbol-variable)",
                 "tags": [
@@ -483,6 +483,19 @@
                     },
                     "required": []
                 }
+            },
+            {
+                "name": "bitmagic_getOtherCompilers",
+                "displayName": "Get X16 Other Compilers Reference",
+                "toolReferenceName": "x16OtherCompilers",
+                "modelDescription": "Returns a markdown reference for debugging programs built by compilers other than BitMagic (eg ca65): how their symbols are named in the debugger (it uses BitMagic's naming, not the other compiler's), how variables are typed, and what shows in Locals and Globals. Read this before evaluating expressions, adding watches or reading variables for a project that isn't BitMagic. Doesn't need a debug session.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(book)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
             }
         ],
         "languages": [
