@@ -454,6 +454,44 @@
                 }
             },
             {
+                "name": "bitmagic_startAudioRecording",
+                "displayName": "Start X16 Audio Recording",
+                "toolReferenceName": "x16StartAudioRecording",
+                "modelDescription": "Starts recording the active BitMagic X16 debug session's audio output (VERA PSG/PCM and YM2151 mix) to a 16-bit stereo WAV file at 48828Hz, overwriting any existing file. The recording is taken straight from the emulator's output buffer: it captures the real audio even when the window is muted, and only covers time the emulator is actually running - while stopped at a breakpoint or paused nothing is written, so the file plays back without the gaps. Only one recording at a time; call x16StopAudioRecording to finish and finalise the file (it is also stopped automatically when the session ends). Returns JSON: { \"Success\": boolean, \"Error\": string or null, \"Path\": the full path being written }.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(record)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ],
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "WAV file to write. An absolute path, or one relative to the project's folder. Missing directories are created."
+                        }
+                    },
+                    "required": [
+                        "path"
+                    ]
+                }
+            },
+            {
+                "name": "bitmagic_stopAudioRecording",
+                "displayName": "Stop X16 Audio Recording",
+                "toolReferenceName": "x16StopAudioRecording",
+                "modelDescription": "Stops the audio recording started by x16StartAudioRecording and finalises the WAV file. Returns JSON: { \"Success\": boolean, \"Error\": string or null, \"Path\": the file written, \"Frames\": audio frames recorded, \"Seconds\": the length recorded (emulated running time only) }.",
+                "canBeReferencedInPrompt": true,
+                "icon": "$(debug-stop)",
+                "tags": [
+                    "bitmagic",
+                    "x16",
+                    "debug"
+                ]
+            },
+            {
                 "name": "bitmagic_getVariables",
                 "displayName": "Get X16 Variables",
                 "toolReferenceName": "x16Variables",

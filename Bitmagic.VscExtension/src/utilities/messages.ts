@@ -39,4 +39,7 @@ export class messages
     public static keyboardInput = "keyboardInput";               // DEBUGGER (custom)
     public static mouseInput = "mouseInput";                     // DEBUGGER (custom)
     public static exceptionInfo = "exceptionInfo";                // DEBUGGER (standard DAP)
+
+    public static startAudioRecording = "startAudioRecording";   // DEBUGGER (custom)
+    public static stopAudioRecording = "stopAudioRecording";     // DEBUGGER (custom)
 }

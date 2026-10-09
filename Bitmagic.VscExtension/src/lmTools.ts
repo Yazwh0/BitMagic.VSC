@@ -282,6 +282,42 @@ class SendMouseTool implements vscode.LanguageModelTool<SendMouseParams> {
     }
 }
 
+interface StartAudioRecordingParams {
+    path: string;
+}
+
+// Same as X16M's start_audio_recording: records the emulator's own output buffer, so it isn't affected by the
+// window being muted, and nothing is written while the emulator is stopped.
+class StartAudioRecordingTool implements vscode.LanguageModelTool<StartAudioRecordingParams> {
+    async invoke(options: vscode.LanguageModelToolInvocationOptions<StartAudioRecordingParams>): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        const { path } = options.input;
+
+        try {
+            const reply = await withTimeout(session.customRequest(messages.startAudioRecording, { Path: path }), 3000);
+            return jsonResult(reply);
+        } catch (err) {
+            return errorResult(`Failed to start recording audio to "${path}"`, err);
+        }
+    }
+}
+
+class StopAudioRecordingTool implements vscode.LanguageModelTool<object> {
+    async invoke(): Promise<vscode.LanguageModelToolResult> {
+        const session = requireActiveSession();
+        if (session instanceof vscode.LanguageModelToolResult) return session;
+
+        try {
+            const reply = await withTimeout(session.customRequest(messages.stopAudioRecording), 3000);
+            return jsonResult(reply);
+        } catch (err) {
+            return errorResult("Failed to stop the audio recording", err);
+        }
+    }
+}
+
 interface GetVariablesParams {
     scopeName?: string;
     frameId?: number;
@@ -384,6 +420,8 @@ export function registerLmTools(context: vscode.ExtensionContext) {
         vscode.lm.registerTool("bitmagic_findMemoryValue", new FindMemoryValueTool()),
         vscode.lm.registerTool("bitmagic_sendKey", new SendKeyTool()),
         vscode.lm.registerTool("bitmagic_sendMouse", new SendMouseTool()),
+        vscode.lm.registerTool("bitmagic_startAudioRecording", new StartAudioRecordingTool()),
+        vscode.lm.registerTool("bitmagic_stopAudioRecording", new StopAudioRecordingTool()),
         vscode.lm.registerTool("bitmagic_getVariables", new GetVariablesTool()),
         vscode.lm.registerTool("bitmagic_getOtherCompilers", new GetOtherCompilersTool(context.extensionUri))
     );
