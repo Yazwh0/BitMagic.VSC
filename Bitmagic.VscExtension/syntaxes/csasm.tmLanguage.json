@@ -21,7 +21,8 @@
 				{ "include" : "#comment" },		
 				{
 					"name" : "meta.embedded.line.csasm",
-					"match": "(@\\()(.*)(\\))",
+					"comment": "Ends at the ) that closes @(, allowing nested brackets up to three deep, not the last ) on the line, which may be in a trailing comment",
+					"match": "(@\\()((?:[^()]|\\((?:[^()]|\\([^()]*\\))*\\))*)(\\))",
 					"captures": 
 					{
 						"1": { "name" : "punctuation.curlybrace.transition.csasm"},
