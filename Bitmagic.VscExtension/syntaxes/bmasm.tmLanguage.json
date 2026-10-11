@@ -126,7 +126,7 @@
 			"patterns": [
 				{
 					"comment": "the name being defined, after any public / private, is taken here so the value after it can't be read as a C# field declaration ('.export line_count lines ; ...')",
-					"match": "(\\.(?i:const|export))(?:\\s+(public|private)\\b)?(?:\\s+([_[:alpha:]][_[:alnum:]]*)\\b)?",
+					"match": "(\\.(?i:const|export))\\b(?:\\s+(public|private)\\b)?(?:\\s+([_[:alpha:]][_[:alnum:]]*)\\b)?",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.pseudofunction.bmasm"
@@ -260,6 +260,13 @@
 					"captures" : {
 						"1" : { "name" : "keyword.other.section" },
 						"2" : { "name" : "entity.name.section.bmasm" }
+					}
+				},
+				{
+					"comment" : "members, on a line of its own: C# for the library's class follows",
+					"match" : "^\\s*(members)\\s*(?=;|$)",
+					"captures" : {
+						"1" : { "name" : "keyword.other.section" }
 					}
 				}
 			]
