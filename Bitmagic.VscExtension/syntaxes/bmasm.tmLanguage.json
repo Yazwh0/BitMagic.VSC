@@ -16,6 +16,9 @@
 		{ "include" : "#magic-import" },
 		{ "include" : "#magic-include" },
 		{ "include" : "#magic-library"},
+		{ "include" : "#magic-file" },
+		{ "include" : "#magic-section" },
+		{ "include" : "#magic-place" },
 		{ "include" : "#magic-nuget" },
 		{ "include" : "#magic-reference" },
 		{ "include" : "source.csasm" }
@@ -232,6 +235,45 @@
 						"3" :{
 							"name" : "string.include"
 						}
+					}
+				}
+			]
+		},
+		"magic-file" : {
+			"patterns" : [
+				{
+					"comment" : "file <kind> [arguments]: the file is handled by the view <kind>.bmasm. Not C#'s 'file class X'.",
+					"match" : "^\\s*(file)\\s+(?!(?:class|struct|record|interface|enum|delegate|static|sealed|abstract|partial|readonly|unsafe|ref)\\b)([A-Za-z_][\\w-]*)(?:\\s+([^;]*?))?\\s*(?=;|$)",
+					"captures" : {
+						"1" : { "name" : "keyword.other.file" },
+						"2" : { "name" : "entity.name.class" },
+						"3" : { "name" : "entity.name.section.bmasm" }
+					}
+				}
+			]
+		},
+		"magic-section" : {
+			"patterns" : [
+				{
+					"comment" : "section <name>, in a 'file library' file",
+					"match" : "^\\s*(section)\\s+([A-Za-z_]\\w*)\\b",
+					"captures" : {
+						"1" : { "name" : "keyword.other.section" },
+						"2" : { "name" : "entity.name.section.bmasm" }
+					}
+				}
+			]
+		},
+		"magic-place" : {
+			"patterns" : [
+				{
+					"comment" : "place <section> or place <alias>.<section>",
+					"match" : "^\\s*(place)\\s+(?:([A-Za-z_]\\w*)(\\.))?([A-Za-z_]\\w*)\\b",
+					"captures" : {
+						"1" : { "name" : "keyword.other.place" },
+						"2" : { "name" : "entity.name.class" },
+						"3" : { "name" : "punctuation.accessor.bmasm" },
+						"4" : { "name" : "entity.name.section.bmasm" }
 					}
 				}
 			]
