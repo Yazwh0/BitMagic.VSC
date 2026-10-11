@@ -32,6 +32,8 @@ var _startOfficialEmulator = false;
 
 let lspClient: LanguageClient;
 let serverProcess: cp.ChildProcess;
+// how long to keep trying to connect to a newly started X16D's LSP port
+const lspConnectTimeout = 30000;
 let lspDapPort: number | undefined;
 let lspQueryPort: number | undefined;
 
@@ -319,6 +321,11 @@ async function startLsp() {
 				if (!executable || !executable.location)
 					throw new Error('BitMagic debugger not found, LSP server not started.');
 
+				// The client restarts the server when it can't connect, which can be while the last
+				// X16D is still starting; stop that one rather than leave it running unused.
+				if (serverProcess && serverProcess.exitCode === null && serverProcess.signalCode === null)
+					serverProcess.kill();
+
 				return new Promise((resolve, reject) => {
 					bmOutput.appendLine(`Starting debug LSP server: ${executable.location} ${executable.args.join(' ')}`);
 					const child = cp.spawn(executable.location, executable.args, { stdio: ['pipe', 'pipe', 'pipe'], cwd: path.dirname(executable.location) });
@@ -343,15 +350,32 @@ async function startLsp() {
 						}
 						bmOutput.appendLine(`LSP server exited (${code}).`);
 					});
+					// X16D can take a few seconds to start listening, eg on its first run after being
+					// downloaded while it's scanned, so keep trying rather than wait a fixed time.
 					const connectionInfo = { port: lspPort, host: 'localhost' };
-					setTimeout(() => {
+					const started = Date.now();
+					const connect = () => {
+						if (child.exitCode !== null || child.signalCode !== null) {
+							reject(new Error(`The LSP server exited (${child.exitCode ?? child.signalCode}) before it started listening.`));
+							return;
+						}
+
 						const socket = Net.connect(connectionInfo);
-						const result = {
-							reader: socket,
-							writer: socket
+						const failed = () => {
+							socket.destroy();
+							if (Date.now() - started > lspConnectTimeout)
+								reject(new Error(`Couldn't connect to the LSP server on port ${lspPort} within ${lspConnectTimeout / 1000} seconds.`));
+							else
+								setTimeout(connect, 250);
 						};
-						return resolve(result);
-					}, 1000);
+
+						socket.once('error', failed);
+						socket.once('connect', () => {
+							socket.off('error', failed);
+							resolve({ reader: socket, writer: socket });
+						});
+					};
+					setTimeout(connect, 250);
 				});
 			};
 		}
