@@ -298,11 +298,7 @@ async function startLsp() {
 		};
 	}
 	else {
-		var lspPort = await getPort();
-		var dapPort = await getPort();
-		var queryPort = await getPort();
-
-		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, ['--lspport', lspPort.toString(), '--dapport', dapPort.toString(), '--queryport', queryPort.toString()]);
+		let debuggerLocation = BitmagicExecutableFinder.GetExecutable(_dni, []);
 
 		if (!debuggerLocation || !debuggerLocation.location || !fs.existsSync(debuggerLocation?.location)) {
 			bmOutput.appendLine(`File not found: '${debuggerLocation?.location}', LSP server not started.`);
@@ -310,24 +306,41 @@ async function startLsp() {
 			return;
 		}
 		else {
-			serverOptions = () => {
+			serverOptions = async () => {
+				// Fresh ports on every start, including the LanguageClient's own automatic restarts:
+				// the previous X16D can still be holding the last ones, and reusing them makes the
+				// new one fail to listen.
+				const lspPort = await getPort();
+				const dapPort = await getPort();
+				const queryPort = await getPort();
+
+				const executable = BitmagicExecutableFinder.GetExecutable(_dni, ['--lspport', lspPort.toString(), '--dapport', dapPort.toString(), '--queryport', queryPort.toString()]);
+
+				if (!executable || !executable.location)
+					throw new Error('BitMagic debugger not found, LSP server not started.');
+
 				return new Promise((resolve, reject) => {
-					bmOutput.appendLine(`Starting debug LSP server: ${debuggerLocation?.location} ${debuggerLocation?.args.join(' ')}`);
-					serverProcess = cp.spawn(debuggerLocation?.location, debuggerLocation?.args, { stdio: ['pipe', 'pipe', 'pipe'], cwd: path.dirname(debuggerLocation?.location) });
+					bmOutput.appendLine(`Starting debug LSP server: ${executable.location} ${executable.args.join(' ')}`);
+					const child = cp.spawn(executable.location, executable.args, { stdio: ['pipe', 'pipe', 'pipe'], cwd: path.dirname(executable.location) });
+					serverProcess = child;
 					// Shared with BitMagicDebugAdapterServerDescriptorFactory: this is the DAP port
 					// debug sessions can attach to instead of spawning their own process. Re-set on
 					// every (re)start, including the LanguageClient's own automatic restarts.
 					lspDapPort = dapPort;
 					lspQueryPort = queryPort;
-					writeConnectionInfoFile(queryPort, serverProcess.pid);
+					writeConnectionInfoFile(queryPort, child.pid);
 					// Drain the child's console output; otherwise it's invisible and the
 					// pipe buffer can eventually stall X16D.
-					serverProcess.stdout?.on('data', d => bmOutput.append(d.toString()));
-					serverProcess.stderr?.on('data', d => bmOutput.append(d.toString()));
-					serverProcess.on('exit', code => {
-						lspDapPort = undefined;
-						lspQueryPort = undefined;
-						deleteConnectionInfoFile();
+					child.stdout?.on('data', d => bmOutput.append(d.toString()));
+					child.stderr?.on('data', d => bmOutput.append(d.toString()));
+					child.on('exit', code => {
+						// a previous X16D can exit after a restart has started its replacement;
+						// only clear the connection details if they're still this process's
+						if (serverProcess === child) {
+							lspDapPort = undefined;
+							lspQueryPort = undefined;
+							deleteConnectionInfoFile();
+						}
 						bmOutput.appendLine(`LSP server exited (${code}).`);
 					});
 					const connectionInfo = { port: lspPort, host: 'localhost' };
