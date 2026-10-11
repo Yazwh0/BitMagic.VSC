@@ -23,6 +23,7 @@ import { Console } from 'console';
 import { GeneratedFileDocumentProvider } from './generatedFiles';
 import { CpuProfilerView } from './cpuProfilerView/cpuProfilerView';
 import { registerLmTools } from './lmTools';
+import { findHoverExpression } from './hoverText.logic';
 
 const bmOutput = vscode.window.createOutputChannel("BitMagic");
 
@@ -79,6 +80,17 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('bmasm', new BitMagicDebugAdapterServerDescriptorFactory()));
 
 	registerLmTools(context);
+
+	// the debugger's hover: evaluate the name under the cursor, or the operand or expression around it
+	context.subscriptions.push(vscode.languages.registerEvaluatableExpressionProvider('bmasm', {
+		provideEvaluatableExpression(document, position) {
+			const found = findHoverExpression(document.lineAt(position.line).text, position.character);
+			if (!found)
+				return undefined;
+
+			return new vscode.EvaluatableExpression(new vscode.Range(position.line, found.start, position.line, found.end), found.expression);
+		}
+	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('extension.bmasm-debug.getProgramName', config => {
 		return vscode.window.showInputBox({
