@@ -413,6 +413,28 @@
       "description": "Multiplier to scale the display window.",
       "type": "number"
     },
+    "windowPosition": {
+      "$id": "windowPosition",
+      "description": "Screen position of the display window. If not set, the last position is used.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "x": {
+          "description": "Left edge of the window's client area, in screen pixels.",
+          "type": "integer"
+        },
+        "y": {
+          "description": "Top edge of the window's client area, in screen pixels.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
     "muteAudio": {
       "description": "Don't play audio. Emulation is unaffected.",
       "type": "boolean"
