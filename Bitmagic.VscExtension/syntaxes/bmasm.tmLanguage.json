@@ -141,7 +141,7 @@
 				},
 				{
 					"name": "entity.name.function.pseudofunction.bmasm",
-					"match": "\\.(?i:byte|word|const|export|pad|align|importfile|org|cpu|machine|exception|breakpoint|nostop|stop|debugload)\\b"
+					"match": "\\.(?i:byte|word|const|export|entry|pad|align|importfile|org|cpu|machine|exception|breakpoint|nostop|stop|debugload)\\b"
 				}
 			]
 		},
