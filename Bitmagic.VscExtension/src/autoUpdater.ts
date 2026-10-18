@@ -52,6 +52,7 @@ export default class AutoUpdater {
             }
 
             var localCopy = config.get(Constants.SettingsDebuggerPath, '');
+            var backup = '';
 
             if (localCopy) {
                 output.append('Checking for update... ');
@@ -91,12 +92,20 @@ export default class AutoUpdater {
 
                 output.appendLine(`New version ${liveVersion.substring(0, 8)} found!`);
                 output.show();
-                output.append('Deleting old version... ');
-                fs.rmSync(localCopy, { recursive: true, force: true });
-                output.appendLine('Done.');
+
+                backup = this.MoveAside(localCopy, output);
+                if (backup === '')
+                    return;
             }
 
-            await this.DownloadEmulator(context, output, _debuggerUrl, _useOwnDotnet, dni);
+            let downloaded = false;
+            try {
+                downloaded = await this.DownloadEmulator(context, output, _debuggerUrl, _useOwnDotnet, dni);
+            }
+            finally {
+                if (backup !== '')
+                    this.FinishUpdate(localCopy, backup, downloaded, output);
+            }
         }
         catch (e: unknown) {
             output.appendLine('');
@@ -110,7 +119,72 @@ export default class AutoUpdater {
         }
     }
 
-    private async DownloadEmulator(context: vscode.ExtensionContext, output: vscode.OutputChannel, _debuggerUrl: string, useOwnDotnet: boolean, dni: DotNetInstaller) {
+    // Renames the existing install out of the way rather than deleting it in place. On Windows a
+    // directory rename fails as a whole if any file inside is open (eg a running X16D.exe and its
+    // loaded dlls), so this either moves everything or nothing - never leaving a half deleted install.
+    // Returns the backup path, or '' if the install is in use and the update should be skipped.
+    private MoveAside(localCopy: string, output: vscode.OutputChannel): string {
+        const backup = localCopy + '.old';
+
+        // Left over from a previous update whose cleanup failed.
+        if (fs.existsSync(backup)) {
+            try {
+                fs.rmSync(backup, { recursive: true, force: true });
+            }
+            catch {
+                output.appendLine(`Could not remove '${backup}', update skipped. Close any running debug sessions and restart VSCode.`);
+                this.WarnUpdateBlocked();
+                return '';
+            }
+        }
+
+        if (!fs.existsSync(localCopy))
+            return backup;
+
+        output.append('Moving old version aside... ');
+        try {
+            fs.renameSync(localCopy, backup);
+        }
+        catch (e: unknown) {
+            output.appendLine('Failed.');
+            output.appendLine(`The debugger is in use (${e instanceof Error ? e.message : e}), update skipped. Close any running debug sessions and restart VSCode.`);
+            this.WarnUpdateBlocked();
+            return '';
+        }
+        output.appendLine('Done.');
+
+        return backup;
+    }
+
+    private WarnUpdateBlocked() {
+        vscode.window.showWarningMessage('Update detected, but could not be applied probably because of other open sessions.');
+    }
+
+    // Removes the backup if the new version was installed, otherwise puts the old version back.
+    private FinishUpdate(localCopy: string, backup: string, downloaded: boolean, output: vscode.OutputChannel) {
+        if (!fs.existsSync(backup))
+            return;
+
+        try {
+            if (downloaded) {
+                output.append('Deleting old version... ');
+                fs.rmSync(backup, { recursive: true, force: true });
+            }
+            else {
+                output.append('Download failed, restoring old version... ');
+                fs.rmSync(localCopy, { recursive: true, force: true });
+                fs.renameSync(backup, localCopy);
+            }
+            output.appendLine('Done.');
+        }
+        catch (e: unknown) {
+            // Not fatal: a stale backup is cleared on the next update.
+            output.appendLine('Failed.');
+            output.appendLine(e instanceof Error ? e.message : JSON.stringify(e));
+        }
+    }
+
+    private async DownloadEmulator(context: vscode.ExtensionContext, output: vscode.OutputChannel, _debuggerUrl: string, useOwnDotnet: boolean, dni: DotNetInstaller): Promise<boolean> {
         const fileDownloader: FileDownloader = await getApi();
 
         output.append('Downloading new version... ');
@@ -126,7 +200,7 @@ export default class AutoUpdater {
             if (file === undefined) {
                 output.appendLine("Error.");
                 output.show();
-                return;
+                return false;
             }
             output.appendLine('Done.');
 
@@ -139,7 +213,7 @@ export default class AutoUpdater {
             if (file === undefined) {
                 output.appendLine("Error.");
                 output.show();
-                return;
+                return false;
             }
             output.appendLine('Done.');
 
@@ -170,5 +244,7 @@ export default class AutoUpdater {
         var config = vscode.workspace.getConfiguration();
 
         config.update(Constants.SettingsDebuggerPath, fsPath, true);
+
+        return true;
     }
 }
