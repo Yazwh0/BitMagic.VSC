@@ -1,0 +1,54 @@
+img.frame_display
+{
+    height : 525px;
+    width : 800px;
+    border : 1px white solid;
+    image-rendering: pixelated;
+    cursor: crosshair;
+    display: block;
+}
+
+div.frame_container
+{
+    margin-top: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+/* where a click on the image will stop, positioned by the webview script */
+div.beam_target
+{
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    margin-left: -6px;
+    margin-top: -6px;
+    pointer-events: none;
+    background:
+        linear-gradient(#00ff00, #00ff00) center / 1px 100% no-repeat,
+        linear-gradient(#00ff00, #00ff00) center / 100% 1px no-repeat;
+}
+
+div.beam_target[hidden]
+{
+    display: none;
+}
+
+div.frame_control
+{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+vscode-checkbox.auto_update
+{
+    margin-left: 10px;
+}
+
+span.frame_info
+{
+    margin-left: 10px;
+}

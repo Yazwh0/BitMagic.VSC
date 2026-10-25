@@ -605,6 +605,11 @@
                 "category": "BitMagic"
             },
             {
+                "command": "frameControlView.start",
+                "title": "Open The Frame Control View",
+                "category": "BitMagic"
+            },
+            {
                 "command": "spriteView.start",
                 "title": "Open The Sprite Viewer",
                 "category": "BitMagic"
@@ -726,6 +731,7 @@
         "@types/node": "^20.11.19",
         "@types/vscode": "1.95.0",
         "@types/vscode-webview": "^1.57.5",
+        "@vscode/codicons": "^0.0.46-24",
         "@vscode/debugprotocol": "^1.65.0",
         "@vscode/vsce": "^2.32.0",
         "esbuild": "^0.16.17",

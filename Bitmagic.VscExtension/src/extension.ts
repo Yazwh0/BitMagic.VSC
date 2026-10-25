@@ -22,6 +22,7 @@ import getPort from 'get-port';
 import { Console } from 'console';
 import { GeneratedFileDocumentProvider } from './generatedFiles';
 import { CpuProfilerView } from './cpuProfilerView/cpuProfilerView';
+import { FrameControlView } from './frameControlView/frameControlView';
 import { registerLmTools } from './lmTools';
 import { findHoverExpression } from './hoverText.logic';
 
@@ -205,6 +206,7 @@ export function activate(context: vscode.ExtensionContext) {
 	HistoryView.activate(context);
 	SpriteView.activate(context);
 	CpuProfilerView.activate(context);
+	FrameControlView.activate(context);
 
 	// boilerplate
 

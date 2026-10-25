@@ -158,6 +158,27 @@ const spriteViewWebviewConfig = {
     ],
 };
 
+const frameControlViewWebviewConfig = {
+    ...baseConfig,
+    target: "es2020",
+    format: "esm",
+    entryPoints: [
+        "./src/frameControlView/frameControlView.webview.ts"
+    ],
+    outdir: "./out/",
+    plugins: [
+        // Copy webview css files, and the codicons font for the button icons, to `out` directory unaltered
+        copy({
+            resolveFrom: "cwd",
+            assets: [
+                { from: ["./src/frameControlView/frameControlView.css"], to: ["./out"] },
+                { from: ["./node_modules/@vscode/codicons/dist/codicon.css"], to: ["./out"] },
+                { from: ["./node_modules/@vscode/codicons/dist/codicon.ttf"], to: ["./out"] },
+            ],
+        }),
+    ],
+};
+
 // This watch config adheres to the conventions of the esbuild-problem-matchers
 // extension (https://github.com/connor4312/esbuild-problem-matchers#esbuild-via-js)
 /** @type BuildOptions */
@@ -214,6 +235,10 @@ const watchConfig = {
                 ...cpuProfilerViewWebviewConfig,
                 ...watchConfig,
             });
+            await build({
+                ...frameControlViewWebviewConfig,
+                ...watchConfig,
+            });
             console.log("[watch] build finished");
         } else {
             // Build extension and webview code
@@ -224,6 +249,7 @@ const watchConfig = {
             await build(historyViewWebviewConfig);
             await build(spriteViewWebviewConfig);
             await build(cpuProfilerViewWebviewConfig);
+            await build(frameControlViewWebviewConfig);
             console.log("build complete");
         }
     } catch (err) {

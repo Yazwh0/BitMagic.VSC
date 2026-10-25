@@ -40,6 +40,19 @@ export class messages
     public static mouseInput = "mouseInput";                     // DEBUGGER (custom)
     public static exceptionInfo = "exceptionInfo";                // DEBUGGER (standard DAP)
 
+    public static getScreen = "getScreen";                       // DEBUGGER (custom)
+    public static frameControlReady = "frameControlReady";
+    public static frameControlState = "frameControlState";
+    public static updateFrame = "updateFrame";
+    public static frameUpdate = "frameUpdate";
+    public static frameUpdateFailed = "frameUpdateFailed";
+    public static framePause = "framePause";
+    public static frameStep = "frameStep";
+    public static frameRun = "frameRun";
+    public static beamTarget = "beamTarget";
+    public static beamTargetEnd = "beamTargetEnd";
+    public static beamTargetState = "beamTargetState";
+
     public static startAudioRecording = "startAudioRecording";   // DEBUGGER (custom)
     public static stopAudioRecording = "stopAudioRecording";     // DEBUGGER (custom)
 }
