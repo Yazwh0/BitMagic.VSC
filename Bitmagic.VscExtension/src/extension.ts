@@ -637,6 +637,8 @@ class DapOptions implements vscode.DebugAdapterExecutableOptions {
 export function deactivate() {
 	bmOutput.appendLine("Deactivate");
 
+	FrameControlView.deactivate();
+
 	if (lspClient)
 		lspClient.stop();
 	deleteConnectionInfoFile();

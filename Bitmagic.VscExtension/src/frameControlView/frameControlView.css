@@ -1,5 +1,6 @@
 img.frame_display
 {
+    background-color: black;
     height : 525px;
     width : 800px;
     border : 1px white solid;
@@ -43,12 +44,114 @@ div.frame_control
     gap: 5px;
 }
 
+vscode-dropdown.render_mode
+{
+    margin-left: 10px;
+    min-width: 250px;
+}
+
 vscode-checkbox.auto_update
 {
     margin-left: 10px;
 }
 
-span.frame_info
+/* frame, beam and mouse position, under the image */
+div.frame_status
 {
-    margin-left: 10px;
+    margin-top: 4px;
+    max-width: 802px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    min-height: 1.4em;
+}
+
+div.snapshots
+{
+    margin-top: 16px;
+    max-width: 802px;
+}
+
+div.snapshot_header
+{
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+div.snapshot_warning
+{
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    color: var(--vscode-inputValidation-warningForeground, var(--vscode-foreground));
+    background: var(--vscode-inputValidation-warningBackground);
+    border: 1px solid var(--vscode-inputValidation-warningBorder);
+}
+
+div.snapshot_list
+{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+div.snapshot_list.disabled
+{
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+div.snapshot_row
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    cursor: pointer;
+    user-select: none; /* double click restores, rather than selecting text */
+    border: 1px solid transparent;
+}
+
+div.snapshot_row:hover
+{
+    background: var(--vscode-list-hoverBackground);
+    border-color: var(--vscode-focusBorder);
+}
+
+img.snapshot_thumbnail
+{
+    width: 200px;
+    height: 131px;
+    flex-shrink: 0;
+    border: 1px solid var(--vscode-panel-border, grey);
+}
+
+div.snapshot_text
+{
+    flex-grow: 1;
+    min-width: 0;
+}
+
+div.snapshot_name
+{
+    overflow-wrap: anywhere;
+}
+
+div.snapshot_detail
+{
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+div.snapshot_empty
+{
+    opacity: 0.7;
+}
+
+div.snapshot_empty[hidden]
+{
+    display: none;
 }

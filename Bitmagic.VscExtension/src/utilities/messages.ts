@@ -52,6 +52,21 @@ export class messages
     public static beamTarget = "beamTarget";
     public static beamTargetEnd = "beamTargetEnd";
     public static beamTargetState = "beamTargetState";
+    public static frameRenderMode = "frameRenderMode";
+    public static beamScrub = "beamScrub";                       // DEBUGGER (custom)
+    public static setMute = "setMute";                           // DEBUGGER (custom)
+    public static frameMute = "frameMute";
+
+    public static takeSnapshot = "takeSnapshot";                 // DEBUGGER (custom)
+    public static getSnapshots = "getSnapshots";                 // DEBUGGER (custom)
+    public static restoreSnapshot = "restoreSnapshot";           // DEBUGGER (custom)
+    public static deleteSnapshot = "deleteSnapshot";             // DEBUGGER (custom)
+    public static renameSnapshot = "renameSnapshot";             // DEBUGGER (custom)
+    public static snapshotTake = "snapshotTake";
+    public static snapshotRestore = "snapshotRestore";
+    public static snapshotRename = "snapshotRename";
+    public static snapshotDelete = "snapshotDelete";
+    public static snapshotList = "snapshotList";
 
     public static startAudioRecording = "startAudioRecording";   // DEBUGGER (custom)
     public static stopAudioRecording = "stopAudioRecording";     // DEBUGGER (custom)
