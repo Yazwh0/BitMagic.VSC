@@ -555,7 +555,8 @@ class BitMagicDebugAdapterServerDescriptorFactory implements vscode.DebugAdapter
 				return new vscode.DebugAdapterServer(portNumber);
 		}
 
-		if (config.get(this.settingsUseLspProcessForDebugging, false)) {
+		// the official emulator is chosen on X16D's command line, so it needs its own process
+		if (config.get(this.settingsUseLspProcessForDebugging, false) && !_startOfficialEmulator) {
 			if (lspDapPort !== undefined) {
 				bmOutput.appendLine(`Debugging via the shared language-server process (port ${lspDapPort}).`);
 				return new vscode.DebugAdapterServer(lspDapPort);
