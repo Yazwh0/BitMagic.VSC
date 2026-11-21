@@ -7,7 +7,7 @@ export default class DotNetInstaller {
     public async CheckDotnet(context: vscode.ExtensionContext, output: vscode.OutputChannel)
     {
         let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', {
-            version: "6.0",
+            version: "10.0",
             requestingExtensionId: context.extension.id,
         });
 
@@ -23,7 +23,7 @@ export default class DotNetInstaller {
         output.show();
 
         const result = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', { 
-            version: "6.0", 
+            version: "10.0", 
             requestingExtensionId: context.extension.id, 
             installType: 'global', 
             errorConfiguration: AcquireErrorConfiguration.DisplayAllErrorPopups 

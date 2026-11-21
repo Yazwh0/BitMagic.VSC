@@ -6,7 +6,7 @@ It includes a comprehensive 65c02 assembler, but also supports ca65 projects.
 
 To help get you started there are some [examples](https://github.com/Yazwh0/BitMagic.Examples) within the GitHub repo.
 
-Please note only Windows and Linux are supported.
+Please note only Windows and Linux are supported, on x64. Linux needs glibc 2.34 or later (Ubuntu 22.04, Debian 12 or newer) and a few libraries, such as OpenAL and OpenGL; see the [Linux prerequisites](https://bitmagic.org/debugger/#linux-prerequisites).
 
 For more info on anything X16, you can join the [Discord server](https://discord.gg/nS2PqEC).
 
