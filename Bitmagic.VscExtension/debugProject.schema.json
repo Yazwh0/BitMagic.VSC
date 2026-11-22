@@ -474,6 +474,10 @@
     "wifi": {
       "description": "Enable the wifi card at $9fe0",
       "type": "boolean"
+    },
+    "fixedFxLineDraw": {
+      "description": "Draw steep 4bpp lines with the VERA FX line helper properly, as the official emulator does. The hardware doesn't, so leave this off to see what a real X16 draws.",
+      "type": "boolean"
     }
   }
 }
