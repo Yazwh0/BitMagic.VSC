@@ -474,6 +474,10 @@
     "wifi": {
       "description": "Enable the wifi card at $9fe0",
       "type": "boolean"
+    },
+    "fxFixed": {
+      "description": "Make VERA FX behave like the official emulator where it differs from the hardware: steep 4bpp lines with the line helper draw properly, accumulating with the multiplier off adds the product, and polygon DATA0 reads with one-byte cycling always move the cache on a byte. Leave this off to see what a real X16 does.",
+      "type": "boolean"
     }
   }
 }
