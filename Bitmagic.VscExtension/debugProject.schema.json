@@ -485,6 +485,54 @@
     "fxFixed": {
       "description": "Make VERA FX behave like the official emulator where it differs from the hardware: steep 4bpp lines with the line helper draw properly, accumulating with the multiplier off adds the product, and polygon DATA0 reads with one-byte cycling always move the cache on a byte. Leave this off to see what a real X16 does.",
       "type": "boolean"
+    },
+    "debugMode": {
+      "description": "Debug something other than the 6502 code, eg BASIC: the assembly holding the debug mode, and its settings.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "package": {
+          "description": "A NuGet package holding the debug mode, eg BitMagic.X16Basic.Debugger. It's downloaded once into a cache.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "description": "The package's version: exact, a range or float (eg 0.2.*), or left out for the latest release.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "description": "Where to get the package from: a NuGet feed or a folder. nuget.org if left out.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assembly": {
+          "description": "Without a package, the assembly holding the debug mode (relative paths are from the project's base path), eg while developing one. With a package, the assembly's name in it.",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type to use, if the assembly has more than one debug mode.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "settings": {
+          "description": "Passed to the debug mode when it starts.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
     }
   }
 }
